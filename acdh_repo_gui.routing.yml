@@ -1,0 +1,17 @@
+repo_main:
+  path: '/repo_main'
+  defaults:
+    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_main'
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+
+repo_detail:
+  path: '/repo_detail/{identifier}'
+  defaults:
+    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_detail'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE'    
+    

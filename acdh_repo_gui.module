@@ -1,0 +1,64 @@
+<?php
+
+function acdh_repo_gui_page_attachments(&$page)
+{
+    // This could in most cases be added in template as well with:
+    // {{ attach_library('acdh-repo/acdh-repo-css-and-js') }}
+    //$page['#attached']['library'][] = 'acdh-repo-gui-css-and-js';
+}
+
+function acdh_repo_gui_theme($existing, $type, $theme, $path)
+{
+    return [
+        'acdh-repo-gui-main' => [
+            'variables' => ['data' => NULL],
+        ],
+        'acdh-repo-gui-detail' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-basic' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-persons' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-concept' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-project' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-organisations' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-places' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ],
+        'acdh-repo-gui-detail-publications' => [
+            'variables' => ['basic' => NULL, 'extra' => NULL],
+        ]
+    ];
+}
+
+// Setup custom 404!
+// -> add file "page--404.html.twig" to theme template folder
+function acdh_repo_gui_theme_suggestions_page(array $variables)
+{
+    $path_args = explode('/', trim(\Drupal::service('path.current')->getPath(), '/'));
+
+    $suggestions = theme_get_suggestions($path_args, 'page');
+
+    $http_error_suggestions = [
+        'system.404' => 'page__404',
+    ];
+
+    $route_name = \Drupal::routeMatch()->getRouteName();
+
+    if (isset($http_error_suggestions[$route_name])) {
+        $suggestions[] = $http_error_suggestions[$route_name];
+    }
+
+    return $suggestions;
+}
+
+

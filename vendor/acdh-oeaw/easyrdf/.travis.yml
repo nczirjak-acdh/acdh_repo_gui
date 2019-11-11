@@ -1,0 +1,11 @@
+language: php
+php:
+  - 7.1
+  - 7.0
+  - 5.6
+
+install: make composer-install
+script:
+  - make lint
+  - make cs
+  - make test-lib

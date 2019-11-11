@@ -1,0 +1,64 @@
+<div class="arche-detail-dissemination" id="arche-dv-dissemination">
+    {% if extras['dissServ'] %}
+        <div class="res-property">
+            <i class="material-icons">&#xE89F;</i>
+            {% for value in extras['dissServ']['services'] %}
+                <div class="res-act-button">
+                    {% if value['guiUrl'] and value['title'] and value['description']  %}
+                        <a href="{{ value['guiUrl'] }}" title="{{ value['description'] }}" class="dissServAhref" >
+                            <span>{{ value['title']|trans }}</span>
+                        </a>
+                    {% elseif value['returnType'] and value['title'] and value['description']  %}
+                        <a href="{{ extras['dissServ']['identifier'] }}?format={{ value['returnType']|url_encode }}" title="{{ value['description'] }}" class="dissServAhref" >
+                            <span>{{ value['title']|trans }}</span>
+                        </a>
+                    {% elseif value['returnType'] and value['title'] %}
+                        <a href="{{ extras['dissServ']['identifier'] }}?format={{ value['returnType']|url_encode }}" class="dissServAhref" >
+                            <span>{{ value['title']|trans }}</span>
+                        </a>        
+                    {% endif %}    
+                </div>
+            {% endfor %} 
+
+            <div class="res-act-button">
+                <a href="/browser/oeaw_turtle_api/{{ result.insideUri }}" class="dissServAhref" >
+                    <span>Turtle File</span>
+                </a>        
+            </div>
+
+            {% if result.getType == "Collection" %}
+                {% set fedoraUrl = result.getFedoraUri %}
+                {% if fedoraUrl %}
+                    <div class="res-act-button">
+                        <a href="/browser/oeaw_coll_dl_script/{{ fedoraUrl|replace({'https://': ""}) }}" class="dissServAhref" >
+                            <span>Collection Download Script</span>
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div id="shibboleth_login_info" class="shibboleth_login_info" style="display:none"></div>
+
+        <!-- DISS LOGIN FORM START  -->
+        <div id="dissServLoginform">
+            <div id="loginInfo">
+                {{ "Click here to login with your federated account"|trans }} 
+                <a class="shibboleth" href="/browser/federated_login"><i class="fa fa-sign-in" aria-hidden="true"></i></a>     
+                <br>
+                {{ "or" }}
+                <br>
+                {{ "Please provide your login credentials"|trans }}
+            </div>
+            <div id="loginErrorDiv"></div>
+            <input type="text" id="username" placeholder="username" name="username">
+            <input type="password" id="password" name="password" placeholder="password">
+            <div>
+                <input type = "submit" id = "dologin" value = "Login">
+                <input type = "submit" id = "cancelLogin" value = "Cancel">
+            </div>
+        </div>
+        <!-- DISS LOGIN FORM END  -->
+    {% endif %}    	
+</div>
+    

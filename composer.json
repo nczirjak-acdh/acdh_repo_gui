@@ -1,0 +1,10 @@
+{
+    "name": "drupal/acdh_repo_gui",
+    "description": "acdh repo gui composer file",
+    "type": "drupal-module",
+    "license": "MIT",
+    "require": {
+	   "acdh-oeaw/acdh-repo-lib" : "*"
+    }
+}
+

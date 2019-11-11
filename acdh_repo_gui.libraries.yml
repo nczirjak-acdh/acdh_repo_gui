@@ -1,0 +1,8 @@
+acdh-repo-gui-css-and-js:
+  css:
+    theme:
+      css/acdh_repo_gui.css: {}
+  js:
+    js/acdh_repo_gui.js: {}
+  dependencies:
+    - core/jquery

@@ -1,0 +1,144 @@
+<link rel="stylesheet" type="text/css" href="/browser/core/themes/classy/css/components/messages.css">
+
+<!--   MAIN DETAIL VIEW -->
+    <input type="hidden" id="insideUri" name="insideUri" value="{{ result.insideUri }}">
+    <input type="hidden" id="accessRestriction" name="accessRestriction" value="{{ result.accessRestriction }}">
+    <input type="hidden" id="basic_auth" name="basic_auth" value="{{ extras['basic_auth'] }}">
+    
+    <div class="loader-div">
+        <div class="loader-bg">
+            <div class="loader"></div>
+        </div>
+    </div>
+    BREADCRUMB
+    {% if extras['breadcrumb'] %}
+        {% set breadcrumbLength = extras['breadcrumb']|length  %}
+        {% for key, value in extras['breadcrumb'] %}
+            {% if value["rootTitle"] %}
+                {% if breadcrumbLength > 3 and key > 0 and key < breadcrumbLength - 1 %}
+                    {% set breadcrumbTitle = "..." %}
+                {% else %}
+                    {% set breadcrumbTitle = value["rootTitle"]  %}
+                {% endif %} 
+                <a href='/browser/oeaw_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
+                {% if breadcrumbLength -1 >= key %}
+                    /  
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    NICE URI
+    <h3 class="single-res-heading">
+            {{ "Overview"|trans }}
+        <div class="res-act-button res-act-button-expertview basic">
+            <i class="material-icons">&#xE896;</i>
+            <span>{{ "Switch to Expert-View"|trans }}</span>
+        </div>
+        {% if extras.niceURI %}
+        <div class="res-act-button res-act-button-copy-url" id="res-act-button-copy-url" data-copyuri="{{ extras.niceURI }}">
+            <span id="copy-url-button">
+                <i class="material-icons">&#xE157;</i>
+                {{ "Copy Resource Link"|trans }}
+            </span>
+            <span id="copyLinkTextfield-wrapper">
+                <span type="text" name="copyLinkInputBtn" id="copyLinkInputBtn" data-copyuri="{{ extras.niceURI }}">
+                    <i class="material-icons">&#xE14D;</i>
+                </span>
+                <input type="text" name="copyLinkTextfield" id="copyLinkTextfield" value="{{ extras.niceURI }}"/>
+            </span>
+        </div>
+        {% endif %}
+    </h3> 
+    
+    <!-- get the views based on the type -->
+    <div class="single-res-overview single-res-overview-basic">
+        {% if basic.getAcdhType()|lower == 'person'  %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-person.html.twig', {'result': result } ) }}
+        {% elseif basic.getAcdhType()|lower == 'project' %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-project.html.twig', {'result': result,  } ) }}
+        {% elseif basic.getAcdhType()|lower == 'organisation' %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-organisation.html.twig', {'result': result,  } ) }}
+        {% elseif basic.getAcdhType()|lower == 'place' %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-place.html.twig', {'result': result } ) }}
+        {% elseif basic.getAcdhType()|lower == 'publication' %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-publication.html.twig', {'result': result } ) }}            
+        {% else  %}
+            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-basic.html.twig', {'result': result } ) }}
+        {% endif %}
+    </div>
+	
+   <!-- EXPERT VIEW BLOCK -->
+    {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-expert-view.html.twig', {'result': result } ) }}
+   
+    <!-- DISSEMINATION BLOCK -->
+    DISSEMINATION
+    {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': result } ) }}
+    
+    
+    {% if (result.table['acdh:hasDescription'] or result.table['acdh:hasSpatialCoverage'] or result.table['acdh:hasNote']) %}
+        <h3 class="single-res-heading">{{ "Summary"|trans }}</h3>
+        
+        {% if result.table['acdh:hasSpatialCoverage'] %}
+            <div class="res-property">
+                <i class="material-icons">info_outline</i>
+                <span class="res-prop-label">{{ "Spatial Coverage"|trans }}:&nbsp;&nbsp;</span>
+                {% if result.table['acdh:hasSpatialCoverage'] is iterable and result.table['acdh:hasSpatialCoverage']|length > 1 %}
+                    {% for spatial in result.table['acdh:hasSpatialCoverage'] %}
+                        {% if spatial['insideUri'] and spatial['title'] %}
+                            {% if (loop.length <= loop.index)  %}
+                                {% set separator = '' %}
+                            {% else %}    
+                                {% set separator = ',' %}
+                            {% endif %}
+                                <span class="res-prop-value"><a href="/browser/oeaw_detail/{{spatial['insideUri'] }}">{{ spatial['title'] }}</a></span> {{ separator|raw }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% if result.table['acdh:hasSpatialCoverage'][0]['insideUri'] %}
+                        <span class="res-prop-value"><a href="/browser/oeaw_detail/{{ result.table['acdh:hasSpatialCoverage'][0]['insideUri'] }}">{{ result.table['acdh:hasSpatialCoverage'][0]['title'] }}</a></span>
+                    {% else %}
+                        {% if result.table['acdh:hasSpatialCoverage'][0]['uri']  %}
+                            <span class="res-prop-value"><a href="{{ result.table['acdh:hasSpatialCoverage'][0]['uri'] }}">{{ result.table['acdh:hasSpatialCoverage'][0]['uri'] }}</a></span>
+                        {% else %}
+                            <span class="res-prop-value">{{ result.table['acdh:hasSpatialCoverage'][0] }}</span>
+                        {% endif %}
+                    {% endif %}
+                    
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        {% if result.table['acdh:hasDescription'][0] %}
+            <div class="res-property">
+                <i class="material-icons">info_outline</i>
+                <span class="res-prop-label">{{ "Description"|trans }}:&nbsp;&nbsp;</span>
+                <span class="res-prop-value">{{ result.table['acdh:hasDescription'][0]|nl2br }}</span>
+            </div>
+        {% endif %}
+        
+        {% if result.table['acdh:hasNote'][0] %}
+            <div class="res-property">
+                <i class="material-icons">info_outline</i>
+                <span class="res-prop-label">{{ "Note"|trans }}:&nbsp;&nbsp;</span>
+                <span class="res-prop-value">{{ result.table['acdh:hasNote'][0] }}</span>
+            </div>
+        {% endif %}
+    {% endif%}
+    
+    CITE
+    {% if extras.CiteThisWidget %}
+        {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-cite-block.html.twig', {'result': result } ) }}
+    {% endif%}
+    
+    {% if  basic.getAcdhType()|lower == 'collection' or  basic.getAcdhType()|lower == 'organisation'  %}
+        <div class="res-actions" style="padding: 20px;">
+            <div class="res-act-button" style="display: table; margin: 0 auto;">
+                <a href="#" id="getChildView" class="getChildView"><i class="fa fa-angle-down" aria-hidden="true"></i> &nbsp;<b>{{ "Show More"|trans }}</b>&nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+       <div id="child-div-content"></div>
+   {% endif%}
+
+
