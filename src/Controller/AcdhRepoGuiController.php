@@ -83,12 +83,6 @@ class AcdhRepoGuiController extends ControllerBase
             return array();
         }
         
-        echo "<pre>";
-        var_dump($dv->extra);
-        echo "</pre>";
-
-
-
         return [
             '#theme' => 'acdh-repo-gui-detail',
             '#basic' => $dv->basic,

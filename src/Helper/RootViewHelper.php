@@ -23,16 +23,13 @@ class RootViewHelper extends ArcheHelper {
             
     public function createView(array $data): array {
         $this->data = $data;
-         
-        $this->extendActualObj(true);
+        $this->extendActualObj(true);  
           
         if(count((array)$this->data) == 0) {
             return array();
         }
         
         foreach ($this->data as $k => $v) {
-           
-
             $this->rootViewObjectArray[] = new ResourceObject($v, $this->config);
         }
         

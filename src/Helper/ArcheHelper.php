@@ -98,7 +98,19 @@ abstract class ArcheHelper {
                     }
                     $d->shortcut = $this->createShortcut($d->property);
                     $result[$d->shortcut][] = $d;
-                }
+                }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
+                        //setup the acdh uuid variable
+                        $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
+                        if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
+                            $d->acdhid = $d->value;
+                        }
+                        //the uri for the identifier urls
+                        if (strpos($d->value, 'http') !== false) {
+                            $d->uri = $d->value;
+                        }
+                        //add the identifier into the final data
+                        $result['acdh:hasIdentifier'][] = $d;
+                    }
             }
         }
         $this->data = $result;

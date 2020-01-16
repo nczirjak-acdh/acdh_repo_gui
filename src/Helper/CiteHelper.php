@@ -16,7 +16,11 @@ namespace Drupal\acdh_repo_gui\Helper;
 class CiteHelper {
     
     private $cite = array();
+    private $config;
     
+    public function __construct(\acdhOeaw\acdhRepoLib\Repo $config) {
+        $this->config = $config;
+    }
     private function getCiteWidgetData(\Drupal\acdh_repo_gui\Object\ResourceObject $data, string $property): string
     {
         $result = "";
@@ -133,17 +137,17 @@ class CiteHelper {
             if (!empty($obj->getIdentifiers()) && count($obj->getIdentifiers()) > 0) {
                 $acdhURIs = $obj->getIdentifiers();
                 //Only one value under acdh:hasIdentifier
-                
                 $uuid = "";
-                
+
                 foreach ($acdhURIs as $id) {
-                    //the id contains the acdh uuid
-                    if (strpos($id, RC::get('fedoraUuidNamespace')) !== false) {
-                        $uuid = $id;
-                    //if the identifier is the normal acdh identifier then return it
-                    } elseif (strpos($id, RC::get('fedoraIdNamespace')) !== false) {
-                        $uuid = $id;
-                        break;
+                    if(isset($id->value)) {
+                        if (strpos($id->value, $this->config->getSchema()->__get('drupal')->uuidNamespace) !== false) {
+                            $uuid = $id->value;
+                        //if the identifier is the normal acdh identifier then return it
+                        } elseif (strpos($id->value, $this->config->getSchema()->__get('id')) !== false) {
+                            $uuid = $id->value;
+                            break;
+                        }
                     }
                 }
                 $this->cite["MLA"]["acdhURI"] = $uuid;

@@ -50,8 +50,8 @@ class DetailViewController {
             $this->basicViewData->dissemination = $this->helper->getDissServices($dv[0]->id);
         }
         
-        //cite
-        $cite = new CH();
+        //get the cite widget data
+        $cite = new CH($this->config);
         $this->basicViewData->extra = new \stdClass();
         $this->basicViewData->extra->citeWidgetData = $cite->createCiteThisWidget($this->basicViewData->basic);
 

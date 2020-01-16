@@ -30,7 +30,7 @@ class DetailViewHelper extends ArcheHelper {
     public function createView(array $data): array {
         $this->data = $data;
         $this->extendActualObj();
-         
+        
         if(count((array)$this->data) == 0) {
             return array();
         }
