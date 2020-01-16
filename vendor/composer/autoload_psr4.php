@@ -8,7 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'zozlak\\' => array($vendorDir . '/zozlak/rdf-constants/src/zozlak'),
     'acdhOeaw\\acdhRepoLib\\' => array($vendorDir . '/acdh-oeaw/acdh-repo-lib/tests'),
-    'acdhOeaw\\' => array($vendorDir . '/acdh-oeaw/acdh-repo-lib/src/acdhOeaw'),
+    'acdhOeaw\\' => array($vendorDir . '/acdh-oeaw/acdh-repo-acdh/src/acdhOeaw', $vendorDir . '/acdh-oeaw/acdh-repo-lib/src/acdhOeaw'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),

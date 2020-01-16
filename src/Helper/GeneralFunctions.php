@@ -17,7 +17,7 @@ class GeneralFunctions {
     public function __construct()
     {        
         $this->langConf = \Drupal::config('oeaw.settings');
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/acdh_repo_gui/config.yaml');
+        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
     }
     
     /**

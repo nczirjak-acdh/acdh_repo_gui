@@ -4,6 +4,8 @@ namespace Drupal\acdh_repo_gui\Controller;
 
 use Drupal\acdh_repo_gui\Model\DetailViewModel;
 use Drupal\acdh_repo_gui\Helper\DetailViewHelper;
+use Drupal\acdh_repo_gui\Helper\CiteHelper as CH;
+
 
 /**
  * Description of DetailViewController
@@ -23,20 +25,36 @@ class DetailViewController {
         $this->helper = new DetailViewHelper($config);
     }
     
-    
+    /**
+     * Generate the detail view
+     * 
+     * @param string $identifier
+     * @return type
+     */
     public function generateDetailView(string $identifier) {
         $dv = array();
-        $dv = $this->model->getBasicDetailViewData($identifier);
+        
+        $dv = $this->model->getViewData($identifier);
         
         if(count((array)$dv) == 0) {
             return array();
         } 
         
-        
         //extend the data object with the shortcuts
         $this->basicViewData = new \stdClass();
-        $this->basicViewData->basic = $this->helper->createDetailView($dv);
+        $this->basicViewData->basic = $this->helper->createView($dv);
+        $this->basicViewData->basic = $this->basicViewData->basic[0];
         
+        // check the dissemination services
+        if(isset($dv[0]->id) && !is_null($dv[0]->id)) {
+            $this->basicViewData->dissemination = $this->helper->getDissServices($dv[0]->id);
+        }
+        
+        //cite
+        $cite = new CH();
+        $this->basicViewData->extra = new \stdClass();
+        $this->basicViewData->extra->citeWidgetData = $cite->createCiteThisWidget($this->basicViewData->basic);
+
         return $this->basicViewData;
     }
     

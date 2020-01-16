@@ -1,17 +1,57 @@
 [
     {
-        "name": "acdh-oeaw/acdh-repo-lib",
-        "version": "0.5.1",
-        "version_normalized": "0.5.1.0",
+        "name": "acdh-oeaw/acdh-repo-acdh",
+        "version": "0.2.2",
+        "version_normalized": "0.2.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/zozlak/acdh-repo-lib.git",
-            "reference": "79c5378ad02a8f2d749a7f5ce31ff176a3f53092"
+            "url": "https://github.com/zozlak/acdh-repo-acdh.git",
+            "reference": "01ff434a53b621e26b57986508f9291c8c06fdc6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zozlak/acdh-repo-lib/zipball/79c5378ad02a8f2d749a7f5ce31ff176a3f53092",
-            "reference": "79c5378ad02a8f2d749a7f5ce31ff176a3f53092",
+            "url": "https://api.github.com/repos/zozlak/acdh-repo-acdh/zipball/01ff434a53b621e26b57986508f9291c8c06fdc6",
+            "reference": "01ff434a53b621e26b57986508f9291c8c06fdc6",
+            "shasum": ""
+        },
+        "require": {
+            "acdh-oeaw/acdh-repo-lib": "*",
+            "acdh-oeaw/easyrdf": "*"
+        },
+        "time": "2019-11-12T10:13:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "acdhOeaw\\": "src/acdhOeaw"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mateusz Żółtak",
+                "email": "mzoltak@oeaw.ac.at"
+            }
+        ],
+        "description": "A library implementing higher-level ACDH repo concepts",
+        "homepage": "https://github.com/zozlak/acdh-repo-acdh"
+    },
+    {
+        "name": "acdh-oeaw/acdh-repo-lib",
+        "version": "0.5.2",
+        "version_normalized": "0.5.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zozlak/acdh-repo-lib.git",
+            "reference": "f057d383a49062b581f969860550df513f0d1393"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zozlak/acdh-repo-lib/zipball/f057d383a49062b581f969860550df513f0d1393",
+            "reference": "f057d383a49062b581f969860550df513f0d1393",
             "shasum": ""
         },
         "require": {
@@ -22,7 +62,7 @@
         "require-dev": {
             "phpunit/phpunit": "^8.3"
         },
-        "time": "2019-09-17T19:40:12+00:00",
+        "time": "2019-11-12T10:57:59+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -120,33 +160,34 @@
     },
     {
         "name": "guzzlehttp/guzzle",
-        "version": "6.3.3",
-        "version_normalized": "6.3.3.0",
+        "version": "6.4.1",
+        "version_normalized": "6.4.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/guzzle/guzzle.git",
-            "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba"
+            "reference": "0895c932405407fd3a7368b6910c09a24d26db11"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/407b0cb880ace85c9b63c5f9551db498cb2d50ba",
-            "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0895c932405407fd3a7368b6910c09a24d26db11",
+            "reference": "0895c932405407fd3a7368b6910c09a24d26db11",
             "shasum": ""
         },
         "require": {
+            "ext-json": "*",
             "guzzlehttp/promises": "^1.0",
-            "guzzlehttp/psr7": "^1.4",
+            "guzzlehttp/psr7": "^1.6.1",
             "php": ">=5.5"
         },
         "require-dev": {
             "ext-curl": "*",
             "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
-            "psr/log": "^1.0"
+            "psr/log": "^1.1"
         },
         "suggest": {
             "psr/log": "Required for using the Log middleware"
         },
-        "time": "2018-04-22T15:46:56+00:00",
+        "time": "2019-10-23T15:58:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -155,12 +196,12 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "files": [
-                "src/functions_include.php"
-            ],
             "psr-4": {
                 "GuzzleHttp\\": "src/"
-            }
+            },
+            "files": [
+                "src/functions_include.php"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [

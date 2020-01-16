@@ -54,54 +54,54 @@
     <!-- get the views based on the type -->
     <div class="single-res-overview single-res-overview-basic">
         {% if basic.getAcdhType()|lower == 'person'  %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-person.html.twig', {'result': result } ) }}
+            {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-person.html.twig', {'result': basic } ) }}
         {% elseif basic.getAcdhType()|lower == 'project' %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-project.html.twig', {'result': result,  } ) }}
+            {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-project.html.twig', {'result': basic  } ) }}
         {% elseif basic.getAcdhType()|lower == 'organisation' %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-organisation.html.twig', {'result': result,  } ) }}
+            {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-organisation.html.twig', {'result': basic  } ) }}
         {% elseif basic.getAcdhType()|lower == 'place' %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-place.html.twig', {'result': result } ) }}
+            {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-place.html.twig', {'result': basic } ) }}
         {% elseif basic.getAcdhType()|lower == 'publication' %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-publication.html.twig', {'result': result } ) }}            
+            {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-publication.html.twig', {'result': basic } ) }}            
         {% else  %}
-            {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-basic.html.twig', {'result': result } ) }}
+           {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-basic.html.twig', {'result': basic } ) }}
         {% endif %}
     </div>
 	
    <!-- EXPERT VIEW BLOCK -->
-    {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-expert-view.html.twig', {'result': result } ) }}
+    {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-expert-view.html.twig', {'result': basic } ) }}
    
     <!-- DISSEMINATION BLOCK -->
-    DISSEMINATION
-    {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': result } ) }}
+    {% if dissemination %}
+        {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType() } ) }}
+    {% endif %}
     
-    
-    {% if (result.table['acdh:hasDescription'] or result.table['acdh:hasSpatialCoverage'] or result.table['acdh:hasNote']) %}
+    {% if (basic.getData('acdh:hasDescription') or basic.getData('acdh:hasSpatialCoverage') or basic.getData('acdh:hasNote')) %}
         <h3 class="single-res-heading">{{ "Summary"|trans }}</h3>
         
-        {% if result.table['acdh:hasSpatialCoverage'] %}
+        {% if basic.getData('acdh:hasSpatialCoverage') %}
             <div class="res-property">
                 <i class="material-icons">info_outline</i>
                 <span class="res-prop-label">{{ "Spatial Coverage"|trans }}:&nbsp;&nbsp;</span>
-                {% if result.table['acdh:hasSpatialCoverage'] is iterable and result.table['acdh:hasSpatialCoverage']|length > 1 %}
-                    {% for spatial in result.table['acdh:hasSpatialCoverage'] %}
-                        {% if spatial['insideUri'] and spatial['title'] %}
+                {% if basic.getData('acdh:hasSpatialCoverage') is iterable and basic.getData('acdh:hasSpatialCoverage')|length > 1 %}
+                    {% for spatial in basic.getData('acdh:hasSpatialCoverage') %}
+                        {% if spatial.insideUri and spatial.title %}
                             {% if (loop.length <= loop.index)  %}
                                 {% set separator = '' %}
                             {% else %}    
                                 {% set separator = ',' %}
                             {% endif %}
-                                <span class="res-prop-value"><a href="/browser/oeaw_detail/{{spatial['insideUri'] }}">{{ spatial['title'] }}</a></span> {{ separator|raw }}
+                                <span class="res-prop-value"><a href="/browser/repo_detail/{{spatial.insideUri }}">{{ spatial.title }}</a></span> {{ separator|raw }}
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    {% if result.table['acdh:hasSpatialCoverage'][0]['insideUri'] %}
-                        <span class="res-prop-value"><a href="/browser/oeaw_detail/{{ result.table['acdh:hasSpatialCoverage'][0]['insideUri'] }}">{{ result.table['acdh:hasSpatialCoverage'][0]['title'] }}</a></span>
+                    {% if basic.getData('acdh:hasSpatialCoverage')[0].insideUri %}
+                        <span class="res-prop-value"><a href="/browser/repo_detail/{{ basic.getData('acdh:hasSpatialCoverage')[0].insideUri }}">{{ basic.getData('acdh:hasSpatialCoverage')[0].title }}</a></span>
                     {% else %}
-                        {% if result.table['acdh:hasSpatialCoverage'][0]['uri']  %}
-                            <span class="res-prop-value"><a href="{{ result.table['acdh:hasSpatialCoverage'][0]['uri'] }}">{{ result.table['acdh:hasSpatialCoverage'][0]['uri'] }}</a></span>
+                        {% if basic.getData('acdh:hasSpatialCoverage')[0]['uri']  %}
+                            <span class="res-prop-value"><a href="{{ basic.getData('acdh:hasSpatialCoverage')[0].url }}">{{ basic.getData('acdh:hasSpatialCoverage')[0].url }}</a></span>
                         {% else %}
-                            <span class="res-prop-value">{{ result.table['acdh:hasSpatialCoverage'][0] }}</span>
+                            <span class="res-prop-value">{{ basic.getData('acdh:hasSpatialCoverage')[0].value }}</span>
                         {% endif %}
                     {% endif %}
                     
@@ -109,11 +109,11 @@
             </div>
         {% endif %}
         
-        {% if result.table['acdh:hasDescription'][0] %}
+        {% if basic.getData('acdh:hasDescription')[0] %}
             <div class="res-property">
                 <i class="material-icons">info_outline</i>
                 <span class="res-prop-label">{{ "Description"|trans }}:&nbsp;&nbsp;</span>
-                <span class="res-prop-value">{{ result.table['acdh:hasDescription'][0]|nl2br }}</span>
+                <span class="res-prop-value">{{ basic.getData('acdh:hasDescription')[0].title|nl2br }}</span>
             </div>
         {% endif %}
         
@@ -121,14 +121,14 @@
             <div class="res-property">
                 <i class="material-icons">info_outline</i>
                 <span class="res-prop-label">{{ "Note"|trans }}:&nbsp;&nbsp;</span>
-                <span class="res-prop-value">{{ result.table['acdh:hasNote'][0] }}</span>
+                <span class="res-prop-value">{{ basic.getData('acdh:hasNote')[0].value }}</span>
             </div>
         {% endif %}
     {% endif%}
     
-    CITE
-    {% if extras.CiteThisWidget %}
-        {{ include('/modules/acdh_repo_gui/templates/acdh-repo-gui-detail-cite-block.html.twig', {'result': result } ) }}
+    
+    {% if extra.citeWidgetData %}
+        {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-cite-block.html.twig', {'result': extra.citeWidgetData } ) }}
     {% endif%}
     
     {% if  basic.getAcdhType()|lower == 'collection' or  basic.getAcdhType()|lower == 'organisation'  %}

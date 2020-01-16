@@ -1,22 +1,13 @@
 <div class="arche-detail-dissemination" id="arche-dv-dissemination">
-    {% if extras['dissServ'] %}
+    {% if result %}
+        
         <div class="res-property">
             <i class="material-icons">&#xE89F;</i>
-            {% for value in extras['dissServ']['services'] %}
+            {% for key, value in result %}
                 <div class="res-act-button">
-                    {% if value['guiUrl'] and value['title'] and value['description']  %}
-                        <a href="{{ value['guiUrl'] }}" title="{{ value['description'] }}" class="dissServAhref" >
-                            <span>{{ value['title']|trans }}</span>
-                        </a>
-                    {% elseif value['returnType'] and value['title'] and value['description']  %}
-                        <a href="{{ extras['dissServ']['identifier'] }}?format={{ value['returnType']|url_encode }}" title="{{ value['description'] }}" class="dissServAhref" >
-                            <span>{{ value['title']|trans }}</span>
-                        </a>
-                    {% elseif value['returnType'] and value['title'] %}
-                        <a href="{{ extras['dissServ']['identifier'] }}?format={{ value['returnType']|url_encode }}" class="dissServAhref" >
-                            <span>{{ value['title']|trans }}</span>
-                        </a>        
-                    {% endif %}    
+                    <a href="{{ value }}" title="{{ key }}" class="dissServAhref" >
+                        <span>{{ key|trans }}</span>
+                    </a>
                 </div>
             {% endfor %} 
 
@@ -26,7 +17,7 @@
                 </a>        
             </div>
 
-            {% if result.getType == "Collection" %}
+                {% if acdhType|lower == "collection" %}
                 {% set fedoraUrl = result.getFedoraUri %}
                 {% if fedoraUrl %}
                     <div class="res-act-button">

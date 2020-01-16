@@ -1,5 +1,5 @@
 
-{% if extras.CiteThisWidget %}
+{% if result %}
 <h3 class="single-res-heading">{{ "Cite Resource"|trans }}</h3>
     <div class="cite-selector">
         <div class="cite-style selected">
@@ -16,9 +16,9 @@
         <span id="copy-cite-btn-confirmation">{{ "Citation information copied"|trans }}!</span>
     </div>
     <figure class="highlight">
-        <span class="cite-content active">{{ extras.CiteThisWidget.MLA.string | raw }}</span>
-        <span class="cite-content">{{ extras.CiteThisWidget.APA.string | raw }}</span>
-        <span class="cite-content">{{ extras.CiteThisWidget.CMS.string | raw }}</span>
+        <span class="cite-content active">{{ result.MLA.string | raw }}</span>
+        <span class="cite-content">{{ result.APA.string | raw }}</span>
+        <span class="cite-content">{{ result.CMS.string | raw }}</span>
     </figure>
 {% endif%}
 

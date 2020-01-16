@@ -2,12 +2,13 @@
 
 namespace Drupal\acdh_repo_gui\Model;
 
+use Drupal\acdh_repo_gui\Model\ArcheModel;
 /**
  * Description of DetailViewModel
  *
  * @author nczirjak
  */
-class DetailViewModel {
+class DetailViewModel extends ArcheModel {
     
     private $repodb;
     
@@ -17,13 +18,7 @@ class DetailViewModel {
         $this->repodb = \Drupal\Core\Database\Database::getConnection('repo');
     }
     
-    private function changeBackDBConnection()
-    {
-        \Drupal\Core\Database\Database::setActiveConnection();
-    }
-    
-    
-    public function getBasicDetailViewData(string $identifier): array {
+    public function getViewData(string $identifier = ""): array {
         $result = array();
         //run the actual query
         $query = $this->repodb->query(" select * from detail_view_func(:id) ", array(':id' => $identifier));

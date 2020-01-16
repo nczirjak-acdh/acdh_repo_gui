@@ -14,28 +14,28 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
             'variables' => ['data' => NULL],
         ],
         'acdh-repo-gui-detail' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-basic' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-persons' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-concept' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-project' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-organisations' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-places' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ],
         'acdh-repo-gui-detail-publications' => [
-            'variables' => ['basic' => NULL, 'extra' => NULL],
+            'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
         ]
     ];
 }
