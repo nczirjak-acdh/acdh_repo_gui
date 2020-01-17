@@ -17,6 +17,13 @@ class ResourceObject {
         return (isset($this->properties[$property]) && !empty($this->properties[$property])) ? $this->properties[$property] : array();
     }
     
+    /**
+     * 
+     * Change property data
+     * 
+     * @param string $prop
+     * @param array $v
+     */
     private function setData(string $prop = null, array $v = null) {
         if(
             isset($prop) && count((array)$v) > 0  
@@ -25,14 +32,29 @@ class ResourceObject {
         }
     }
     
+    /**
+     * 
+     * Resource title
+     * @return string
+     */
     public function getTitle(): string {
         return (isset($this->properties["acdh:hasTitle"][0]->title) && !empty($this->properties["acdh:hasTitle"][0]->title)) ? $this->properties["acdh:hasTitle"][0]->title : "";
     }
     
+    /**
+     * All identifiers
+     * 
+     * @return array
+     */
     public function getIdentifiers(): array {
         return (isset($this->properties["acdh:hasIdentifier"]) && !empty($this->properties["acdh:hasIdentifier"])) ? $this->properties["acdh:hasIdentifier"] : array();
     }
     
+    /**
+     * PID
+     * 
+     * @return string
+     */
     public function getPid(): string {
         return (isset($this->properties["acdh:hasPid"][0]->title) && !empty($this->properties["acdh:hasPid"][0]->title)) ? $this->properties["acdh:hasPid"][0]->title : "";
     }
@@ -70,6 +92,33 @@ class ResourceObject {
     }
     
     
+    /**
+     * Get the accessrestriction url and title
+     * 
+     * @return array
+     */
+    public function getAccessRestriction(): array {
+        $result = array();
+        if(isset($this->properties["acdh:hasAccessRestriction"])){
+            
+            foreach($this->properties["acdh:hasAccessRestriction"] as $v){
+                if( isset($v->title) && !empty($v->title) ) {
+                    $result['title'] = $v->title;
+                }
+                
+                if( isset($v->accessrestriction) && !empty($v->accessrestriction) ) {
+                   $result['uri'] = $v->accessrestriction;
+                }
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * get the title image url
+     * 
+     * @return string
+     */
     public function getTitleImage(): string {
         $result = "";
         if(isset($this->properties["acdh:hasTitleImage"]) && count($this->properties["acdh:hasTitleImage"]) > 0) {
@@ -87,6 +136,11 @@ class ResourceObject {
         return $result;
     }
     
+    /**
+     * Get the acdh type string
+     * 
+     * @return string
+     */
     public function getAcdhType(): string {
         if(isset($this->properties["rdf:type"])){
             foreach($this->properties["rdf:type"] as $v){
@@ -97,6 +151,12 @@ class ResourceObject {
         }
         return "";
     }
+    
+    /**
+     * Get all data
+     * 
+     * @return array
+     */
     public function getExpertTableData(): array {
         return $this->properties;
     }

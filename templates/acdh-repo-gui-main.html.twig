@@ -48,8 +48,8 @@
             {% if item.getTitle() %}
                 <div class="res-property">
                     <span class="res-title">
-                        {%  if item.getPropTitle('acdh:hasAccessRestriction') %}
-                            {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getPropTitle('acdh:hasAccessRestriction')|lower } ) }}
+                        {%  if item.getAccessRestriction()  %}
+                            {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getAccessRestriction()  } ) }}
                         {% endif%}
                             <a href="/browser/repo_detail/{{ item.getInsideUrl() }}">{{ item.getTitle() }}</a>
                     </span>

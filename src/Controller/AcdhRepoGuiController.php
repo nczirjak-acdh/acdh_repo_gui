@@ -4,6 +4,7 @@ namespace Drupal\acdh_repo_gui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use acdhOeaw\acdhRepoLib\Repo;
+use acdhOeaw\acdhRepoLib\RepoResource;
 use Drupal\acdh_repo_gui\Controller\RootViewController as RVC;
 use Drupal\acdh_repo_gui\Controller\DetailViewController as DVC;
 use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
@@ -82,7 +83,19 @@ class AcdhRepoGuiController extends ControllerBase
             );
             return array();
         }
+        /*
+         * Undefined class constant 'META_NEIGBOURS
+        $res = new RepoResource('https://repo.hephaistos.arz.oeaw.ac.at/5496', $this->config);
+        $neight = $res->loadMetadata(true, RepoResource::META_NEIGBOURS);
         
+        echo "<pre>";
+        var_dump($neight);
+        echo "</pre>";
+
+        die();
+        */
+
+
         return [
             '#theme' => 'acdh-repo-gui-detail',
             '#basic' => $dv->basic,

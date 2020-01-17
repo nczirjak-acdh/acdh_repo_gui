@@ -4,8 +4,8 @@
      {% if  basic.getTitle() %}
         <div class="res-property">
             <span class="res-title">
-                {%  if result.getAccessRestriction() %}
-                    {{ include('/modules/oeaw/templates/accesRestrictionFormat.html.twig', {'data': result.getAccessRestriction()|lower } ) }}
+                {%  if basic.getAccessRestriction() %}
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': basic.getAccessRestriction() } ) }}
                 {% endif%}
                 {{  basic.getTitle() }}
             </span>
@@ -50,9 +50,11 @@
                                 {% set separator = '' %}
                             {% endif %}
                             
-                            {% if ( (key == "acdh:hasPid") or (key == "acdh:hasAccessRestriction") 
+                            {% if ( (key == "acdh:hasPid") 
                                 or (key == "acdh:hasLifeCycleStatus") or (key == "acdh:hasCategory")  )  %}
                                 <a href="{{ val.uri }}">{{ val.uri }}</a> {{ separator|raw }}
+                            {% elseif ( key == "acdh:hasAccessRestriction") %}
+                                <a href="{{ val.accessrestriction }}">{{ val.title }}</a> {{ separator|raw }}
                             {% elseif (val.title) and (val.insideUri) %}
                                 <a href="/browser/repo_detail/{{ val.insideUri }}">{{ val.title }} </a>  {{ separator|raw }}
                             {% elseif val.title %}
