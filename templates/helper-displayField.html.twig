@@ -23,18 +23,21 @@
                     {% elseif (dateformat)  %}
                         {{ value.value|date(dateformat) }}
                     {% elseif (isbinary)  %}
-                        
-                        {% set bytes =  value.value %}
-                        {% set kiloBytes = (bytes / 1024)|round(2) %}
-                        {% set megaBytes = (kiloBytes / 1024)|round(2) %}
-                        {% set gigaBytes = (megaBytes / 1024)|round(2) %}
-                        
-                        {% if (gigaBytes) > 0  %}
-                            {{ gigaBytes }} GB
-                        {% elseif (megaBytes) > 0  %}
-                            {{ megaBytes }} MB
-                        {% elseif (kiloBytes) > 0  %}                            
-                            {{ kiloBytes }} KB
+                        {% if(value.value == 0) %}
+                            {{ value.value }} KB
+                        {% else %}
+                            {% set bytes =  value.value %}
+                            {% set kiloBytes = (bytes / 1024)|round(2) %}
+                            {% set megaBytes = (kiloBytes / 1024)|round(2) %}
+                            {% set gigaBytes = (megaBytes / 1024)|round(2) %}
+
+                            {% if (gigaBytes) > 0  %}
+                                {{ gigaBytes }} GB
+                            {% elseif (megaBytes) > 0  %}
+                                {{ megaBytes }} MB
+                            {% elseif (kiloBytes) > 0  %}                            
+                                {{ kiloBytes }} KB
+                            {% endif%}    
                         {% endif%}    
                         
                     {% elseif (value.insideUri) and (value.title)  %}

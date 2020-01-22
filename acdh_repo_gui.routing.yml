@@ -15,3 +15,10 @@ repo_detail:
     _permission: 'access content'
     _access: 'TRUE'    
     
+repo_child_api:    
+    path: '/repo_child_api/{identifier}/{limit}/{page}/{order}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\ChildApiController::repo_child_api'
+    requirements:
+        _permission: 'access content'
+        _access: 'TRUE'    

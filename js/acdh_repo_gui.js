@@ -1,10 +1,6 @@
-(function ($, Drupal) {
-    'use strict';
+ jQuery(function($) {
+    "use strict";
+    
+            
+});
 
-    Drupal.behaviors.acdhRepoGui = {
-        attach: function (context, settings) {
-            console.log("hello acdh gui");
-        }
-    };
-})(jQuery, Drupal);
- 

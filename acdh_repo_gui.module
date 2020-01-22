@@ -36,6 +36,14 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
         ],
         'acdh-repo-gui-detail-publications' => [
             'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
+        ],
+        'acdh-repo-gui-child' => [
+            'variables' => ['data' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-styles', //include our custom library for this response
+                ]
+            ]
         ]
     ];
 }

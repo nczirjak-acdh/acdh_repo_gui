@@ -1,6 +1,6 @@
 <!-- expert view -->
 <div class="single-res-overview single-res-overview-expert">
-    TOOLTIP, ACCESRES, IDENTIFIERS
+    TOOLTIPs
      {% if  basic.getTitle() %}
         <div class="res-property">
             <span class="res-title">
@@ -55,12 +55,14 @@
                                 <a href="{{ val.uri }}">{{ val.uri }}</a> {{ separator|raw }}
                             {% elseif ( key == "acdh:hasAccessRestriction") %}
                                 <a href="{{ val.accessrestriction }}">{{ val.title }}</a> {{ separator|raw }}
-                            {% elseif (val.title) and (val.insideUri) %}
+                            {% elseif (val.title is defined and val.insideUri is defined) %}
                                 <a href="/browser/repo_detail/{{ val.insideUri }}">{{ val.title }} </a>  {{ separator|raw }}
-                            {% elseif val.title %}
+                            {% elseif (val.title is defined and val.uri is defined) %}
                                 <a href="{{ val.uri }}">{{ val.title }}</a> {{ separator|raw }}
-                            {% elseif val.uri %}
+                            {% elseif val.uri is defined %}
                                 <a href="{{ val.uri }}">{{ val.uri }}</a> {{ separator|raw }}
+                            {% elseif val.title is defined %}
+                                {{ val.title }} {{ separator|raw }}
                             {% else %}
                                 {{ val }}
                             {% endif %}

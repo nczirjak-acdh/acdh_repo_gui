@@ -1,3 +1,16 @@
+repo-styles:  
+    version: 1.0.0
+    css:
+        base:
+            css/acdh_repo_gui.css: {}
+    js:
+        js/acdh_repo_gui.js: {}
+        js/acdh_repo_gui_detail_view.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupal.form   
+        - core/jquery
+        
 acdh-repo-gui-css-and-js:
   css:
     theme:

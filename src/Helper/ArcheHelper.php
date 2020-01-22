@@ -58,9 +58,16 @@ abstract class ArcheHelper {
      */
     protected function extendActualObj(bool $root = false) {
         $result = array();
+        
         foreach($this->data as $d) {
             if($root) {
                 if(is_null($d->id) === false) {
+                    $key = $d->id;
+                    //we have reorder
+                    if(isset($this->data['order'])) {
+                        $key = array_search($d->id, $this->data['order']);
+                    }
+                    
                     if(is_null($d->property) === false) {
                         //create the shortcur
                         $d->title = "";
@@ -74,16 +81,17 @@ abstract class ArcheHelper {
                         }
 
                         $d->shortcut = $this->createShortcut($d->property);
-                        $result[$d->id][$d->shortcut][] = $d;
+                        $result[$key][$d->shortcut][] = $d;
                     }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
                         $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
                         if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
                             $d->acdhid = $d->value;
                         }
                         $d->shortcut = $this->createShortcut($d->property);
-                        $result[$d->id][$d->shortcut][] = $d;
+                        $result[$key][$d->shortcut][] = $d;
                     }
-                } 
+                }
+                
             } else { 
                 if(is_null($d->property) === false) {
                     //create the shortcur
@@ -99,20 +107,24 @@ abstract class ArcheHelper {
                     $d->shortcut = $this->createShortcut($d->property);
                     $result[$d->shortcut][] = $d;
                 }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
-                        //setup the acdh uuid variable
-                        $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
-                        if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
-                            $d->acdhid = $d->value;
-                        }
-                        //the uri for the identifier urls
-                        if (strpos($d->value, 'http') !== false) {
-                            $d->uri = $d->value;
-                        }
-                        //add the identifier into the final data
-                        $result['acdh:hasIdentifier'][] = $d;
+                    //setup the acdh uuid variable
+                    $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
+                    if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
+                        $d->acdhid = $d->value;
                     }
+                    //the uri for the identifier urls
+                    if (strpos($d->value, 'http') !== false) {
+                        $d->uri = $d->value;
+                    }
+                    //add the identifier into the final data
+                    $result['acdh:hasIdentifier'][] = $d;
+                }
             }
         }
+        if($root == true) {
+            ksort($result);
+        }
+        
         $this->data = $result;
     }
     

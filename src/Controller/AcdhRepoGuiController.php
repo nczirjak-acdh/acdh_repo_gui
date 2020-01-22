@@ -58,6 +58,11 @@ class AcdhRepoGuiController extends ControllerBase
         return [
             '#theme' => 'acdh-repo-gui-main',
             '#data' => $roots,
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-styles',
+                ]
+            ]
         ]; 
         
     }
@@ -83,24 +88,17 @@ class AcdhRepoGuiController extends ControllerBase
             );
             return array();
         }
-        /*
-         * Undefined class constant 'META_NEIGBOURS
-        $res = new RepoResource('https://repo.hephaistos.arz.oeaw.ac.at/5496', $this->config);
-        $neight = $res->loadMetadata(true, RepoResource::META_NEIGBOURS);
-        
-        echo "<pre>";
-        var_dump($neight);
-        echo "</pre>";
-
-        die();
-        */
-
-
+      
         return [
             '#theme' => 'acdh-repo-gui-detail',
             '#basic' => $dv->basic,
             '#extra' => $dv->extra,
-            '#dissemination' => (isset($dv->dissemination)) ? $dv->dissemination : array()
+            '#dissemination' => (isset($dv->dissemination)) ? $dv->dissemination : array(),
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-styles',
+                ]
+            ]
         ]; 
         
     }

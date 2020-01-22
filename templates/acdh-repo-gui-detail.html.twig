@@ -20,7 +20,7 @@
                 {% else %}
                     {% set breadcrumbTitle = value["rootTitle"]  %}
                 {% endif %} 
-                <a href='/browser/oeaw_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
+                <a href='/browser/repo_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
                 {% if breadcrumbLength -1 >= key %}
                     /  
                 {% endif %}
@@ -134,7 +134,10 @@
     {% if  basic.getAcdhType()|lower == 'collection' or  basic.getAcdhType()|lower == 'organisation'  %}
         <div class="res-actions" style="padding: 20px;">
             <div class="res-act-button" style="display: table; margin: 0 auto;">
-                <a href="#" id="getChildView" class="getChildView"><i class="fa fa-angle-down" aria-hidden="true"></i> &nbsp;<b>{{ "Show More"|trans }}</b>&nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+                <a href="#" id="getRepoChildView" class="getRepoChildView"><i class="fa fa-angle-down" aria-hidden="true"></i> &nbsp;<b>{{ "Show More"|trans }}</b>&nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            </div>
+            <div class="res-act-button hideChildView" style="display: none; margin: 0 auto;">
+                <a href="#" id="hideRepoChildView" class="hideRepoChildView"><i class="fa fa-angle-up" aria-hidden="true"></i> &nbsp;<b>{{ "Hide View"|trans }}</b>&nbsp; <i class="fa fa-angle-up" aria-hidden="true"></i></a>
             </div>
         </div>
 

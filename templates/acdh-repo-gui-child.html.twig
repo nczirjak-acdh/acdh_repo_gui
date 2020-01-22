@@ -1,0 +1,114 @@
+{% if data|length < 1 %}
+  There are no child elements.
+{% else %}
+    <div class="res-el res-info col-block col-lg-12">
+        <div class="result-basic-info">
+            <span class="results-info-bar">{{ totalResultAmount }} {{ "Result"|trans }}</span>
+            <span class="results-info-bar">{{ "Page"|trans }} {{ currentPage }} {{ "of"|trans }} {{ totalPages }}</span>
+            <span class="results-info-bar results-info-bar-items">{{ "Items"|trans }}
+                <div class="pagination-dropdown dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="resPerPageButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    10
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="resPerPageButton" id="resPerPageButton">
+                    <a class="dropdown-item" href="#">10</a>
+                    <a class="dropdown-item" href="#">25</a>
+                    <a class="dropdown-item" href="#">50</a>
+                  </div>
+                </div>
+            </span>
+            <span class="results-info-bar results-info-bar-sort"> {{ "Sort by"|trans }}
+                <div class="pagination-dropdown dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="sortByButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ "Title"|trans }} (ASC)
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="sortByButton" id="sortByDropdown">
+                    <a class="dropdown-item" data-value="titleasc" href="#">{{ "Title"|trans }} (ASC)</a>
+                    <a class="dropdown-item" data-value="titledesc" href="#">{{ "Title"|trans }} (DESC)</a>
+                    <a class="dropdown-item" data-value="dateasc" href="#">{{ "Date"|trans }} (ASC)</a>
+                    <a class="dropdown-item" data-value="datedesc" href="#">{{ "Date"|trans }} (DESC)</a>
+                  </div>
+                </div>
+            </span>
+            {% if pagination %}
+            	<span class="results-info-bar pagination-span">{{ pagination|raw }}</span>
+            {% endif%}
+        </div>
+    </div>
+        
+    {% for item in data %}
+        
+        <div class="res-el col-block col-lg-12">
+		
+            {% if item.getTitleImage() %}<div class="res-inside-wrap col-lg-6 "> {% endif%} 
+                
+            {% if item.getTitle() %}
+                <div class="res-property">
+                    <span class="res-title">
+                        {%  if item.getAccessRestriction()  %}
+                            {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getAccessRestriction()  } ) }}
+                        {% endif%}
+                            <a href="/browser/repo_detail/{{ item.getInsideUrl() }}">{{ item.getTitle() }}</a>
+                    </span>
+                </div>
+            {% endif%}    
+
+           
+            {% if item.getAcdhType() %}
+                <div class="res-property">
+                    <i class="material-icons">&#xE54E;</i>
+                    <span class="res-prop-label">{{ "Type"|trans }}: </span>
+                    <span class="res-rdfType"><a href="/browser/repo_search/&type={{ item.getAcdhType() }}/10">{{ item.getAcdhType() }}</a></span>
+                </div>
+            {% endif%}
+
+            {% if item.getData('acdh:hasAvailableDate') %}
+                <div class="res-property">
+                    <i class="material-icons">&#xE8DF;</i>
+                    <span class="res-prop-label">{{ "Available Date"|trans }}: </span>
+                    <span class="res-creationdate">{{ item.getPropTitle('acdh:hasAvailableDate')|date("d M Y") }}   </span>
+                </div>
+            {% endif%}
+
+            
+            {% if item.getData('acdh:hasDescription') %}
+                <div class="res-property res-property-desc">
+                    <span class="res-description">
+                         {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': item.getData('acdh:hasDescription') , 'icon': 'info' } ) }}
+                    </span>
+                </div>
+            {% endif%}
+
+            <div class="res-actions">
+
+                <div class="res-act-button">
+                    <a href="/browser/repo_detail/{{ item.getInsideUrl() }}">
+                        <i class="material-icons">&#xE873;</i>
+                        <span>{{ "Detailed View"|trans }}</span>
+                    </a>	
+                </div>
+                        
+                {% if item.getData('acdh:hasDescription') %}
+                    <div class="res-act-button res-act-button-summary closed">
+                            <i class="material-icons">&#xE145;</i>
+                            <span class="show_summary">{{ "Show Summary"|trans }}</span>
+                            <span class="hide_summary">{{ "Hide Summary"|trans }}</span>
+                    </div>
+                {% endif%}
+                
+            </div>	
+
+            {% if item.getTitleImage() %}</div>{% endif%}
+
+            {% if item.getTitleImage() %}	
+                <div class="res-inside-wrap col-lg-6 ">	
+                    <div class="single-res-thumb">
+                        <a href="/browser/repo_detail/{{ item.getInsideUrl() }}"><img src="{{ item.getTitleImage() }}"></a>
+                    </div>
+                </div>
+            {% endif%}            
+  
+            	                                        
+        </div>
+    {% endfor %} 
+{% endif %}
