@@ -21,65 +21,65 @@ class ChildApiModel extends ArcheModel {
     public function getViewData(string $identifier = "", int $limit = 10, int $page = 0, string $orderby = "titleasc" ): array {
         $result = array();
         $idResult = array();
-        $return = array();
-        //run the actual query
-        //$identifier = 'https://id.acdh.oeaw.ac.at/uuid/57777494-57e5-6f8f-c170-461cecbb44b3';
-        $order = $this->ordering($orderby);
         
+        $order = $this->ordering($orderby);
         $prop = $order->property;
         $ord = $order->order;
-        $direction = $order->direction;
+ 
+
+            
         //get the requested sorting
         try {
-            $query = $this->repodb->query("select id from child_view_func(:id) where property = :property  order by $ord $direction limit :limit offset :offset", array(':id' => $identifier, ':property' => $prop, ':limit' => $limit, ':offset' => $page));
-            $idResult = $query->fetchAllAssoc('id');
-        } catch (Exception $ex) {
+            $query = $this->repodb->query(
+                    "select * from child_view_func(:id, :limit, :offset, :order, :property)", 
+                    array(':id' => $identifier,  ':limit' => intval($limit), ':offset' => intval($page), ':order' => $ord, ':property' => $prop)
+            );
+            
+            $result = $query->fetchAll();
+        
+            echo "<pre>";
+            var_dump($result);
+            echo "</pre>";
+           
+                } catch (Exception $ex) {
             $result = array();
+            echo "<pre>";
+            var_dump($ex->getMessage());
+            echo "</pre>";
         } catch(\Drupal\Core\Database\DatabaseExceptionWrapper $ex ) {
+            echo "<pre>";
+            var_dump($ex->getMessage());
+            echo "</pre>";
             $result = array();
         }
-                
-        //get the actual view resources by the sorting
-        if(count($idResult) > 0) {
-            $idOrder = array_keys($idResult);
-            $ids = implode(", ", $idOrder);
-            try {
-                $query = $this->repodb->query("select * from child_view_func(:id) where id IN ($ids)", array(':id' => $identifier));
-                $result = $query->fetchAll();
-                $result['order'] = $idOrder;
-            } catch (Exception $ex) {
-                $result = array();
-            } catch(\Drupal\Core\Database\DatabaseExceptionWrapper $ex ) {
-                $result = array();
-            }
-        }
+        
         $this->changeBackDBConnection();
         return $result;
     }
     
+    /**
+     * Create the order values for the sql
+     * 
+     * @param string $orderby
+     * @return object
+     */
     private function ordering(string $orderby = "titleasc"): object {
         $result = new \stdClass();
         $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-        $result->order = 'value';
-        $result->direction = 'asc';
-        
+        $result->order = 'value asc';
         
         if($orderby == "titleasc") {
             $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-            $result->order = 'value';
-            $result->direction = 'asc';
+            $result->order = 'value asc';
         }else if ($orderby == "titledesc") {
             $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-            $result->order = 'value';
-            $result->direction = 'desc';
+            $result->order = 'value desc';
         }else if ($orderby == "dateasc") {
             $result->property = 'http://fedora.info/definitions/v4/repository#lastModified';
-            $result->order = 'value ';
-            $result->direction = 'asc';
+            $result->order = 'value asc';            
         }else if ($orderby == "datedesc") {
             $result->property = 'http://fedora.info/definitions/v4/repository#lastModified';
-            $result->order = 'value';
-            $result->direction = 'desc';
+            $result->order = 'value desc';
         }
         return $result;
     }

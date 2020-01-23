@@ -3,8 +3,8 @@
 {% else %}
     <div class="res-el res-info col-block col-lg-12">
         <div class="result-basic-info">
-            <span class="results-info-bar">{{ totalResultAmount }} {{ "Result"|trans }}</span>
-            <span class="results-info-bar">{{ "Page"|trans }} {{ currentPage }} {{ "of"|trans }} {{ totalPages }}</span>
+            <span class="results-info-bar">{{ data.num }} {{ "Result"|trans }}</span>
+            <span class="results-info-bar">{{ "Page"|trans }} {{ data.page }} {{ "of"|trans }} {{ data.numPage }}</span>
             <span class="results-info-bar results-info-bar-items">{{ "Items"|trans }}
                 <div class="pagination-dropdown dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="resPerPageButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,13 +30,15 @@
                   </div>
                 </div>
             </span>
+                  
             {% if pagination %}
             	<span class="results-info-bar pagination-span">{{ pagination|raw }}</span>
             {% endif%}
+            
         </div>
     </div>
         
-    {% for item in data %}
+    {% for item in data.data %}
         
         <div class="res-el col-block col-lg-12">
 		

@@ -24,7 +24,7 @@ class ChildApiController extends ControllerBase {
     private $config;
     private $model;
     private $helper;
-    private $data = array();
+    private $data;
     private $childNum;
     
     public function __construct() {
@@ -33,6 +33,7 @@ class ChildApiController extends ControllerBase {
         $this->langConf = $this->config('acdh_repo_gui.settings');
         $this->model = new ChildApiModel();
         $this->helper = new ChildApiHelper();
+        $this->data = new \stdClass();
     }
     
     /**
@@ -48,16 +49,32 @@ class ChildApiController extends ControllerBase {
             $identifier = $this->config->getSchema()->__get('drupal')->uuidNamespace.$identifier;
         }
         $this->childNum = $this->model->getCount($identifier);
-        $this->childNum = 0 ;
+        
+
         if($this->childNum < 1) {
             goto end;
         }
         
-        $data = $this->model->getViewData($identifier, (int)$limit, (int)$page, $order);
-        $this->data = $this->helper->createView($data);
+        $this->data->sum = $this->childNum;
+        $this->data->limit = $limit;
+        $this->data->page = $page;
+        $this->data->order = $order;
+        $this->data->identifier = $identifier;
+        $this->data->numPage = ceil((int)$this->childNum / (int)$limit);
         
-        if(count((array)$this->data) <= 0) {
-            $this->data['errorMSG'] = $this->langConf->get('errmsg_no_child_resources') ? $this->langConf->get('errmsg_no_child_resources') : 'There are no Child resources';
+        ($page == 0) ? $offset = 0 : $offset = $page * $limit;
+        $data = $this->model->getViewData($identifier, (int)$offset, (int)$page, $order);
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+
+        die();
+        
+       
+        $this->data->data = $this->helper->createView($data);
+        
+        if(count((array)$this->data->data) <= 0) {
+            $this->data->errorMSG = $this->langConf->get('errmsg_no_child_resources') ? $this->langConf->get('errmsg_no_child_resources') : 'There are no Child resources';
         }
         
         end:
