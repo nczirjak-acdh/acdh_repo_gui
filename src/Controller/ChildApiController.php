@@ -7,6 +7,7 @@ use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoLib\RepoResource;
 use Drupal\acdh_repo_gui\Model\ChildApiModel;
 use Drupal\acdh_repo_gui\Helper\ChildApiHelper;
+use Drupal\acdh_repo_gui\Helper\PagingHelper;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +27,7 @@ class ChildApiController extends ControllerBase {
     private $helper;
     private $data;
     private $childNum;
+    private $pagingHelper;
     
     public function __construct() {
         $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
@@ -34,6 +36,7 @@ class ChildApiController extends ControllerBase {
         $this->model = new ChildApiModel();
         $this->helper = new ChildApiHelper();
         $this->data = new \stdClass();
+        $this->pagingHelper = new PagingHelper();
     }
     
     /**
@@ -56,6 +59,7 @@ class ChildApiController extends ControllerBase {
         }
         
         $this->data->sum = $this->childNum;
+
         $this->data->limit = $limit;
         $this->data->page = $page;
         $this->data->order = $order;
@@ -63,13 +67,15 @@ class ChildApiController extends ControllerBase {
         $this->data->numPage = ceil((int)$this->childNum / (int)$limit);
         
         ($page == 0) ? $offset = 0 : $offset = $page * $limit;
-        $data = $this->model->getViewData($identifier, (int)$offset, (int)$page, $order);
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-
-        die();
         
+        $this->data->pagination = $this->pagingHelper->createView(
+            array(
+                'limit' => $limit, 'page' => $page, 'order' => $order,
+                'numPage' => $this->data->numPage, 'sum' => $this->data->sum
+            )
+        );
+        $this->data->pagination = $this->data->pagination[0];
+        $data = $this->model->getViewData($identifier, (int)$limit, (int)$offset, $order);
        
         $this->data->data = $this->helper->createView($data);
         
@@ -78,6 +84,7 @@ class ChildApiController extends ControllerBase {
         }
         
         end:
+       
         $build = [
             '#theme' => 'acdh-repo-gui-child',
             '#data' => $this->data,

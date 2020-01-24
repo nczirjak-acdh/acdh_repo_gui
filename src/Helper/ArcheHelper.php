@@ -128,5 +128,5 @@ abstract class ArcheHelper {
         $this->data = $result;
     }
     
-    public abstract function createView(array $data);
+    public abstract function createView(array $data): array;
 }

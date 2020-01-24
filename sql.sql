@@ -186,13 +186,17 @@ ALTER FUNCTION public.detail_view_func()
 
 ################################ CHILD VIEW METADATA FUNCTION ########################################################
 
-f.e: select * from child_view_func('https://id.acdh.oeaw.ac.at/uuid/57777494-57e5-6f8f-c170-461cecbb44b3', '10', '0', 'value asc', 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle');
+select * from child_view_func('https://id.acdh.oeaw.ac.at/uuid/57777494-57e5-6f8f-c170-461cecbb44b3', '10', '0', 'value asc', 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle');
 
-
-CREATE OR REPLACE FUNCTION public.child_view_func(_parentid text, _limit int, _page int, _orderby text, _orderprop text )
+CREATE OR REPLACE FUNCTION public.child_view_func(_parentid text, _limit text, _page text, _orderby text, _orderprop text )
     RETURNS table (id bigint, property text, type text, value text, acdhid  text)
 AS $func$
+/* we need to use text instead of integer, because php passing all variables as a text...*/
+DECLARE limitint bigint := cast ( _limit as bigint);
+DECLARE pageint bigint := cast ( _page as bigint);
 BEGIN
+	_limit  := cast ( _limit as bigint);
+   	_page  := cast ( _page as bigint);
 	/* get child ids */
 	DROP TABLE IF EXISTS child_ids;
 	CREATE TEMPORARY TABLE child_ids(orderid serial, childid int);
@@ -207,8 +211,8 @@ BEGIN
 		and mv.property = _orderprop
 		and i.ids = _parentid
 		order by _orderby
-		limit _limit
-		offset _page
+		limit limitint
+		offset pageint
 	);
 	
 	/* get child raw metadata by the childids */
@@ -262,7 +266,6 @@ BEGIN
 END
 $func$
 LANGUAGE 'plpgsql';
-
 
 
 

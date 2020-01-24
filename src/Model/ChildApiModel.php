@@ -18,6 +18,15 @@ class ChildApiModel extends ArcheModel {
         $this->repodb = \Drupal\Core\Database\Database::getConnection('repo');
     }
     
+    /**
+     * Get the actual page view data
+     * 
+     * @param string $identifier
+     * @param int $limit
+     * @param int $page
+     * @param string $orderby
+     * @return array
+     */
     public function getViewData(string $identifier = "", int $limit = 10, int $page = 0, string $orderby = "titleasc" ): array {
         $result = array();
         $idResult = array();
@@ -25,31 +34,18 @@ class ChildApiModel extends ArcheModel {
         $order = $this->ordering($orderby);
         $prop = $order->property;
         $ord = $order->order;
- 
-
-            
+        
         //get the requested sorting
         try {
             $query = $this->repodb->query(
                     "select * from child_view_func(:id, :limit, :offset, :order, :property)", 
-                    array(':id' => $identifier,  ':limit' => intval($limit), ':offset' => intval($page), ':order' => $ord, ':property' => $prop)
+                    array(':id' => $identifier,  ':limit' => $limit, ':offset' => $page, ':order' => $ord, ':property' => $prop)
             );
             
             $result = $query->fetchAll();
-        
-            echo "<pre>";
-            var_dump($result);
-            echo "</pre>";
-           
-                } catch (Exception $ex) {
+        } catch (Exception $ex) {
             $result = array();
-            echo "<pre>";
-            var_dump($ex->getMessage());
-            echo "</pre>";
         } catch(\Drupal\Core\Database\DatabaseExceptionWrapper $ex ) {
-            echo "<pre>";
-            var_dump($ex->getMessage());
-            echo "</pre>";
             $result = array();
         }
         
