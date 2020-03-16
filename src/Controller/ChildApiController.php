@@ -52,7 +52,6 @@ class ChildApiController extends ControllerBase {
             $identifier = $this->config->getSchema()->__get('drupal')->uuidNamespace.$identifier;
         }
         $this->childNum = $this->model->getCount($identifier);
-        
 
         if($this->childNum < 1) {
             goto end;
@@ -65,8 +64,9 @@ class ChildApiController extends ControllerBase {
         $this->data->order = $order;
         $this->data->identifier = $identifier;
         $this->data->numPage = ceil((int)$this->childNum / (int)$limit);
-        
-        ($page == 0) ? $offset = 0 : $offset = $page * $limit;
+        //change the page and offset variables, because we want the paging to start from 1 not 0
+        ($page == 0) ? $page = 1 : "";
+        ($page == 1) ? $offset = 0 : $offset = ($page -1) * $limit;
         
         $this->data->pagination = $this->pagingHelper->createView(
             array(

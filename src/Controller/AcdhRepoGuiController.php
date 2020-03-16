@@ -41,8 +41,57 @@ class AcdhRepoGuiController extends ControllerBase
      * 
      * @return type
      */
-    public function repo_main()
+    public function repo_root(string $limit = "10", string $page = "1", string $order = "datedesc"): array
     {
+        $limit = (int)$limit;
+        $page = (int)$page;
+        // on the gui we are displaying 1 as the first page.
+        $page = $page-1;
+        
+        $roots = array();
+        $roots = $this->rootViewController->generateRootView($limit, $page, $order);
+        
+        if(count($roots) <= 0) {
+            drupal_set_message(
+                $this->langConf->get('errmsg_no_root_resources') ? $this->langConf->get('errmsg_no_root_resources') : 'You do not have Root resources',
+                'error',
+                false
+            );
+            return array();
+        }
+        
+        return [
+            '#theme' => 'acdh-repo-gui-main',
+            '#data' => $roots,
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-styles',
+                ]
+            ]
+        ]; 
+        
+    }
+    
+    
+    public function repo_complexsearch(string $metavalue = "root", string $limit = "10", string $page = "1", string $order = "titleasc"): array
+    {         
+        //this is the root collection view
+        if (empty($metavalue) ||  $metavalue == "root") {
+            //If a cookie setting exists and the query is coming without a specific parameter
+            if ((isset($_COOKIE["resultsPerPage"]) && !empty($_COOKIE["resultsPerPage"])) && empty($limit)) {
+                $limit = $_COOKIE["resultsPerPage"];
+            }
+            if ((isset($_COOKIE["resultsOrder"]) && !empty($_COOKIE["resultsOrder"])) && empty($order)) {
+                $order = $_COOKIE["resultsOrder"];
+            }
+            if (empty($page)) {
+                $page = "1";
+            }
+            return $this->repo_root($limit, $page, $order);
+        } 
+        
+        //the search view
+        echo "the search view";    
         $roots = array();
         $roots = $this->rootViewController->generateRootView();
         
@@ -64,6 +113,9 @@ class AcdhRepoGuiController extends ControllerBase
                 ]
             ]
         ]; 
+        
+        
+        
         
     }
     
@@ -101,5 +153,20 @@ class AcdhRepoGuiController extends ControllerBase
             ]
         ]; 
         
+    }
+    
+    public function search_view(string $str) {
+        
+        $this->config->getResourcesBySqlQuery($str, $parameters);
+        
+        return [
+            '#theme' => 'acdh-repo-gui-search',
+            '#result' => "sss",
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-styles',
+                ]
+            ]
+        ]; 
     }
 }

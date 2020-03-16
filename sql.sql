@@ -289,3 +289,96 @@ END
 $func$
 LANGUAGE 'plpgsql';
 
+
+
+////////////////////////////// LEFT SIDE BLOCKS SQL ////////////////////////////
+select count(value), value
+from metadata 
+where property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+and value LIKE 'https://vocabs.acdh.oeaw.ac.at/schema#%'
+group by value
+order by value asc
+
+
+
+/////// EXTEND THE ACL FOR A RESOURCE //////////
+insert into 
+    metadata 
+values 
+    (nextval('mid_seq'), 16685, 'https://vocabs.acdh.oeaw.ac.at/schema#acl', 'http://www.w3.org/2001/XMLSchema#string', '', null, null, 'public');
+
+
+
+///// NEW REPO ROOT SQL ////////
+
+--DROP FUNCTION public.root_view_func(_page text, _limit text, _order_by text)
+
+-- select * from root_view_func('0', '10', 'title_asc');
+
+/*
+* root view all metadata 
+*/
+CREATE OR REPLACE FUNCTION public.root_view_func(_page text, _limit text, _order_by text)
+  RETURNS table (id bigint, title text, avDate text, description text, accresres text, titleimg text)
+AS $func$
+DECLARE limitint bigint := cast ( _limit as bigint);
+DECLARE pageint bigint := cast ( _page as bigint);
+
+BEGIN
+	
+/* get root ids */
+DROP TABLE IF EXISTS  rootids;
+CREATE TEMP TABLE rootids AS (
+	select DISTINCT(r.id) as rootid,
+	(select mt.value from metadata as mt where mt.id = r.id and mt.property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle' LIMIT 1) as title,
+	(select md.value from metadata as md where md.id = r.id and md.property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate' LIMIT 1) as avdate,
+	(select mdesc.value from metadata as mdesc where mdesc.id = r.id and mdesc.property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasDescription' LIMIT 1) as description,
+	(select macc.value from metadata as macc where macc.id = r.id and macc.property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasAccessRestriction' LIMIT 1) as accresres,
+	(select mtimg.value from metadata as mtimg where mtimg.id = r.id and mtimg.property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitleImage' LIMIT 1) as titleimg,	
+	CASE WHEN _order_by = 'title_asc' THEN title END as title_ord,
+	CASE WHEN _order_by = 'title_desc' THEN title END as title_ord2,
+	CASE WHEN _order_by = 'date_asc' THEN avdate END as avdate_ord,
+	CASE WHEN _order_by = 'date_desc' THEN avdate END as avdate_ord2
+	from metadata as m
+	left join relations as r on r.id = m.id
+	where
+		m.property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+		and m.value = 'https://vocabs.acdh.oeaw.ac.at/schema#Collection'
+		and r.property != 'https://vocabs.acdh.oeaw.ac.at/schema#isPartOf'	
+		and r.id NOT IN ( 
+			SELECT DISTINCT(r.id) from metadata as m left join relations as r on r.id = m.id
+			where
+				m.property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+				and m.value = 'https://vocabs.acdh.oeaw.ac.at/schema#Collection'
+				and r.property = 'https://vocabs.acdh.oeaw.ac.at/schema#isPartOf'
+		)
+	
+	ORDER BY 	
+	(CASE WHEN _order_by = 'title_asc' THEN title END) ASC,
+	(CASE WHEN _order_by = 'title_desc' THEN title END) DESC,
+	(CASE WHEN _order_by = 'date_asc' THEN avdate END) ASC,
+	(CASE WHEN _order_by = 'date_desc' THEN avdate END) DESC
+	LIMIT limitint
+	OFFSET pageint
+);
+
+RETURN QUERY
+select rootids.rootid, rootids.title , rootids.avdate, rootids.description, rootids.accresres, rootids.titleimg
+--CASE WHEN mv.value IS NOT NULL THEN mv.value ELSE NULL END as valuetext, 
+--CASE WHEN mv.property IS NOT NULL THEN mv.property ELSE NULL END as proptext
+from rootids
+--left join metadata_view as mv on mv.id = rootids.rootid
+--WHERE 
+--mv.property in ('https://vocabs.acdh.oeaw.ac.at/schema#hasTitleImage', 'https://vocabs.acdh.oeaw.ac.at/schema#hasDescription', 'https://vocabs.acdh.oeaw.ac.at/schema#hasAccessRestriction')
+ORDER BY 
+	(CASE WHEN _order_by = 'title_asc' THEN rootids.title END) ASC,
+	(CASE WHEN _order_by = 'title_desc' THEN rootids.title END) DESC,
+	(CASE WHEN _order_by = 'date_asc' THEN rootids.avdate END) ASC,
+	(CASE WHEN _order_by = 'date_desc' THEN rootids.avdate END) DESC
+	;
+	--LIMIT limitint
+	--OFFSET pageint;
+
+END
+$func$
+LANGUAGE 'plpgsql';

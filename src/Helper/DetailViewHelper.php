@@ -53,7 +53,9 @@ class DetailViewHelper extends ArcheHelper {
         try {
             $dissServ = array();
             $dissServ = $rep->getDissServices();
+            
             foreach($dissServ as $k => $v) {
+                $v->getRequest($rep)->getUri();
                 $result[$k] = (string) $v->getRequest($rep)->getUri();
             }
             return $result;

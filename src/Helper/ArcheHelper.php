@@ -60,65 +60,31 @@ abstract class ArcheHelper {
         $result = array();
         
         foreach($this->data as $d) {
-            if($root) {
-                if(is_null($d->id) === false) {
-                    $key = $d->id;
-                    //we have reorder
-                    if(isset($this->data['order'])) {
-                        $key = array_search($d->id, $this->data['order']);
-                    }
-                    
-                    if(is_null($d->property) === false) {
-                        //create the shortcur
-                        $d->title = "";
-                        $d->title = $d->value;
-                        if(isset($d->relvalue) && !empty($d->relvalue)) {
-                            $d->title = $d->relvalue;
-                        }
-                        if(isset($d->acdhid) && !empty($d->acdhid)) {
-                            $d->insideUri = "";
-                            $d->insideUri = $this->makeInsideUri($d->acdhid);
-                        }
-
-                        $d->shortcut = $this->createShortcut($d->property);
-                        $result[$key][$d->shortcut][] = $d;
-                    }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
-                        $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
-                        if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
-                            $d->acdhid = $d->value;
-                        }
-                        $d->shortcut = $this->createShortcut($d->property);
-                        $result[$key][$d->shortcut][] = $d;
-                    }
+            if(is_null($d->property) === false) {
+                //create the shortcur
+                $d->title = "";
+                $d->title = $d->value;
+                if(isset($d->relvalue) && !empty($d->relvalue)) {
+                    $d->title = $d->relvalue;
                 }
-                
-            } else { 
-                if(is_null($d->property) === false) {
-                    //create the shortcur
-                    $d->title = "";
-                    $d->title = $d->value;
-                    if(isset($d->relvalue) && !empty($d->relvalue)) {
-                        $d->title = $d->relvalue;
-                    }
-                    if(isset($d->acdhid) && !empty($d->acdhid)) {
-                        $d->insideUri = "";
-                        $d->insideUri = $this->makeInsideUri($d->acdhid);
-                    }
-                    $d->shortcut = $this->createShortcut($d->property);
-                    $result[$d->shortcut][] = $d;
-                }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
-                    //setup the acdh uuid variable
-                    $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
-                    if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
-                        $d->acdhid = $d->value;
-                    }
-                    //the uri for the identifier urls
-                    if (strpos($d->value, 'http') !== false) {
-                        $d->uri = $d->value;
-                    }
-                    //add the identifier into the final data
-                    $result['acdh:hasIdentifier'][] = $d;
+                if(isset($d->acdhid) && !empty($d->acdhid)) {
+                    $d->insideUri = "";
+                    $d->insideUri = $this->makeInsideUri($d->acdhid);
                 }
+                $d->shortcut = $this->createShortcut($d->property);
+                $result[$d->shortcut][] = $d;
+            }else if(isset($d->type) && !empty($d->type) && $d->type == "ID") {
+                //setup the acdh uuid variable
+                $d->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier';
+                if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
+                    $d->acdhid = $d->value;
+                }
+                //the uri for the identifier urls
+                if (strpos($d->value, 'http') !== false) {
+                    $d->uri = $d->value;
+                }
+                //add the identifier into the final data
+                $result['acdh:hasIdentifier'][] = $d;
             }
         }
         if($root == true) {

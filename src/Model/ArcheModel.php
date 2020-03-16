@@ -26,9 +26,9 @@ abstract class ArcheModel {
     }
     
     /**
-     * get the root views data
+     * get the views data
      * 
      * @return array
      */
-    abstract public function getViewData(string $identifier = ""): array;    
+    abstract public function getViewData(): array;    
 }
