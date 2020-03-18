@@ -61,16 +61,20 @@ class GeneralFunctions {
     */
     public function detailViewUrlDecodeEncode(string $data, int $code = 0): string
     {
-        if (empty($data)) {
-            return "";
-        }
-        
+        if (empty($data)) { return ""; }
+      
         if ($code == 0) {
+            //if we have the repo id then we need to add the repo baseurl
+            if (strpos($data, ':') === false) {
+                return $this->config->getBaseUrl().$data;
+            }
+            
             $data = explode(":", $data);
             $identifier = "";
 
             foreach ($data as $ra) {
                 if (strpos($ra, '&') !== false) {
+                    
                     $pos = strpos($ra, '&');
                     $ra = substr($ra, 0, $pos);
                     $identifier .= $ra."/";

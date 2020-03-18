@@ -5,6 +5,7 @@ namespace Drupal\acdh_repo_gui\Object;
 class ResourceObject {
     private $config;
     private $properties;
+    private $acdhid;
    
     public function __construct(array $data, $config) {
         $this->properties = array();
@@ -74,6 +75,7 @@ class ResourceObject {
         }
         return "";
     }
+   
     
     /**
      * Get the resource acdh uuid
@@ -85,6 +87,21 @@ class ResourceObject {
             foreach($this->properties["acdh:hasIdentifier"] as $v){
                 if(isset($v->acdhid) && !empty($v->acdhid) ) {
                     return $v->acdhid;
+                }
+            }
+        }
+        return "";
+    }
+    
+    /**
+     * Get the repo identifier
+     * @return string
+     */
+    public function getRepoID(): string {
+        if(isset($this->properties["acdh:hasIdentifier"])){
+            foreach($this->properties["acdh:hasIdentifier"] as $v){
+                if(isset($v->id) && !empty($v->id)){
+                    return $v->id;
                 }
             }
         }

@@ -8,9 +8,9 @@
         let searchParams = new URLSearchParams(window.location.href);
         
         //get the uuid
-        var uuid = getUuidFromUrl(window.location.href);
+        var uuid = getIDFromUrl(window.location.href);
         uuid = uuid.replace('id.acdh.oeaw.ac.at/uuid/', '');
-        
+        console.log(uuid);
         var urlPage = searchParams.get('page');
         var urlLimit = searchParams.get('limit');
         var urlOrder = searchParams.get('order');
@@ -46,7 +46,7 @@
             
             $('.res-act-button.hideChildView').css('display', 'table');
             //get the uuid
-            var uuid = getUuidFromUrl(window.location.href);
+            var uuid = getIDFromUrl(window.location.href);
             uuid = uuid.replace('id.acdh.oeaw.ac.at/uuid/', '');
             getChildData(uuid, urlLimit, urlPage, urlOrder);
         }
@@ -58,11 +58,13 @@
      * @param {type} str
      * @returns {String}
      */
-    function getUuidFromUrl(str) {
+    function getIDFromUrl(str) {
+        var reg = /^\d+$/;
 	var res = "";
         if(str.indexOf('/repo_detail/') >= 0) {
-            var n = str.indexOf("/repo_detail/");         
-            res = str.substring(n+13, str.length); 
+            var n = str.indexOf("/repo_detail/");
+            res = str.substring(n+13, str.length);
+            
             if(res.indexOf('&') >= 0) {
                 res = res.substring(0, res.indexOf('&'));
             }
@@ -130,8 +132,58 @@
            }
        });
    }
+   
+   
+   //************************* PAGINATION ****************************************//
+   if(window.location.href.indexOf("/repo_detail/") > -1) {
+       $(document ).delegate( "#prev-btn", "click", function(e) {            
+       console.log("prev btn");
+   });
+   
+   $(document ).delegate( "#next-btn", "click", function(e) {            
+       console.log("next btn");
+        e.preventDefault();
+/*
+  $(".loader-div").show();
+        var urlParams = generateUrlParams();
+        var urlPage = urlParams['urlPage'];
+        var urlLimit = urlParams['urlLimit'];
+        var urlOrder = urlParams['urlOrder'];
+        var maxPageLimit = urlParams['maxPageLimit'];
+        var insideUri = urlParams['insideUri'];
+
+        if ($(this).hasClass('disabled')){
+            $(".loader-div").hide();
+            return false;
+        }
+
+        if(maxPageLimit == parseInt(urlPage) + 1){
+            urlPage = parseInt(urlPage) + 1;
+            $( "#next-btn" ).addClass('disabled');
+            getData(insideUri, urlLimit, urlPage, urlOrder);
+        }else if (maxPageLimit == urlPage) {
+            $( "#next-btn" ).addClass('disabled');
+            $(".loader-div").hide();
+            return false;
+        }else {
+            $( "#next-btn" ).removeClass('disabled');                
+            urlPage = parseInt(urlPage) + 1;
+            getData(insideUri, urlLimit, urlPage, urlOrder);
+        }
+        $('#actualPageSpan').html(urlPage);
+        createNewUrl(urlPage, urlLimit, urlOrder);
+        $(".loader-div").delay(2000).fadeOut("fast");
+        $(".loader-div").hide();
+        //to skip the jump to top function
+        return false;
+        * */  
+ 
+    });
     
-    
+       
+   }
+   
+  
             
 });
 

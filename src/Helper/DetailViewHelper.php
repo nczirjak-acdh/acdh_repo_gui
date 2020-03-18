@@ -6,7 +6,7 @@ use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
 use Drupal\acdh_repo_gui\Helper\ConfigConstants as CC;
 use Drupal\acdh_repo_gui\Object\ResourceObject;
 use acdhOeaw\acdhRepoLib\Repo;
-use acdhOeaw\acdhRepoAcdh\RepoResource;
+use acdhOeaw\acdhRepoDisserv\RepoResource;
 
 use Drupal\acdh_repo_gui\Helper\ArcheHelper;
 /**
@@ -48,7 +48,7 @@ class DetailViewHelper extends ArcheHelper {
     public function getDissServices(string $id): array {
         $result = array();
         //internal id 
-        $rep = new \acdhOeaw\acdhRepoAcdh\RepoResource($this->config->getBaseUrl().$id, $this->config);
+        $rep = new \acdhOeaw\acdhRepoDisserv\RepoResource($this->config->getBaseUrl().$id, $this->config);
         
         try {
             $dissServ = array();

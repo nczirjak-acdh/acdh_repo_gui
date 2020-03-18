@@ -19,6 +19,7 @@ class DetailViewModel extends ArcheModel {
     }
     
     public function getViewData(string $identifier = ""): array {
+        if(empty($identifier)) { return array();}
         $result = array();
         //run the actual query
         $query = $this->repodb->query(" select * from detail_view_func(:id) ", array(':id' => $identifier));

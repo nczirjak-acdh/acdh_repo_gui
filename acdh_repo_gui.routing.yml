@@ -1,7 +1,7 @@
-repo_main:
-  path: '/repo_main'
+repo_root:
+  path: '/repo_root'
   defaults:
-    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_main'
+    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_root'
   requirements:
     _permission: 'access content'
     _access: 'TRUE'
@@ -22,3 +22,15 @@ repo_child_api:
     requirements:
         _permission: 'access content'
         _access: 'TRUE'    
+
+repo_complexsearch:
+  path: '/discover/{metavalue}/{order}/{limit}/{page}'
+  defaults:
+    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_complexsearch'
+    metavalue: ""
+    order: "datedesc"
+    limit: "10"
+    page: "1"
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'

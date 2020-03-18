@@ -72,7 +72,15 @@ class AcdhRepoGuiController extends ControllerBase
         
     }
     
-    
+    /**
+     * Repo search/root main view
+     * 
+     * @param string $metavalue
+     * @param string $limit
+     * @param string $page
+     * @param string $order
+     * @return array
+     */
     public function repo_complexsearch(string $metavalue = "root", string $limit = "10", string $page = "1", string $order = "titleasc"): array
     {         
         //this is the root collection view
@@ -113,10 +121,6 @@ class AcdhRepoGuiController extends ControllerBase
                 ]
             ]
         ]; 
-        
-        
-        
-        
     }
     
     /**
@@ -129,7 +133,6 @@ class AcdhRepoGuiController extends ControllerBase
     {   
         $dv = array();
         $identifier = $this->generalFunctions->detailViewUrlDecodeEncode($identifier, 0);
-        
         $dv = $this->detailViewController->generateDetailView($identifier);
         
         if(count((array)$dv) == 0) {

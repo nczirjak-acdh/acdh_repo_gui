@@ -6,7 +6,7 @@ use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
 use Drupal\acdh_repo_gui\Object\ResourceObject;
 use Drupal\acdh_repo_gui\Helper\ConfigConstants as CC;
 use acdhOeaw\acdhRepoLib\Repo;
-use acdhOeaw\acdhRepoAcdh\RepoResource as RR;
+use acdhOeaw\acdhRepoDisserv\RepoResource as RR;
 use Drupal\acdh_repo_gui\Helper\ArcheHelper;
 
 /**

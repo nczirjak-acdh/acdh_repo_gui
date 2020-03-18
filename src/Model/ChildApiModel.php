@@ -34,7 +34,7 @@ class ChildApiModel extends ArcheModel {
         $order = $this->ordering($orderby);
         $prop = $order->property;
         $ord = $order->order;
-        
+        echo 'select * from child_view_func('.$identifier.', '.$limit.', '.$page.', '.$ord.', '.$prop.')';
         //get the requested sorting
         try {
             $query = $this->repodb->query(

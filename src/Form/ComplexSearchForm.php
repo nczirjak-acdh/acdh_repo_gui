@@ -4,22 +4,25 @@ namespace Drupal\acdh_repo_gui\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\SessionManagerInterface;
-use Drupal\user\PrivateTempStoreFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\acdh_repo_gui\Model\BlocksModel;
+use Drupal\acdh_repo_gui\Helper\FormHelper;
+
 
 class ComplexSearchForm extends FormBase
 {
     private $langConf;
-    
+    private $model;
+    private $helper;
+    private $entityData = array();
+    private $yearsData = array();
     /**
      * Set up necessary properties
      */
     public function __construct()
     {
-        $this->langConf = $this->config('oeaw.settings');
+        $this->langConf = $this->config('arche.settings');
+        $this->model = new BlocksModel();
+        $this->helper = new FormHelper();
     }
     
     /**
@@ -39,61 +42,30 @@ class ComplexSearchForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $this->langConf->get('my_arche_message');
-        /****  THE Search Input field  *****/
+        
+        //the input field
         $this->createSearchInput($form);
         
-        $cache = new SearchBoxCache();
-        
-        /****  Type of Entity Box  *****/
-        $typeCache = array();
-        
-        
-        if (count($typeCache) > 0) {
+        //the entity box section
+        $this->entityData = $this->model->getViewData("entity");
+        if(count($this->entityData) > 0) {
+            $this->entityData = $this->helper->formatEntityYears($this->entityData);
             $resData["title"] = $this->langConf->get('gui_type_of_entity') ? $this->langConf->get('gui_type_of_entity') : 'Type of Entity' ;
             $resData["type"] = "searchbox_types";
-            $resData["fields"] = $typeCache;
-            if (count($resData["fields"]) > 0) {
-                $this->createBox($form, $resData);
-            }
+            $resData["fields"] = $this->entityData['fields'];
+            $this->createBox($form, $resData);
+            
         }
         
-        /****  Entitites by Year  BOX *****/
-        $entitiesCache = array();
-        if ($cache->getCachedData('entities')) {
-            $entitiesCache = $cache->getCachedData('entities');
-        } else {
-            $entitiesCache = $cache->setCacheData('entities');
-        }
-        
-        if (count($entitiesCache) > 0) {
+        //the years box section
+        $this->yearsData = $this->model->getViewData("years");
+        if(count($this->yearsData) > 0) {
+            $this->yearsData = $this->helper->formatEntityYears($this->yearsData, true);
             $dateData["title"] = $this->langConf->get('gui_entities_by_year') ? $this->langConf->get('gui_entities_by_year') :  'Entities by Year';
             $dateData["type"] = "datebox_years";
-            $dateData["fields"] = $entitiesCache;
+            $dateData["fields"] = $this->yearsData['fields'];
+            $this->createBox($form, $dateData);
             
-            if (count($dateData["fields"]) > 0) {
-                $this->createBox($form, $dateData);
-            }
-        }
-        
-        /****  Format  BOX *****/
-        
-        $formatCache = array();
-        if ($cache->getCachedData('formats')) {
-            $formatCache = $cache->getCachedData('formats');
-        } else {
-            $formatCache = $cache->setCacheData('formats');
-        }
-        
-        if (count($formatCache) > 0) {
-            $formatData["title"] = $this->t('Format');
-            $formatData["type"] = "searchbox_format";
-            
-            $formatData["fields"] = $frm;
-
-            if (count($formatData["fields"]) > 0) {
-                $this->createBox($form, $formatData);
-            }
         }
         
         
@@ -122,64 +94,10 @@ class ComplexSearchForm extends FormBase
             )
         ];
         
-        if (strpos($_SERVER['HTTP_HOST'], 'arche.acdh.oeaw.ac.at') === false) {
-            $form['bgSearch'] = [
-                '#type' => 'checkbox',
-                '#title' => 'Blazegraph Search(Beta)',
-                '#attributes' => array(
-                    'class' => array('checkbox-custom bgSearch'),
-                )
-            ];
-        }
-        
         return $form;
     }
     
-    /**
-     * Create the checkbox templates
-     *
-     * @param array $form
-     * @param array $data
-     */
-    private function createBox(array &$form, array $data)
-    {
-        $form['search'][$data["type"]] = array(
-            '#type' => 'checkboxes',
-            '#title' => $this->t($data["title"]),
-            '#attributes' => array(
-                'class' => array('checkbox-custom', $data["type"]),
-            ),
-            '#options' =>
-                $data["fields"]
-        );
-    }
-        
-    /**
-     * this function creates the search input field
-     *
-     * @param array $form
-     * @return array
-     */
-    private function createSearchInput(array &$form)
-    {
-        $form['metavalue'] = array(
-            '#type' => 'textfield',
-            '#attributes' => array(
-                'class' => array('form-control')
-            ),
-            #'#required' => TRUE,
-        );
-        
-        $form['actions']['#type'] = 'actions';
-        $form['actions']['submit'] = array(
-            '#type' => 'submit',
-            '#value' => $this->langConf->get('gui_apply_selected_filters') ? $this->langConf->get('gui_apply_selected_filters') : 'Apply the selected search filters',
-            '#attributes' => array(
-                'class' => array('complexsearch-btn')
-            ),
-            '#button_type' => 'primary',
-        );
-    }
+   
     
     /**
      * Validate the form
@@ -189,13 +107,22 @@ class ComplexSearchForm extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
+        error_log("validate form");
         $metavalue = $form_state->getValue('metavalue');
+        error_log("metavalue");
+        error_log(print_r($metavalue, true));
+        
         $types = $form_state->getValue('searchbox_types');
+        error_log("types");
+        error_log(print_r($types, true));
         if (count($types) > 0) {
             $types = array_filter($types);
         }
         
         $formats = $form_state->getValue('searchbox_format');
+        
+        error_log("formats");
+        error_log(print_r($formats, true));
         if (count($formats) > 0) {
             $formats = array_filter($formats);
         }
@@ -205,6 +132,10 @@ class ComplexSearchForm extends FormBase
                 && empty($form_state->getValue('date_end_date'))) {
             $form_state->setErrorByName('metavalue', $this->t('Missing').': '.t('Keyword').' '.t('or').' '.t('Type'));
         }
+        
+        
+        
+            
     }
     
     /**
@@ -215,12 +146,14 @@ class ComplexSearchForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        
         $metavalue = $form_state->getValue('metavalue');
         
         $extras = array();
         
         $types = $form_state->getValue('searchbox_types');
         $types = array_filter($types);
+        
         $formats = $form_state->getValue('searchbox_format');
         $formats = array_filter($formats);
         
@@ -247,8 +180,68 @@ class ComplexSearchForm extends FormBase
             $extras["start_date"] = $startDate;
             $extras["end_date"] = $endDate;
         }
+        error_log("submit form");
+        error_log(print_r($metavalue, true));
+        echo "<pre>";
+        var_dump($metavalue);
+        echo "</pre>";
+
+        die();
+
+
+
+        /*
         $metaVal = $this->oeawFunctions->convertSearchString($metavalue, $extras);
         $metaVal = urlencode($metaVal);
         $form_state->setRedirect('oeaw_complexsearch', ["metavalue" => $metaVal, "limit" => 10,  "page" => 1]);
+         * 
+         */
+    }
+    
+    
+     /**
+     * Create the checkbox templates
+     *
+     * @param array $form
+     * @param array $data
+     */
+    private function createBox(array &$form, array $data)
+    {
+        $form['search'][$data["type"]] = array(
+            '#type' => 'checkboxes',
+            '#title' => $this->t($data["title"]),
+            '#attributes' => array(
+                'class' => array('checkbox-custom', $data["type"]),
+            ),
+            '#options' =>
+                $data["fields"]
+        );
+    }
+    
+    /**
+     * this function creates the search input field
+     *
+     * @param array $form
+     * @return array
+     */
+    private function createSearchInput(array &$form)
+    {
+        $form['metavalue'] = array(
+            '#type' => 'textfield',
+            '#attributes' => array(
+                'class' => array('form-control')
+            ),
+            #'#required' => TRUE,
+        );
+        
+        $form['actions']['#type'] = 'actions';
+        $form['actions']['submit'] = array(
+            '#type' => 'submit',
+            '#value' => $this->langConf->get('gui_apply_selected_filters') ? $this->langConf->get('gui_apply_selected_filters') : 'Apply the selected search filters',
+            '#attributes' => array(
+                'class' => array('complexsearch-btn')
+            ),
+            '#button_type' => 'primary',
+        );
     }
 }

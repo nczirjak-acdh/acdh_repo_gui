@@ -33,7 +33,6 @@ class DetailViewController {
      */
     public function generateDetailView(string $identifier) {
         $dv = array();
-        
         $dv = $this->model->getViewData($identifier);
         
         if(count((array)$dv) == 0) {

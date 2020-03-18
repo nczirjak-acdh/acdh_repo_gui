@@ -51,19 +51,16 @@
                         {%  if item.getAccessRestriction()  %}
                             {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getAccessRestriction()  } ) }}
                         {% endif%}
-                            <a href="/browser/repo_detail/{{ item.getInsideUrl() }}">{{ item.getTitle() }}</a>
+                            <a href="/browser/repo_detail/{{ item.getRepoId() }}">{{ item.getTitle() }}</a>
                     </span>
                 </div>
             {% endif%}    
-
-           
-            {% if item.getAcdhType() %}
-                <div class="res-property">
-                    <i class="material-icons">&#xE54E;</i>
-                    <span class="res-prop-label">{{ "Type"|trans }}: </span>
-                    <span class="res-rdfType"><a href="/browser/repo_search/&type=Collection/10">Collection|trans</a></span>
-                </div>
-            {% endif%}
+            
+            <div class="res-property">
+                <i class="material-icons">&#xE54E;</i>
+                <span class="res-prop-label">{{ "Type"|trans }}: </span>
+                <span class="res-rdfType"><a href="/browser/repo_search/&type=Collection/10">{{ "Collection"|trans }}</a></span>
+            </div>
 
             {% if item.getData('acdh:hasAvailableDate') %}
                 {{ item.getPropTitle('acdh:hasAvailableDate') }}
@@ -84,7 +81,7 @@
             <div class="res-actions">
 
                 <div class="res-act-button">
-                    <a href="/browser/repo_detail/{{ item.getRepoUrl() }}">
+                    <a href="/browser/repo_detail/{{ item.getRepoId() }}">
                         <i class="material-icons">&#xE873;</i>
                         <span>{{ "Detailed View"|trans }}</span>
                     </a>	
@@ -105,7 +102,7 @@
             {% if item.getTitleImage() %}	
                 <div class="res-inside-wrap col-lg-6 ">	
                     <div class="single-res-thumb">
-                        <a href="/browser/repo_detail/{{ item.getInsideUrl() }}"><img src="{{ item.getTitleImage() }}"></a>
+                        <a href="/browser/repo_detail/{{ item.getRepoId() }}"><img src="{{ item.getTitleImage() }}"></a>
                     </div>
                 </div>
             {% endif%}            

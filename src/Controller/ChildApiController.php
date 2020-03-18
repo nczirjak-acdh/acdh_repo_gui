@@ -48,9 +48,13 @@ class ChildApiController extends ControllerBase {
      */
     public function repo_child_api(string $identifier, string $limit, string $page, string $order): Response
     {
-        if (strpos($identifier, $this->config->getSchema()->__get('drupal')->uuidNamespace) === false) {
+        
+        if (preg_match("/^\d+$/", $identifier)) {
+            $identifier = $this->config->getBaseUrl().$identifier;
+        } else if (strpos($identifier, $this->config->getSchema()->__get('drupal')->uuidNamespace) === false) {
             $identifier = $this->config->getSchema()->__get('drupal')->uuidNamespace.$identifier;
         }
+        
         $this->childNum = $this->model->getCount($identifier);
 
         if($this->childNum < 1) {
@@ -76,13 +80,16 @@ class ChildApiController extends ControllerBase {
         );
         $this->data->pagination = $this->data->pagination[0];
         $data = $this->model->getViewData($identifier, (int)$limit, (int)$offset, $order);
-       
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die();
         $this->data->data = $this->helper->createView($data);
         
         if(count((array)$this->data->data) <= 0) {
             $this->data->errorMSG = $this->langConf->get('errmsg_no_child_resources') ? $this->langConf->get('errmsg_no_child_resources') : 'There are no Child resources';
         }
-        
+       
         end:
        
         $build = [

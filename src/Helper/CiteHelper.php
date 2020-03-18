@@ -130,7 +130,7 @@ class CiteHelper {
          * PID > id.acdh > id.acdh/uuid > long gui url
          */
         if (!empty($obj->getPID())) {
-            $this->cite["MLA"]["acdhURI"] = $obj->acdhid;
+            $this->cite["MLA"]["acdhURI"] = $obj->getUUID();
         }
         
         if (!$this->cite["MLA"]["acdhURI"]) {
@@ -237,14 +237,6 @@ class CiteHelper {
         if ($this->cite["MLA"]["accesedDate"]) {
             $this->cite["MLA"]["string"] .= 'Accessed '.$this->cite["MLA"]["accesedDate"].'. ';
         }
-
-        /*
-        } else {
-            //Only cite top level collections for now
-            return $content;
-        }
-        */
-
         return $this->cite;
     }
 }
