@@ -66,6 +66,11 @@ class GeneralFunctions {
         if ($code == 0) {
             //if we have the repo id then we need to add the repo baseurl
             if (strpos($data, ':') === false) {
+                if (strpos($data, '&') !== false) {
+                    $pos = strpos($data, '&');
+                    $data = substr($data, 0, $pos);
+                    return $this->config->getBaseUrl().$data;
+                }
                 return $this->config->getBaseUrl().$data;
             }
             

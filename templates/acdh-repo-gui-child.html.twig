@@ -33,10 +33,9 @@
             {% endif%}
 
             {% if item.getData('acdh:hasAvailableDate') %}
+                {{ item.getPropTitle('acdh:hasAvailableDate') }}
                 <div class="res-property">
-                    <i class="material-icons">&#xE8DF;</i>
-                    <span class="res-prop-label">{{ "Available Date"|trans }}: </span>
-                    <span class="res-creationdate">{{ item.getPropTitle('acdh:hasAvailableDate')|date("d M Y") }}   </span>
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': item.getData('acdh:hasAvailableDate') , 'icon': 'today', 'dateformat': "d M Y", 'label': "Available Date"  } ) }}
                 </div>
             {% endif%}
 
@@ -52,7 +51,7 @@
             <div class="res-actions">
 
                 <div class="res-act-button">
-                    <a href="/browser/repo_detail/{{ item.getInsideUrl() }}">
+                    <a href="/browser/repo_detail/{{ item.getRepoID() }}">
                         <i class="material-icons">&#xE873;</i>
                         <span>{{ "Detailed View"|trans }}</span>
                     </a>	

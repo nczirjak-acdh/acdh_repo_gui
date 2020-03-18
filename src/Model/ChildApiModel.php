@@ -11,6 +11,8 @@ use Drupal\acdh_repo_gui\Model\ArcheModel;
 class ChildApiModel extends ArcheModel {
     
     private $repodb;
+    private $result = array();
+    private $data = array();
     
     public function __construct() {
         //set up the DB connections
@@ -28,29 +30,28 @@ class ChildApiModel extends ArcheModel {
      * @return array
      */
     public function getViewData(string $identifier = "", int $limit = 10, int $page = 0, string $orderby = "titleasc" ): array {
-        $result = array();
-        $idResult = array();
-        
         $order = $this->ordering($orderby);
         $prop = $order->property;
         $ord = $order->order;
-        echo 'select * from child_view_func('.$identifier.', '.$limit.', '.$page.', '.$ord.', '.$prop.')';
+        
         //get the requested sorting
         try {
             $query = $this->repodb->query(
-                    "select * from child_view_func(:id, :limit, :offset, :order, :property)", 
+                    "select * from child_views_func(:id, :limit, :offset, :order, :property)", 
                     array(':id' => $identifier,  ':limit' => $limit, ':offset' => $page, ':order' => $ord, ':property' => $prop)
             );
             
-            $result = $query->fetchAll();
+            $this->result = $query->fetchAll();
+            $this->reorderResult();
+           
         } catch (Exception $ex) {
-            $result = array();
+            $this->data = array();
         } catch(\Drupal\Core\Database\DatabaseExceptionWrapper $ex ) {
-            $result = array();
+            $this->data = array();
         }
         
         $this->changeBackDBConnection();
-        return $result;
+        return $this->data;
     }
     
     /**
@@ -62,20 +63,20 @@ class ChildApiModel extends ArcheModel {
     private function ordering(string $orderby = "titleasc"): object {
         $result = new \stdClass();
         $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-        $result->order = 'value asc';
+        $result->order = 'asc';
         
         if($orderby == "titleasc") {
             $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-            $result->order = 'value asc';
+            $result->order = 'asc';
         }else if ($orderby == "titledesc") {
             $result->property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
-            $result->order = 'value desc';
+            $result->order = 'desc';
         }else if ($orderby == "dateasc") {
             $result->property = 'http://fedora.info/definitions/v4/repository#lastModified';
-            $result->order = 'value asc';            
+            $result->order = 'asc';            
         }else if ($orderby == "datedesc") {
             $result->property = 'http://fedora.info/definitions/v4/repository#lastModified';
-            $result->order = 'value desc';
+            $result->order = 'desc';
         }
         return $result;
     }
@@ -100,5 +101,18 @@ class ChildApiModel extends ArcheModel {
         }
         $this->changeBackDBConnection();
         return 0;
+    }
+    
+    /**
+     * Reorder the sql result based on the orderid
+     */
+    private function reorderResult() {
+        if(count((array)$this->result) > 0) {
+            foreach($this->result as $v) {
+                if(isset($v->orderid)){
+                    $this->data[$v->orderid][] = $v;
+                }
+            }
+        }
     }
 }

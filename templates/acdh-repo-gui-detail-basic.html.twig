@@ -3,27 +3,32 @@
     'acdh:hasContact': {
 	'icon': 'person_add',
         'label': 'Contact(s)',
-        'url_only': false
+        'url_only': false,
+        'repoid': true
     },
     'acdh:hasEditor': {
         'icon': 'people',
         'label': 'Editor(s)',
-        'url_only': false
+        'url_only': false,
+        'repoid': true
     },
     'acdh:hasAuthor': {
         'icon': 'people',
         'label': 'Author(s)',
-        'url_only': false
+        'url_only': false,
+        'repoid': true
     },
     'acdh:hasCreator': {
         'icon': 'people',
         'label': 'Creator(s)',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasContributor': {
         'icon': 'person',
         'label': 'Contributor(s)',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasCreatedDate': {
         'icon': 'today',
@@ -71,7 +76,8 @@
     'acdh:hasLicensor': {
         'icon': 'copyright',
         'label': 'Licensor',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true      
     },
     'acdh:hasLicense': {
         'icon': 'copyright',
@@ -101,14 +107,16 @@
     'acdh:hasRelatedProject': {
         'icon': 'track_changes',
         'label': 'Related Project(s)',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:isPartOf': {
         'icon': 'device_hub',
         'label': 'Part of',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
-    'acdh:isderivedFrom': {
+    'acdh:isDerivedFrom': {
         'icon': 'device_hub',
         'label': 'Derived from',
         'url_only': false
@@ -121,12 +129,14 @@
     'acdh:hasPrincipalInvestigator': {
         'icon': 'device_hub',
         'label': 'Principal Investigator',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasCurator': {
         'icon': 'people',
         'label': 'Curator(s)',
-        'url_only': false
+        'url_only': false,
+        'repoid': true
     }
 }
 %}
@@ -159,7 +169,7 @@
        
             {% for key, value in properties %}
                 {% if basic.getData(key) %}
-                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only, 'dateformat': value.dateformat, 'isbinary': value.isbinary } ) }}
+                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only, 'dateformat': value.dateformat, 'isbinary': value.isbinary, 'repoid': value.repoid } ) }}
                 {% endif%}
             {% endfor %}
             
@@ -169,7 +179,7 @@
         {% if basic.getTitleImage() %}	
             <div class="res-inside-wrap col-lg-4 ">	
                 <div class="single-res-thumb">
-                    <a data-lightbox="{{ basic.getTitle() }}" href="{{ basic.getTitleImage() }}"><img src="{{ basic.getTitleImage() }}"></a>
+                    <a href="/browser/repo_detail/{{ basic.getRepoId() }}"><img src="data:image/png;base64,{{ basic.getTitleImage() }}" /></a>
                 </div>
             </div>
         {% endif%}

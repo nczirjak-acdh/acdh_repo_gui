@@ -59,6 +59,9 @@ class AcdhRepoGuiController extends ControllerBase
             );
             return array();
         }
+        //$file = file_get_contents('https://repo.hephaistos.arz.oeaw.ac.at/69501');
+        //$imageData = base64_encode($file);
+        //echo '<img src="data:image/png;base64,'.$imageData.'" alt="Image1"/>';
         
         return [
             '#theme' => 'acdh-repo-gui-main',

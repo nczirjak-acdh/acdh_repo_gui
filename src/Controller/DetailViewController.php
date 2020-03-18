@@ -38,7 +38,7 @@ class DetailViewController {
         if(count((array)$dv) == 0) {
             return array();
         } 
-        
+       
         //extend the data object with the shortcuts
         $this->basicViewData = new \stdClass();
         $this->basicViewData->basic = $this->helper->createView($dv);

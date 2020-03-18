@@ -60,6 +60,11 @@ abstract class ArcheHelper {
         $result = array();
         
         foreach($this->data as $d) {
+            if(isset($d->type) && !empty($d->type) && $d->type == "REL") {
+                $d->repoid = "";
+                $d->repoid = $d->value;
+            }
+            
             if(is_null($d->property) === false) {
                 //create the shortcur
                 $d->title = "";
@@ -79,6 +84,9 @@ abstract class ArcheHelper {
                 if (strpos($d->value, '/id.acdh.oeaw.ac.at/uuid/') !== false) {
                     $d->acdhid = $d->value;
                 }
+                if (strpos($d->value, '//repo.') !== false) {
+                    $d->repoid = $d->id;
+                }
                 //the uri for the identifier urls
                 if (strpos($d->value, 'http') !== false) {
                     $d->uri = $d->value;
@@ -86,6 +94,8 @@ abstract class ArcheHelper {
                 //add the identifier into the final data
                 $result['acdh:hasIdentifier'][] = $d;
             }
+            
+            
         }
         if($root == true) {
             ksort($result);

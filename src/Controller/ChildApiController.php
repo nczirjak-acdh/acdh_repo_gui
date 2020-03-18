@@ -80,10 +80,7 @@ class ChildApiController extends ControllerBase {
         );
         $this->data->pagination = $this->data->pagination[0];
         $data = $this->model->getViewData($identifier, (int)$limit, (int)$offset, $order);
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
-        die();
+        
         $this->data->data = $this->helper->createView($data);
         
         if(count((array)$this->data->data) <= 0) {

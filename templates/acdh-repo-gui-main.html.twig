@@ -61,7 +61,7 @@
                 <span class="res-prop-label">{{ "Type"|trans }}: </span>
                 <span class="res-rdfType"><a href="/browser/repo_search/&type=Collection/10">{{ "Collection"|trans }}</a></span>
             </div>
-
+            
             {% if item.getData('acdh:hasAvailableDate') %}
                 {{ item.getPropTitle('acdh:hasAvailableDate') }}
                 <div class="res-property">
@@ -102,7 +102,7 @@
             {% if item.getTitleImage() %}	
                 <div class="res-inside-wrap col-lg-6 ">	
                     <div class="single-res-thumb">
-                        <a href="/browser/repo_detail/{{ item.getRepoId() }}"><img src="{{ item.getTitleImage() }}"></a>
+                        <a href="/browser/repo_detail/{{ item.getRepoId() }}"><img src="data:image/png;base64,{{ item.getTitleImage() }}" /></a>
                     </div>
                 </div>
             {% endif%}            

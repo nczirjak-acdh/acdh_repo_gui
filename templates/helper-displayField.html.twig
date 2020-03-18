@@ -20,6 +20,14 @@
                 {% for value in data %}
                     {% if (onlyurl)  %}
                         <a href="{{ value.uri }}">{{ value.uri }}</a>
+                    {% elseif (repoid)  %}
+                        {% if (value.repoid) and (value.title)  %}
+                            <a href="/browser/repo_detail/{{ value.repoid }}">{{ value.title|nl2br }}</a>
+                        {% elseif (value.repoid)  %}
+                            <a href="/browser/repo_detail/{{ value.repoid }}">{{ value.repoid }}</a>
+                        {% else  %}
+                            {{ value.title|nl2br }}
+                        {% endif  %}   
                     {% elseif (dateformat)  %}
                         {{ value.value|date(dateformat) }}
                     {% elseif (isbinary)  %}

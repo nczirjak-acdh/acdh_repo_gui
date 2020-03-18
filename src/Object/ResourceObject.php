@@ -75,6 +75,18 @@ class ResourceObject {
         }
         return "";
     }
+    
+    public function getAvailableDate(): string {
+        if(isset($this->properties["acdh:hasAvailableDate"])){
+            foreach($this->properties["acdh:hasAvailableDate"] as $v){
+                if(isset($v->value)){
+                    $time = strtotime($v->value);
+                    return date('d m Y',$time);
+                }
+            }
+        }
+        return "";
+    }
    
     
     /**
@@ -137,20 +149,17 @@ class ResourceObject {
      * @return string
      */
     public function getTitleImage(): string {
-        $result = "";
         if(isset($this->properties["acdh:hasTitleImage"]) && count($this->properties["acdh:hasTitleImage"]) > 0) {
-            if(isset($this->properties["acdh:hasTitleImage"][0]->acdhid)) {
-                if (strpos($this->properties["acdh:hasTitleImage"][0]->acdhid, '/uuid/') !== false) {
-                    $baseurl = str_replace('/browser', '/services/thumbnails/', 'https://fedora.hephaistos.arz.oeaw.ac.at/browser');
-                    $thumbOptions = '?width=150';            
-                    $thumbID = str_replace($this->config->getSchema()->drupal->uuidNamespace, 'uuid/', $this->properties["acdh:hasTitleImage"][0]->acdhid);
-                    $result = $baseurl.$thumbID.$thumbOptions;
-                }
+            if (isset($this->properties["acdh:hasTitleImage"][0]->value)) {
+                $img = ''; 
+                if($img = @file_get_contents($this->config->getBaseUrl().$this->properties["acdh:hasTitleImage"][0]->value)) {
+                    if(!empty($img)) {
+                        return $imageData = base64_encode($img);
+                    }
+                }              
             }
-        }else if( !empty($this->getAcdhType()) && strtolower($this->getAcdhType() == "image") ) {
-            (!empty($this->getUUID())) ? $result = $this->getUUID() : "";
         }
-        return $result;
+        return '';
     }
     
     /**
