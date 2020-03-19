@@ -6,8 +6,8 @@ repo_root:
     _permission: 'access content'
     _access: 'TRUE'
 
-repo_detail:
-  path: '/repo_detail/{identifier}'
+oeaw_detail:
+  path: '/oeaw_detail/{identifier}'
   defaults:
     _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_detail'
   requirements:
@@ -34,3 +34,19 @@ repo_complexsearch:
   requirements:
     _permission: 'access content'
     _access: 'TRUE'
+    
+#dissemination services
+
+oeaw_dl_collection:
+    path: '/oeaw_dl_collection/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_dl_collection_view'
+    requirements:
+        uri: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+    options:
+        no_cache: 'TRUE' 
+
+
+#arche apis

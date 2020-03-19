@@ -2,8 +2,8 @@
 
     <div class="res-el res-info col-block col-lg-12">
         <div class="result-basic-info">
-            <span class="results-info-bar">{{ totalResultAmount }} {{ "Result"|trans }}</span>
-            <span class="results-info-bar">{{ "Page"|trans }} {{ currentPage }} {{ "of"|trans }} {{ totalPages }}</span>
+            <span class="results-info-bar">{{ paging.totalResultAmount }} {{ "Result"|trans }}</span>
+            <span class="results-info-bar">{{ "Page"|trans }} {{ paging.currentPage }} {{ "of"|trans }} {{ paging.totalPages }}</span>
             <span class="results-info-bar results-info-bar-items">{{ "Items"|trans }}
                 <div class="pagination-dropdown dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" id="resPerPageButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,7 +51,7 @@
                         {%  if item.getAccessRestriction()  %}
                             {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getAccessRestriction()  } ) }}
                         {% endif%}
-                            <a href="/browser/repo_detail/{{ item.getRepoId() }}">{{ item.getTitle() }}</a>
+                            <a href="/browser/oeaw_detail/{{ item.getRepoId() }}">{{ item.getTitle() }}</a>
                     </span>
                 </div>
             {% endif%}    
@@ -81,7 +81,7 @@
             <div class="res-actions">
 
                 <div class="res-act-button">
-                    <a href="/browser/repo_detail/{{ item.getRepoId() }}">
+                    <a href="/browser/oeaw_detail/{{ item.getRepoId() }}">
                         <i class="material-icons">&#xE873;</i>
                         <span>{{ "Detailed View"|trans }}</span>
                     </a>	
@@ -102,7 +102,7 @@
             {% if item.getTitleImage() %}	
                 <div class="res-inside-wrap col-lg-6 ">	
                     <div class="single-res-thumb">
-                        <a href="/browser/repo_detail/{{ item.getRepoId() }}"><img src="data:image/png;base64,{{ item.getTitleImage() }}" /></a>
+                        <a href="/browser/oeaw_detail/{{ item.getRepoId() }}"><img src="data:image/png;base64,{{ item.getTitleImage() }}" /></a>
                     </div>
                 </div>
             {% endif%}            

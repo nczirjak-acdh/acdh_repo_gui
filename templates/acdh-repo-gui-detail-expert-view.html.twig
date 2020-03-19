@@ -56,7 +56,7 @@
                             {% elseif ( key == "acdh:hasAccessRestriction") %}
                                 <a href="{{ val.accessrestriction }}">{{ val.title }}</a> {{ separator|raw }}
                             {% elseif (val.title is defined and val.insideUri is defined) %}
-                                <a href="/browser/repo_detail/{{ val.insideUri }}">{{ val.title }} </a>  {{ separator|raw }}
+                                <a href="/browser/oeaw_detail/{{ val.insideUri }}">{{ val.title }} </a>  {{ separator|raw }}
                             {% elseif (val.title is defined and val.uri is defined) %}
                                 <a href="{{ val.uri }}">{{ val.title }}</a> {{ separator|raw }}
                             {% elseif val.uri is defined %}

@@ -10,10 +10,10 @@ class AcdhRepoGuiPathProcessor implements InboundPathProcessorInterface
 {
     public function processInbound($path, Request $request)
     {   
-        if (strpos($path, '/repo_detail/') === 0) {
-            $names = preg_replace('|^\/repo_detail\/|', '', $path);
+        if (strpos($path, '/oeaw_detail/') === 0) {
+            $names = preg_replace('|^\/oeaw_detail\/|', '', $path);
             $names = str_replace('/', ':', $names);
-            return "/repo_detail/$names";
+            return "/oeaw_detail/$names";
         }
         
         return $path;

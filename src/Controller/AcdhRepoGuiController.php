@@ -39,7 +39,7 @@ class AcdhRepoGuiController extends ControllerBase
      * 
      * Root view
      * 
-     * @return type
+     * @return array
      */
     public function repo_root(string $limit = "10", string $page = "1", string $order = "datedesc"): array
     {
@@ -47,9 +47,17 @@ class AcdhRepoGuiController extends ControllerBase
         $page = (int)$page;
         // on the gui we are displaying 1 as the first page.
         $page = $page-1;
+        $count = 0;
+        $count = $this->rootViewController->countRoots();
         
         $roots = array();
-        $roots = $this->rootViewController->generateRootView($limit, $page, $order);
+        $paging = array();
+        if((int)$count > 0){
+            $roots = $this->rootViewController->generateRootView($limit, $page, $order);
+            $paging['totalResultAmount'] = $count;
+            $paging['currentPage'] = $page+1;
+            $paging['totalPages'] = ceil($count / $limit);
+        }
         
         if(count($roots) <= 0) {
             drupal_set_message(
@@ -59,13 +67,11 @@ class AcdhRepoGuiController extends ControllerBase
             );
             return array();
         }
-        //$file = file_get_contents('https://repo.hephaistos.arz.oeaw.ac.at/69501');
-        //$imageData = base64_encode($file);
-        //echo '<img src="data:image/png;base64,'.$imageData.'" alt="Image1"/>';
         
         return [
             '#theme' => 'acdh-repo-gui-main',
             '#data' => $roots,
+            '#paging' => $paging,
             '#attached' => [
                 'library' => [
                     'acdh_repo_gui/repo-styles',
@@ -171,6 +177,19 @@ class AcdhRepoGuiController extends ControllerBase
             '#attached' => [
                 'library' => [
                     'acdh_repo_gui/repo-styles',
+                ]
+            ]
+        ]; 
+    }
+    
+    public function oeaw_dl_collection_view(string $repoid) {
+  
+        return [
+            '#theme' => 'acdh-repo-ds-dl-collection',
+            '#result' => "sss",
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/DL_collection',
                 ]
             ]
         ]; 

@@ -2,6 +2,7 @@
 
 namespace Drupal\acdh_repo_gui\Controller;
 
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\acdh_repo_gui\Model\DetailViewModel;
 use Drupal\acdh_repo_gui\Helper\DetailViewHelper;
 use Drupal\acdh_repo_gui\Helper\CiteHelper as CH;
@@ -12,7 +13,7 @@ use Drupal\acdh_repo_gui\Helper\CiteHelper as CH;
  *
  * @author nczirjak
  */
-class DetailViewController {
+class DetailViewController extends ControllerBase {
     
     private $config;
     private $model;

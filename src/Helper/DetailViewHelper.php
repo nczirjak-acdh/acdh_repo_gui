@@ -55,7 +55,6 @@ class DetailViewHelper extends ArcheHelper {
             $dissServ = $rep->getDissServices();
             
             foreach($dissServ as $k => $v) {
-                $v->getRequest($rep)->getUri();
                 $result[$k] = (string) $v->getRequest($rep)->getUri();
             }
             return $result;
@@ -69,7 +68,4 @@ class DetailViewHelper extends ArcheHelper {
         }
     }
     
-    public function createCiteWidget() {
-        
-    }
 }

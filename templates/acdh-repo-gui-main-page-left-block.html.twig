@@ -11,7 +11,7 @@
                         {%  if item.getAccessRestriction()  %}
                             {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': item.getAccessRestriction()  } ) }}
                         {% endif%}
-                            <a href="/browser/repo_detail/{{ item.getRepoId() }}">{{ item.getTitle() }}</a>
+                            <a href="/browser/oeaw_detail/{{ item.getRepoId() }}">{{ item.getTitle() }}</a>
                     </span>
                 </div>
             {% endif%}    
@@ -41,7 +41,7 @@
              <div class="res-actions">
 
                 <div class="res-act-button">
-                    <a href="/browser/repo_detail/{{ item.getRepoUrl() }}">
+                    <a href="/browser/oeaw_detail/{{ item.getRepoUrl() }}">
                         <i class="material-icons">&#xE873;</i>
                         <span>{{ "Detailed View"|trans }}</span>
                     </a>	
@@ -62,7 +62,7 @@
             {% if item.getTitleImage() %}	
                 <div class="res-inside-wrap col-lg-6 ">	
                     <div class="single-res-thumb">
-                        <a href="/browser/repo_detail/{{ item.getRepoId() }}"><img src="{{ item.getTitleImage() }}"></a>
+                        <a href="/browser/oeaw_detail/{{ item.getRepoId() }}"><img src="{{ item.getTitleImage() }}"></a>
                     </div>
                 </div>
             {% endif%}   

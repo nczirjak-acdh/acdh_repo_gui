@@ -70,7 +70,7 @@ class AcdhRepoGuiEventSubscriber implements EventSubscriberInterface
      * @return string
      */
     public static function getSubscribedEvents()
-    {error_log("subsc events");
+    {
         $events = [];
         //$events[KernelEvents::REQUEST][] = array('checkForShibboleth', 300);
         return $events;

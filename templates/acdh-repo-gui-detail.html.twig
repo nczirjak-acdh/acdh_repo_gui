@@ -20,7 +20,7 @@
                 {% else %}
                     {% set breadcrumbTitle = value["rootTitle"]  %}
                 {% endif %} 
-                <a href='/browser/repo_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
+                <a href='/browser/oeaw_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
                 {% if breadcrumbLength -1 >= key %}
                     /  
                 {% endif %}
@@ -76,6 +76,7 @@
         {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType() } ) }}
     {% endif %}
     
+    <br>
     {% if (basic.getData('acdh:hasDescription') or basic.getData('acdh:hasSpatialCoverage') or basic.getData('acdh:hasNote')) %}
         <h3 class="single-res-heading">{{ "Summary"|trans }}</h3>
         
@@ -91,12 +92,12 @@
                             {% else %}    
                                 {% set separator = ',' %}
                             {% endif %}
-                                <span class="res-prop-value"><a href="/browser/repo_detail/{{spatial.insideUri }}">{{ spatial.title }}</a></span> {{ separator|raw }}
+                                <span class="res-prop-value"><a href="/browser/oeaw_detail/{{spatial.insideUri }}">{{ spatial.title }}</a></span> {{ separator|raw }}
                         {% endif %}
                     {% endfor %}
                 {% else %}
                     {% if basic.getData('acdh:hasSpatialCoverage')[0].insideUri %}
-                        <span class="res-prop-value"><a href="/browser/repo_detail/{{ basic.getData('acdh:hasSpatialCoverage')[0].insideUri }}">{{ basic.getData('acdh:hasSpatialCoverage')[0].title }}</a></span>
+                        <span class="res-prop-value"><a href="/browser/oeaw_detail/{{ basic.getData('acdh:hasSpatialCoverage')[0].insideUri }}">{{ basic.getData('acdh:hasSpatialCoverage')[0].title }}</a></span>
                     {% else %}
                         {% if basic.getData('acdh:hasSpatialCoverage')[0]['uri']  %}
                             <span class="res-prop-value"><a href="{{ basic.getData('acdh:hasSpatialCoverage')[0].url }}">{{ basic.getData('acdh:hasSpatialCoverage')[0].url }}</a></span>

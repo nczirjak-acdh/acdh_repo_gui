@@ -22,9 +22,9 @@
                         <a href="{{ value.uri }}">{{ value.uri }}</a>
                     {% elseif (repoid)  %}
                         {% if (value.repoid) and (value.title)  %}
-                            <a href="/browser/repo_detail/{{ value.repoid }}">{{ value.title|nl2br }}</a>
+                            <a href="/browser/oeaw_detail/{{ value.repoid }}">{{ value.title|nl2br }}</a>
                         {% elseif (value.repoid)  %}
-                            <a href="/browser/repo_detail/{{ value.repoid }}">{{ value.repoid }}</a>
+                            <a href="/browser/oeaw_detail/{{ value.repoid }}">{{ value.repoid }}</a>
                         {% else  %}
                             {{ value.title|nl2br }}
                         {% endif  %}   
@@ -49,7 +49,7 @@
                         {% endif%}    
                         
                     {% elseif (value.insideUri) and (value.title)  %}
-                        <a href="/browser/repo_detail/{{ value.insideUri }}">{{ value.title|nl2br }}</a>
+                        <a href="/browser/oeaw_detail/{{ value.insideUri }}">{{ value.title|nl2br }}</a>
                     {% elseif value.title and value.uri %}
                         <a href="{{ value.uri }}">{{ value.title|nl2br }}</a>
                     {% elseif value.uri %}

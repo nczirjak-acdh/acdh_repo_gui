@@ -4,22 +4,26 @@ set properties = {
     'acdh:hasUrl': {
 	'icon': 'web',
         'label': 'Url',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasContact': {
         'icon': 'person_add',
         'label': 'Contact(s)',
-        'url_only': false
+        'url_only': false,
+        'repoid': true
     },
     'acdh:hasFunder': {
         'icon': 'attach_money',
         'label': 'Funder',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasPrincipalInvestigator': {
         'icon': 'perm_identity',
         'label': 'Principal Investigator',
-        'url_only': false
+        'url_only': false, 
+        'repoid': true
     },
     'acdh:hasStartDate': {
         'icon': 'today',
@@ -48,7 +52,7 @@ set properties = {
 <div class="arche-detail-view" >
     
     <div class="arche-detail-main" id="arche-dv-main">
-        {% if result.imageUrl %}<div class="res-inside-wrap col-lg-8 ">{% endif%}
+        {% if basic.getTitleImage() %}<div class="res-inside-wrap col-lg-8 ">{% endif%}
         
             {% if  basic.getTitle() %}
                 <div class="res-property">
@@ -58,12 +62,6 @@ set properties = {
                 </div>
             {% endif%} 
 
-            {%  if basic.getData('acdh:hasAlternativeTitle') %}
-                <div class="res-property">
-                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData('acdh:hasAlternativeTitle'), 'icon': "", 'label': "Alternative Title" } ) }}
-                </div>
-            {% endif%}
-            
             {% if basic.getAcdhType() %}
                 <div class="res-property">
                     <i class="material-icons">&#xE54E;</i>
@@ -73,20 +71,32 @@ set properties = {
                     </span>
                 </div>
             {% endif%}
+            
+            {%  if basic.getData('acdh:hasAlternativeTitle') %}
+                <div class="res-property">
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData('acdh:hasAlternativeTitle'), 'icon': "title", 'label': "Alternative Title" } ) }}
+                </div>
+            {% endif%}
+            
+            {%  if basic.getData('acdh:hasIdentifier') %}
+                <div class="res-property">
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData('acdh:hasIdentifier'), 'icon': "label", 'label': "Identifier(s)" } ) }}
+                </div>
+            {% endif%}
              
             {% for key, value in properties %}
                 {% if basic.getData(key) %}
-                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only } ) }}
+                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only, 'repoid': value.repoid } ) }}
                 {% endif%}
             {% endfor %}
             
             
-        {% if result.imageUrl %}</div>{% endif%}
+        {% if basic.getTitleImage() %}</div>{% endif%}
         
-        {% if result.imageUrl %}	
+        {% if basic.getTitleImage() %}	
             <div class="res-inside-wrap col-lg-4 ">	
                 <div class="single-res-thumb">
-                    <a data-lightbox="{{ result.title }}" href="{{ result.imageUrl }}"><img src="{{ result.imageUrl }}"></a>
+                    <a href="/browser/oeaw_detail/{{ basic.getRepoId() }}"><img src="data:image/png;base64,{{ basic.getTitleImage() }}" /></a>
                 </div>
             </div>
         {% endif%}

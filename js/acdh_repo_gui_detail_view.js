@@ -34,7 +34,7 @@
     });
     
     //if the url already contains the aparameters then we just get and load the data
-    if(window.location.href.indexOf("/repo_detail/") > -1) {
+    if(window.location.href.indexOf("/oeaw_detail/") > -1) {
         
         if(window.location.href.indexOf("&page=") > -1) {
             $(".loader-div").show();
@@ -61,8 +61,8 @@
     function getIDFromUrl(str) {
         var reg = /^\d+$/;
 	var res = "";
-        if(str.indexOf('/repo_detail/') >= 0) {
-            var n = str.indexOf("/repo_detail/");
+        if(str.indexOf('/oeaw_detail/') >= 0) {
+            var n = str.indexOf("/oeaw_detail/");
             res = str.substring(n+13, str.length);
             
             if(res.indexOf('&') >= 0) {
@@ -135,7 +135,7 @@
    
    
    //************************* PAGINATION ****************************************//
-   if(window.location.href.indexOf("/repo_detail/") > -1) {
+   if(window.location.href.indexOf("/oeaw_detail/") > -1) {
        $(document ).delegate( "#prev-btn", "click", function(e) {            
        console.log("prev btn");
    });

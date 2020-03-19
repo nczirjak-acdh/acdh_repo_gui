@@ -1,5 +1,11 @@
 
 {% set properties = {
+    'acdh:hasPrincipalInvestigator': {
+        'icon': 'device_hub',
+        'label': 'Principal Investigator',
+        'url_only': false, 
+        'repoid': true
+    },
     'acdh:hasContact': {
 	'icon': 'person_add',
         'label': 'Contact(s)',
@@ -84,6 +90,11 @@
         'label': 'License',
         'url_only': false
     },
+    'acdh:hasAccessRestriction': {
+        'icon': 'copyright',
+        'label': 'Access Restriction',
+        'url_only': false
+    },
     'acdh:hasSchema': {
         'icon': 'format_list_bulleted',
         'label': 'Schema',
@@ -126,12 +137,6 @@
         'label': 'See Also',
         'url_only': false
     },
-    'acdh:hasPrincipalInvestigator': {
-        'icon': 'device_hub',
-        'label': 'Principal Investigator',
-        'url_only': false, 
-        'repoid': true
-    },
     'acdh:hasCurator': {
         'icon': 'people',
         'label': 'Curator(s)',
@@ -166,6 +171,18 @@
                     </span>
                 </div>
             {% endif%}
+            
+            {%  if basic.getData('acdh:hasAlternativeTitle') %}
+                <div class="res-property">
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData('acdh:hasAlternativeTitle'), 'icon': "title", 'label': "Alternative Title" } ) }}
+                </div>
+            {% endif%}
+            
+            {%  if basic.getData('acdh:hasIdentifier') %}
+                <div class="res-property">
+                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': basic.getData('acdh:hasIdentifier'), 'icon': "label", 'label': "Identifier(s)" } ) }}
+                </div>
+            {% endif%}
        
             {% for key, value in properties %}
                 {% if basic.getData(key) %}
@@ -179,7 +196,7 @@
         {% if basic.getTitleImage() %}	
             <div class="res-inside-wrap col-lg-4 ">	
                 <div class="single-res-thumb">
-                    <a href="/browser/repo_detail/{{ basic.getRepoId() }}"><img src="data:image/png;base64,{{ basic.getTitleImage() }}" /></a>
+                    <a href="/browser/oeaw_detail/{{ basic.getRepoId() }}"><img src="data:image/png;base64,{{ basic.getTitleImage() }}" /></a>
                 </div>
             </div>
         {% endif%}

@@ -25,15 +25,15 @@ class RootViewController  extends ControllerBase {
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language'])  : $this->siteLang = "en";
     }
     
-    
-    public function generateRootView(string $limit = "10", string $page = "0", string $order = "datedesc"): array {
+    public function countRoots(): int {
         //count the actual root values
         $counts = 0;
         $counts = $this->model->countRoots($this->siteLang);
         //if we dont have root elements then we will send back an empty array
-        if($counts <  1 ) {
-            return array();
-        }
+        return (int)$counts;
+    }
+    
+    public function generateRootView(string $limit = "10", string $page = "0", string $order = "datedesc"): array {
         
         $data = $this->model->getViewData($limit, $page, $order, $this->siteLang);
         if(count((array)$data) <= 0) {
