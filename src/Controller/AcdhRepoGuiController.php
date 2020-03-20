@@ -3,6 +3,8 @@
 namespace Drupal\acdh_repo_gui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoLib\RepoResource;
 use Drupal\acdh_repo_gui\Controller\RootViewController as RVC;
@@ -182,16 +184,72 @@ class AcdhRepoGuiController extends ControllerBase
         ]; 
     }
     
+    
+    ////////// DISSEMINATION SERVICES /////////
+    
+    /**
+     * The collection view GUI view with the metadata and the js treeview
+     * 
+     * @param string $repoid
+     * @return type
+     */
     public function oeaw_dl_collection_view(string $repoid) {
-  
+        $view = array();
+        //$DSC = new DisseminationServicesController($this->config);
+        $repoid = $this->generalFunctions->detailViewUrlDecodeEncode($repoid, 0);
+        //$view = $DSC->generateView($repoid, 'collection');
+        $extra['metadata'] = $this->detailViewController->generateObjDataForDissService($repoid);
+        $extra['repoid'] = $repoid;
+        
         return [
             '#theme' => 'acdh-repo-ds-dl-collection',
-            '#result' => "sss",
+            '#basic' => $view,
+            '#extra' => $extra,
             '#attached' => [
                 'library' => [
-                    'acdh_repo_gui/DL_collection',
+                    'acdh_repo_gui/repo-collection-dl',
                 ]
             ]
         ]; 
     }
+    
+    /**
+     *
+     * This generates the jstree data for the collection download view
+     *
+     * @param string $uri
+     * @return Response
+    */
+    public function oeaw_get_collection_data(string $repoid) : Response
+    {
+        $result = array();
+        if (empty($repoid)) {
+            $errorMSG = t('Missing').': Identifier';
+        } else {
+            $DSC = new DisseminationServicesController($this->config);
+            $result = $DSC->generateView($repoid, 'collection');
+        }
+        
+        $response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    public function oeaw_dl_collection_binaries(string $repoid) : Response
+    {
+        
+    }
+    public function oeaw_3d_viewer(string $repoid) : Response
+    {
+        
+    }
+    public function oeaw_iiif_viewer(string $repoid) : Response
+    {
+        
+    }
+    
+    
+    
+    
 }

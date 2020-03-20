@@ -17,7 +17,7 @@ class PagingHelper {
     
     private $data;
     
-    public function createView(array $data): array {
+    public function createView(array $data = array()): array {
         $this->data = new \stdClass();
         $this->data->limit = (int)$data['limit'];
         $this->data->page = (int)$data['page'];

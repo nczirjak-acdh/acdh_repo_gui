@@ -25,7 +25,7 @@ class ChildApiHelper extends ArcheHelper {
      * @param array $data
      * @return array
      */    
-    public function createView(array $data): array {
+    public function createView(array $data = array()): array {
         $this->data = $data;
         $this->extendActualObj();  
         

@@ -16,9 +16,8 @@ use Drupal\acdh_repo_gui\Helper\ArcheHelper;
  */
 class DetailViewHelper extends ArcheHelper {
     
-    private $detailViewObject;
+    private $detailViewObjectArray;
     private $lng = "en";
-    private $typesToBeCited = ["collection", "project", "resource", "publication", "metadata"];
     
     /**
      * 
@@ -27,7 +26,7 @@ class DetailViewHelper extends ArcheHelper {
      * @param array $data
      * @return array
      */
-    public function createView(array $data): array {
+    public function createView(array $data = array(), string $dissemination = ''): array {
         $this->data = $data;
         $this->extendActualObj();
         
@@ -49,7 +48,7 @@ class DetailViewHelper extends ArcheHelper {
         $result = array();
         //internal id 
         $rep = new \acdhOeaw\acdhRepoDisserv\RepoResource($this->config->getBaseUrl().$id, $this->config);
-        
+       
         try {
             $dissServ = array();
             $dissServ = $rep->getDissServices();

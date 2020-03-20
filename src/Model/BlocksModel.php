@@ -48,15 +48,22 @@ class BlocksModel extends ArcheModel {
     private function getEntityData(): array {
         $result = array();
         //run the actual query
-        $query = $this->repodb->query("
-            select count(value), value
-            from metadata 
-            where property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-            and value LIKE 'https://vocabs.acdh.oeaw.ac.at/schema#%'
-            group by value
-            order by value asc"
-        );
-        $result = $query->fetchAll();
+        try {
+            $query = $this->repodb->query("
+                select count(value), value
+                from metadata 
+                where property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                and value LIKE 'https://vocabs.acdh.oeaw.ac.at/schema#%'
+                group by value
+                order by value asc"
+            );
+            $result = $query->fetchAll();
+        } catch (Exception $ex) {
+            $result = array();
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+             $result = array();
+        }
+        
         $this->changeBackDBConnection();
         return $result;
     }
@@ -69,15 +76,23 @@ class BlocksModel extends ArcheModel {
     private function getYearsData(): array {
         $result = array();
         //run the actual query
-        $query = $this->repodb->query("
-            select
-                count(EXTRACT(YEAR FROM CAST(value AS DATE))), EXTRACT(YEAR FROM CAST(value AS DATE)) as year
-            from metadata 
-            where property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate'
-            group by year
-            order by year desc"
-        );
-        $result = $query->fetchAll();
+        try {
+            $query = $this->repodb->query("
+                select
+                    count(EXTRACT(YEAR FROM CAST(value AS DATE))), EXTRACT(YEAR FROM CAST(value AS DATE)) as year
+                from metadata 
+                where property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate'
+                group by year
+                order by year desc"
+            );
+            $result = $query->fetchAll();
+            
+        } catch (Exception $ex) {
+            $result = array();
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+             $result = array();
+        }
+        
         $this->changeBackDBConnection();
         return $result;
     }

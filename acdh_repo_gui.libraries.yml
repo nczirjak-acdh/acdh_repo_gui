@@ -52,10 +52,10 @@ repo-3d-page:
         
 
 repo-collection-dl:
-    version: 1.0.2
+    version: 1.0.0
     css:
         base:
-            css/oeaw.css: {}
+            css/arche.css: {}
             css/jqtree/themes/default/style.min.css: {}
     js:
         js/jquery-1.12.3.min.js: {}        

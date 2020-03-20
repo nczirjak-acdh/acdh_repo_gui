@@ -161,7 +161,8 @@
     }
 
     $(document).ready(function() {
-       
+        
+        console.log("itt");
         $('#selected_files_size_div').hide();
         $('#success_login_msg').hide();
         $('#error_login_msg').hide();
@@ -172,13 +173,12 @@
         //var uid = Drupal.settings.currentUser;
         var roles = drupalSettings.oeaw.users.roles;
         var actualUserRestriction = 'public';
-        
         actualUserRestriction = getActualuserRestriction();
         
         var url = $('#insideUri').val();
         
         if(!getCookie(url)){
-            window.setTimeout( generateCollection(url), 5000 );
+            window.setTimeout( generateCollection('51347'), 5000 );
         }
         
         /**  the collection download input field actions **/

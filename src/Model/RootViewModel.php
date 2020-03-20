@@ -20,26 +20,6 @@ class RootViewModel extends ArcheModel {
     }
     
     /**
-     * Get the actual ids based on the view filtering
-     * 
-     * @param string $limit
-     * @param string $page
-     * @param string $order
-     * @return type
-     */
-    private function getActualViewElements(string $limit = "10", string $page = "1", string $order = "datedesc") {
-        $result = array();
-        try {
-            $query = $this->repodb->query("SELECT * FROM public.root_view_func() order by id;");
-            $result = $query->fetchAll();
-            $this->changeBackDBConnection();
-            return $result;
-        } catch (Exception $ex) {
-            return array();
-        }
-    }
-    
-    /**
      * The ordering for the root sql
      * 
      * @param type $order
@@ -72,12 +52,10 @@ class RootViewModel extends ArcheModel {
      * @return array
      */
     public function getViewData(string $limit = "10", string $page = "0", string $order = "datedesc"): array {
-        $result = array();
         
         if($page > 0) {
             $page = $limit * $page;
         }
-       
         $order = $this->ordering($order);
         try {
             
@@ -85,6 +63,8 @@ class RootViewModel extends ArcheModel {
             $this->sqlResult = $query->fetchAll();
             $this->changeBackDBConnection();
         } catch (Exception $ex) {
+            return array();
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
             return array();
         }
         return $this->sqlResult;
@@ -96,11 +76,17 @@ class RootViewModel extends ArcheModel {
      */
     public function countRoots(): int {
         $result = array();
-        $query = $this->repodb->query("select count(*) from public.root_views_func();");
-        $this->sqlResult = $query->fetch();
-        $this->changeBackDBConnection();
-        if(isset($this->sqlResult->count)) {
-            return $this->sqlResult->count;
+        try {
+            $query = $this->repodb->query("select count(*) from public.root_views_func();");
+            $this->sqlResult = $query->fetch();
+            $this->changeBackDBConnection();
+            if(isset($this->sqlResult->count)) {
+                return $this->sqlResult->count;
+            }    
+        } catch (Exception $ex) {
+            return 0;
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            return 0;
         }
         return 0;
     }

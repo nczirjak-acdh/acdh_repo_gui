@@ -12,24 +12,37 @@ use Drupal\acdh_repo_gui\Model\ArcheModel;
 class DisseminationServicesModel extends ArcheModel {
     
     private $repodb;
-    
+    private $sqlResult = array();
     
     public function __construct() {
         //set up the DB connections
         \Drupal\Core\Database\Database::setActiveConnection('repo');
         $this->repodb = \Drupal\Core\Database\Database::getConnection('repo');
     }
-    
-    /**
-     * Get the data for the left side boxes
-     * 
-     * @param string $identifier
-     * @return array
-     */
-    public function getViewData(string $identifier = "entity"): array {
-        return array();
+  
+    public function getViewData(string $identifier = "", string $dissemination = '' ): array {
+        
+        switch ($dissemination) {
+            case "collection":;
+                $this->getCollectionData($identifier);
+                break;
+
+            default:
+                break;
+        }
+        return $this->sqlResult;
     }
     
-    
+    private function getCollectionData(string $identifier) {
+        try {
+            $query = $this->repodb->query("select mainid, parentid, title, depth from collection_views_func('".$identifier."');");
+            $this->sqlResult = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $this->changeBackDBConnection();
+        } catch (Exception $ex) {
+            $this->sqlResult = array();
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            $this->sqlResult = array();
+        }
+    }
         
 }

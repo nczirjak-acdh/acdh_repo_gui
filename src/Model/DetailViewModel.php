@@ -21,9 +21,16 @@ class DetailViewModel extends ArcheModel {
     public function getViewData(string $identifier = ""): array {
         if(empty($identifier)) { return array();}
         $result = array();
-        //run the actual query
-        $query = $this->repodb->query(" select * from detail_view_func(:id) ", array(':id' => $identifier));
-        $result = $query->fetchAll();
+        try {
+            //run the actual query
+            $query = $this->repodb->query(" select * from detail_view_func(:id) ", array(':id' => $identifier));
+            $result = $query->fetchAll();
+        } catch (Exception $ex) {
+            $result = array();
+        } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            $result = array();
+        }
+        
         $this->changeBackDBConnection();
         return $result;
     }

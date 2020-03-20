@@ -1,3 +1,32 @@
+
+{% set properties = {
+    'acdh:isPartOf': {
+        'icon': 'device_hub',
+        'label': 'Part Of',
+        'url_only': false, 
+        'repoid': true
+    },
+    'acdh:hasLicense': {
+	'icon': 'copyright',
+        'label': 'License',
+        'url_only': false,
+        'repoid': true
+    },
+    'acdh:hasNumberOfItems': {
+        'icon': 'attachment',
+        'label': 'Number of files',
+        'url_only': false,
+        'repoid': true
+    },
+    'acdh:hasBinarySize': {
+        'icon': 'attachment',
+        'label': 'Summary Size',
+        'url_only': false,
+        'isbinary': 'binary'
+    }
+}
+%}
+
 {% if  errorMSG %}
     <span style="color:red; font-size: 20px; font-weight: bold;">{{ errorMSG }}</span>
 {% else %}
@@ -43,28 +72,30 @@
         }
         
     </style>
-    
+    <!--
     <div id="loader-div">
         <div class="loader-bg">
             <div class="loader"></div>
         </div>
     </div>
-   
+   -->
     <div>
-        {%  if resourceData['metadata'].data.insideUri %}
+        
+        {%  if extra.metadata.getRepoId() %}
             <div>
-                <a href="/browser/oeaw_detail/{{ resourceData['metadata'].data.insideUri }}"><span>{{ "Back to the resource"|trans }}</span></a>
+                <a href="/browser/oeaw_detail/{{ extra.metadata.getRepoId() }}"><span>{{ "Back to the resource"|trans }}</span></a>
                 <br/><br/>
             </div>
         {% endif %}    
-        {%  if  resourceData['metadata'].data.title  %}
-            <h2>{{ resourceData['metadata'].data.title }} </h2>
+        
+        {%  if extra.metadata.getTitle()  %}
+            <h2>{{ extra.metadata.getTitle()  }} </h2>
         {% endif %}
         
     </div>
     
-    <input type="hidden" id="insideUri" name="insideUri" value="{{ resourceData['metadata'].data.insideUri }}">
-    <input type="hidden" id="estDLTime" name="estDLTime" value="{{ resourceData['metadata'].data.estDLTime }}">
+    <input type="hidden" id="insideUri" name="insideUri" value="{{ extra.metadata.getRepoId() }}">
+    <input type="hidden" id="estDLTime" name="estDLTime" value="{{ extra.estDLTime }}">
     
     <div id="content_collection">
         <div class="single-res-overview single-res-overview-basic">
@@ -72,58 +103,21 @@
                 <i class="material-icons">&#xE54E;</i>
                 <span class="res-prop-label">{{ "Name"|trans }}:</span> 
                 <span class="res-prop-value">
-                    {% if resourceData['metadata'].data.title %}
-                        {{ resourceData['metadata'].data.title }}
+                    {% if extra.metadata.getTitle() %}
+                        {{ extra.metadata.getTitle() }}
                     {% else %}    
                         {{ "Empty"|trans }}
                     {% endif %}
                 </span>
             </div>
-            
+           
+            {% for key, value in properties %}
+                {% if extra.metadata.getData(key) %}
+                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': extra.metadata.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only, 'dateformat': value.dateformat, 'isbinary': value.isbinary, 'repoid': value.repoid } ) }}
+                {% endif%}
+            {% endfor %}    
                 
-            {% if resourceData['metadata'].data.isPartOf %}     
-            <div class="res-property">
-                <i class="material-icons">device_hub</i>
-                <span class="res-prop-label">{{ "Part of"|trans }}:</span> 
-                <span class="res-prop-value">
-                    {{ resourceData['metadata'].data.isPartOf }}
-                </span>
-            </div>
-            {% endif %}
-            
-            {% if resourceData['metadata'].data.license %} 
-                <div class="res-property">
-                    <i class="material-icons">copyright</i>
-                    <span class="res-prop-label">{{ "License"|trans }}:</span> 
-                    <span class="res-prop-value">
-                        {{ resourceData['metadata'].data.license }}
-                    </span>
-                </div>
-            {% endif %}
-                    
-            <div class="res-property">
-                <i class="material-icons">&#xE54E;</i>
-                <span class="res-prop-label">{{ "Number of files"|trans }}:</span> 
-                <span class="res-prop-value">
-                     {% if resourceData['metadata'].data.filesNum %}
-                        {{ resourceData['metadata'].data.filesNum }}
-                    {% else %}    
-                       {{ "Empty"|trans }}
-                    {% endif %}
-                </span>
-            </div>
-            
-            <div class="res-property">
-                <i class="material-icons">&#xE54E;</i>
-                <span class="res-prop-label">{{ " Summary"|trans }} {{ "Size"|trans }}:</span> 
-                <span class="res-prop-value">
-                    {% if resourceData['metadata'].data.formattedSize %}
-                        {{ resourceData['metadata'].data.formattedSize }}
-                    {% else %}    
-                        {{ "Empty"|trans }}
-                    {% endif %}
-                </span>
-            </div>
+           
             {% if resourceData['metadata'].data.estDLTime %}                
             <div class="res-property">
                 <i class="material-icons">&#xE54E;</i>

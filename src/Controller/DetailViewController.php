@@ -32,12 +32,12 @@ class DetailViewController extends ControllerBase {
      * @param string $identifier
      * @return type
      */
-    public function generateDetailView(string $identifier) {
+    public function generateDetailView(string $identifier): object {
         $dv = array();
         $dv = $this->model->getViewData($identifier);
-        
+        echo $identifier;
         if(count((array)$dv) == 0) {
-            return array();
+            return new \stdClass();
         } 
        
         //extend the data object with the shortcuts
@@ -56,6 +56,29 @@ class DetailViewController extends ControllerBase {
         $this->basicViewData->extra->citeWidgetData = $cite->createCiteThisWidget($this->basicViewData->basic);
 
         return $this->basicViewData;
+    }
+    
+    /**
+     * 
+     * generate the basic metadata for the root resource/collection in the dissemination services view
+     * @param string $identifier
+     * @return object
+     */
+    public function generateObjDataForDissService(string $identifier): object {
+        $dv = array();
+        $dv = $this->model->getViewData($identifier);
+        
+        if(count((array)$dv) == 0) {
+            return new \stdClass();
+        } 
+       
+        //extend the data object with the shortcuts
+        $obj = new \stdClass();
+        $obj = $this->helper->createView($dv);
+        if(isset($obj[0])) {
+            return $obj[0];
+        }
+        return new \stdClass();
     }
     
 }

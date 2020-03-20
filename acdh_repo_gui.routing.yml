@@ -48,5 +48,40 @@ oeaw_dl_collection:
     options:
         no_cache: 'TRUE' 
 
+oeaw_get_collection_data:    
+    path: '/get_collection_data/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_get_collection_data'
+    requirements:
+        uri: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+oeaw_3d_viewer:
+    path: '/oeaw_3d_viewer/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_3d_viewer'
+    requirements:
+        data: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+oeaw_dlc:
+    path: '/oeaw_dlc/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_dl_collection_binaries'
+    requirements:
+        uri: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+oeaw_iiif_viewer:
+    path: '/iiif_viewer/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_iiif_viewer'
+    requirements:
+        uri: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
 
 #arche apis
