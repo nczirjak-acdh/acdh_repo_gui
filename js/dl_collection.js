@@ -87,7 +87,6 @@
             plugins : [ 'checkbox', 'search' ]
         })//treeview before load the data to the ui
         .on("loaded.jstree", function (e, d) {
-            console.log("a loadedben:");
             console.log(d);
             loadedData = d;
             var userAllowedToDL = false;
@@ -199,6 +198,7 @@
             
             if(data.selected.length == 1) {
                 //if we have a directory then do not open the fedora url
+                console.log(data.node.original);
                 if(data.node.original.dir === false){
                     let id = data.instance.get_node(data.selected[0]).id;
                     //check the permissions for the file download

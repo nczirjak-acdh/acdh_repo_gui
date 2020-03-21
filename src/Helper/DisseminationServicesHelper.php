@@ -17,11 +17,12 @@ class DisseminationServicesHelper extends ArcheHelper {
     
     public function createView(array $data = array(), string $dissemination = '', string $identifier = ''): array {
         $this->data = $data;
-       
+        
         $this->modifyDataStructure();
       
         $result = array();
         $result = $this->createTreeData($this->data, $identifier);
+        
         if(count($result) > 0) {
             return $result;
         }
@@ -33,11 +34,18 @@ class DisseminationServicesHelper extends ArcheHelper {
             $v['uri'] = $v['mainid'];
             $v['uri_dl'] = $this->config->getBaseUrl().$v['mainid'];
             $v['text'] = $v['title'];
-            $v['filename'] = $v['title'];
-            $v['resShortId'] = $v['maind'];
-            $v['userAllowedToDL'] = true;
-            $v['dir'] = true;
-            $v['accessRestriction'] = 'public';
+            $v['resShortId'] = $v['mainid'];
+            if($v['accesres'] == 'public'){
+                $v['userAllowedToDL'] = true;
+            }else {
+                $v['userAllowedToDL'] = false;
+            }
+            if(empty($v['filename'])){
+                $v['dir'] = true;
+            }else {
+                $v['dir'] = false;
+            }
+            $v['accessRestriction'] = $v['accesres'];
             $v['encodedUri'] = $this->config->getBaseUrl().$v['mainid'];
             $this->data[$k] = $v;
         }
@@ -56,14 +64,13 @@ class DisseminationServicesHelper extends ArcheHelper {
             "title" => 'main',
             "text" => 'main',
             "parentid" => '',
-            "userAllowedToDL" => 'true',
-            "dir" => 'true',
+            "userAllowedToDL" => true,
+            "dir" => true,
             "accessRestriction" => 'public',
             "encodedUri" => $this->config->getBaseUrl().$identifier
         );
         
         $new = array();
-        $new[0] = $first;
         foreach ($data as $a){
             $a = (array)$a;
             $new[$a['parentid']][] = $a;

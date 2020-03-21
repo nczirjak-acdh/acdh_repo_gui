@@ -35,7 +35,6 @@ class DetailViewController extends ControllerBase {
     public function generateDetailView(string $identifier): object {
         $dv = array();
         $dv = $this->model->getViewData($identifier);
-        echo $identifier;
         if(count((array)$dv) == 0) {
             return new \stdClass();
         } 

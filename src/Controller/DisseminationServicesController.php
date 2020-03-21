@@ -40,7 +40,7 @@ class DisseminationServicesController extends ControllerBase {
         } 
         $this->basicViewData = $this->helper->createView($vd, $dissemination, $identifier);
         
-        return array($this->basicViewData);
+        return $this->basicViewData;
     }
     
     
