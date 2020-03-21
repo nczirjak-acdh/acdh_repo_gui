@@ -13,13 +13,35 @@ use Drupal\acdh_repo_gui\Helper\ArcheHelper;
  */
 class DisseminationServicesHelper extends ArcheHelper {
     
+    private $data;
+    
     public function createView(array $data = array(), string $dissemination = '', string $identifier = ''): array {
+        $this->data = $data;
+       
+        $this->modifyDataStructure();
+      
         $result = array();
-        $result = $this->createTreeData($data, $identifier);
+        $result = $this->createTreeData($this->data, $identifier);
         if(count($result) > 0) {
             return $result;
         }
         return array();
+    }
+    
+    private function modifyDataStructure() {
+        foreach($this->data as $k => $v) {
+            $v['uri'] = $v['mainid'];
+            $v['uri_dl'] = $this->config->getBaseUrl().$v['mainid'];
+            $v['text'] = $v['title'];
+            $v['filename'] = $v['title'];
+            $v['resShortId'] = $v['maind'];
+            $v['userAllowedToDL'] = true;
+            $v['dir'] = true;
+            $v['accessRestriction'] = 'public';
+            $v['encodedUri'] = $this->config->getBaseUrl().$v['mainid'];
+            $this->data[$k] = $v;
+        }
+        
     }
     
     private function createTreeData(array $data, string $identifier): array {
@@ -27,9 +49,17 @@ class DisseminationServicesHelper extends ArcheHelper {
         
         $first = array(
             "mainid" => $identifier,
+            "uri" => $identifier,
+            "uri_dl" => $this->config->getBaseUrl().$identifier,
+            "filename" => "main",
+            "resShortId" => $identifier,
             "title" => 'main',
             "text" => 'main',
-            "parentid" => ''
+            "parentid" => '',
+            "userAllowedToDL" => 'true',
+            "dir" => 'true',
+            "accessRestriction" => 'public',
+            "encodedUri" => $this->config->getBaseUrl().$identifier
         );
         
         $new = array();

@@ -87,7 +87,8 @@
             plugins : [ 'checkbox', 'search' ]
         })//treeview before load the data to the ui
         .on("loaded.jstree", function (e, d) {
-            
+            console.log("a loadedben:");
+            console.log(d);
             loadedData = d;
             var userAllowedToDL = false;
             $.each( d.instance._model.data, function( key, value ) {
@@ -178,7 +179,7 @@
         var url = $('#insideUri').val();
         
         if(!getCookie(url)){
-            window.setTimeout( generateCollection('51347'), 5000 );
+            window.setTimeout( generateCollection(url), 5000 );
         }
         
         /**  the collection download input field actions **/

@@ -205,6 +205,7 @@ class AcdhRepoGuiController extends ControllerBase
             '#theme' => 'acdh-repo-ds-dl-collection',
             '#basic' => $view,
             '#extra' => $extra,
+            '#cache' => ['max-age' => 0,], 
             '#attached' => [
                 'library' => [
                     'acdh_repo_gui/repo-collection-dl',
