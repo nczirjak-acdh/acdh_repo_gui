@@ -23,10 +23,9 @@ class DisseminationServicesModel extends ArcheModel {
     public function getViewData(string $identifier = "", string $dissemination = '' ): array {
         
         switch ($dissemination) {
-            case "collection":;
+            case "collection":
                 $this->getCollectionData($identifier);
                 break;
-
             default:
                 break;
         }

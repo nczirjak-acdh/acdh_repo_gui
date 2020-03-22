@@ -6,6 +6,10 @@ namespace Drupal\acdh_repo_gui\Helper;
 use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoDisserv\RepoResource;
 use Drupal\acdh_repo_gui\Helper\ArcheHelper;
+
+use EasyRdf\Graph;
+use EasyRdf\Resource;
+
 /**
  * Description of DisseminationServicesHelper
  *
@@ -14,22 +18,43 @@ use Drupal\acdh_repo_gui\Helper\ArcheHelper;
 class DisseminationServicesHelper extends ArcheHelper {
     
     private $data;
+    private $repoid;
+    private $result = array();
     
     public function createView(array $data = array(), string $dissemination = '', string $identifier = ''): array {
-        $this->data = $data;
         
-        $this->modifyDataStructure();
-      
-        $result = array();
-        $result = $this->createTreeData($this->data, $identifier);
+        $this->repoid = $identifier;
         
-        if(count($result) > 0) {
-            return $result;
+        switch ($dissemination) {
+            case 'collection':
+                $this->data = $data;
+                $this->createCollection();
+                break;
+            case 'turtle_api':
+                $this->result = array($this->turtleDissService($this->repoid));
+                break;
+            default:
+                break;
         }
-        return array();
+        return $this->result;
     }
     
-    private function modifyDataStructure() {
+    
+    /////// Collection data functions Start ///////
+    /**
+     * function for the collection data steps
+     */
+    private function createCollection() {
+        $this->modifyCollectionDataStructure();
+        $this->result = $this->createTreeData($this->data, $this->repoid);
+    }
+    
+    
+    /**
+     * Modify the collection data structure for the tree view
+     * 
+     */
+    private function modifyCollectionDataStructure() {
         foreach($this->data as $k => $v) {
             $v['uri'] = $v['mainid'];
             $v['uri_dl'] = $this->config->getBaseUrl().$v['mainid'];
@@ -52,6 +77,12 @@ class DisseminationServicesHelper extends ArcheHelper {
         
     }
     
+    /**
+     * Creates the tree data for the collection download views
+     * @param array $data
+     * @param string $identifier
+     * @return array
+     */
     private function createTreeData(array $data, string $identifier): array {
         $tree = array();
         
@@ -91,11 +122,45 @@ class DisseminationServicesHelper extends ArcheHelper {
     {
         $tree = array();
         foreach ($parent as $k=>$l){
-        if(isset($list[$l['mainid']])){
-            $l['children'] = $this->convertToTreeById($list, $list[$l['mainid']]);
+            if(isset($list[$l['mainid']])){
+                $l['children'] = $this->convertToTreeById($list, $list[$l['mainid']]);
+            }
+            $tree[] = $l;
+        } 
+        return $tree;
+    }
+    
+    /////// Collection data functions end ///////
+    
+    
+    /**
+      *
+      * Create turtle file from the resource
+      *
+      * @param string $fedoraUrl
+      * @return type
+      */
+    public function turtleDissService(string $repoid)
+    {
+        
+        $result = array();
+        $client = new \GuzzleHttp\Client();
+        $repoid = $this->config->getBaseUrl().$repoid;
+        try {
+            $request = $client->request('GET', $repoid.'/metadata', ['Accept' => ['application/n-triples']]);
+            if ($request->getStatusCode() == 200) {
+                $body = "";
+                $body = $request->getBody()->getContents();
+                if (!empty($body)) {
+                    $graph = new \EasyRdf_Graph();
+                    $graph->parse($body);
+                    return $graph->serialise('turtle');
+                }
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $ex) {
+            return "";
+        } catch (\Exception $ex) {
+            return "";
         }
-        $tree[] = $l;
-    } 
-    return $tree;
     }
 }

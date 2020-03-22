@@ -252,4 +252,33 @@ class GeneralFunctions {
         return $bytes;
     }
     
+    /**
+     * Extend the collection download python script with the url
+     *
+     * @param string $fdUrl
+     * @return string
+     */
+    public function changeCollDLScript(string $repoUrl)
+    {
+        $text = "";
+        try {
+            $fileName = $_SERVER["DOCUMENT_ROOT"].'/sites/default/files/coll_dl_script/collection_download.py';
+            
+            if (!file_exists($fileName)) {
+                return $text;
+            }
+            
+            $text = file_get_contents($fileName);
+            
+            if (strpos($text, 'args = args.parse_args()') !== false) {
+                $text = str_replace("args = args.parse_args()", "args = args.parse_args(['".$repoUrl."', '--recursive'])", $text);
+            }
+            
+            return $text;
+        } catch (\Exception $e) {
+            return;
+        }
+        return $text;
+    }
+    
 }

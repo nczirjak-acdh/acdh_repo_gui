@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoLib\RepoResource;
+use acdhOeaw\acdhRepoLib\RepoDb;
+use acdhOeaw\acdhRepoLib\SearchConfig;
+use acdhOeaw\acdhRepoLib\SearchTerm;
 use Drupal\acdh_repo_gui\Controller\RootViewController as RVC;
 use Drupal\acdh_repo_gui\Controller\DetailViewController as DVC;
 use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
@@ -22,6 +25,7 @@ class AcdhRepoGuiController extends ControllerBase
     private $config;
     private $rootViewController;
     private $detailViewController;
+    private $dissServController;
     private $siteLang;
     private $langConf;
     
@@ -33,6 +37,7 @@ class AcdhRepoGuiController extends ControllerBase
         
         $this->rootViewController = new RVC($this->config);
         $this->detailViewController = new DVC($this->config);
+        $this->dissServController = new DisseminationServicesController($this->config);
         $this->generalFunctions = new GeneralFunctions();
         $this->langConf = $this->config('acdh_repo_gui.settings');
     }
@@ -169,10 +174,33 @@ class AcdhRepoGuiController extends ControllerBase
         
     }
     
-    public function search_view(string $str) {
+    public function search_view(string $data) {
         
-        $this->config->getResourcesBySqlQuery($str, $parameters);
+        //$this->config->getResourcesBySqlQuery($str, $parameters);
+        /*
+        $repo = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
         
+        $config = new SearchConfig();
+       
+        $pdo = new \PDO("pgsql: user=drupal password=123qwe dbname=www-data host=127.0.0.1");
+        
+        $repodb = new acdhOeaw\acdhRepoLib\RepoDb($this->config->getBaseUrl(), $this->config->getSchema(),
+                                $pdo, array());
+        echo "<pre>";
+        var_dump($repodb);
+        echo "</pre>";
+        $config->ftsQuery = 'Wollmilchsau';
+        $results = $this->config->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config);
+        //foreach ($results as $res) {
+            
+       // }
+        
+        
+       echo "<pre>";
+       var_dump($results);
+       echo "</pre>";
+        
+        */
         return [
             '#theme' => 'acdh-repo-gui-search',
             '#result' => "sss",
@@ -186,6 +214,47 @@ class AcdhRepoGuiController extends ControllerBase
     
     
     ////////// DISSEMINATION SERVICES /////////
+    
+    /**
+     * Download Whole Collection python script
+     *
+     * @param string $url
+     * @return Response
+     */
+    public function oeaw_get_collection_dl_script(string $repoid): Response
+    {
+        if(empty($repoid)) {
+            $result = '';
+        }else {
+            $repoid = $this->config->getBaseUrl().$repoid;
+            $result = $this->generalFunctions->changeCollDLScript($repoid);
+        }
+        
+        $response = new Response();
+        $response->setContent($result);
+        $response->headers->set('Content-Type', 'application/x-python-code');
+        $response->headers->set('Content-Disposition', 'attachment; filename=collection_download_script.py');
+        return $response;
+    }
+    
+    /**
+     * This API will generate the turtle file from the resource.
+     *
+     * @param string $identifier - the UUID
+     * @param string $page
+     * @param string $limit
+     */
+    public function oeaw_turtle_api(string $repoid): Response
+    {
+        if (!empty($repoid)) {
+            $result = array();
+            $result = $this->dissServController->generateView($repoid, 'turtle_api');
+            if(count($result) > 0) {
+                return new Response($result[0], 200, ['Content-Type'=> 'text/turtle']);
+            }
+        }
+        return new Response("No data!", 400);
+    }
     
     /**
      * The collection view GUI view with the metadata and the js treeview

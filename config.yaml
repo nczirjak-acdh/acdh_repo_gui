@@ -1,8 +1,8 @@
 dbConnStr:
     # admin connection should grant full data modification rights
-    admin: "pgsql: "
+    admin: "pgsql: user=repo dbname=www-data host=127.0.0.1"
     # guest connection should be read-only
-    guest: "pgsql: "
+    guest: "pgsql: user=guest dbname=www-data host=127.0.0.1"
 storage: 
     dir: /home/www-data/data
     tmpDir: /home/www-data/tmp

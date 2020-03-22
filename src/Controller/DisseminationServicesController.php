@@ -20,7 +20,7 @@ class DisseminationServicesController extends ControllerBase {
     private $extraViewData;
     
     private $disseminations = array(
-        'collection', '3d', 'iiif', 'turtle'
+        'collection', '3d', 'iiif', 'turtle_api'
     );
     
     public function __construct($config) {
@@ -34,10 +34,13 @@ class DisseminationServicesController extends ControllerBase {
             return array();
         }
         $vd = array();
-        $vd = $this->model->getViewData($identifier, $dissemination);
-        if(count((array)$vd) == 0) {
-            return array();
-        } 
+        if($dissemination != 'turtle_api') {
+            $vd = $this->model->getViewData($identifier, $dissemination);
+            if(count((array)$vd) == 0) {
+                return array();
+            }
+        }
+        
         $this->basicViewData = $this->helper->createView($vd, $dissemination, $identifier);
         
         return $this->basicViewData;

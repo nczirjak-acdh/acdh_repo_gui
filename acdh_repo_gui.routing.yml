@@ -37,6 +37,16 @@ repo_complexsearch:
     
 #dissemination services
 
+## the collection download python script
+oeaw_dlc_script:
+    path: '/oeaw_coll_dl_script/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_get_collection_dl_script'
+    requirements:
+        uri: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+        
 oeaw_dl_collection:
     path: '/oeaw_dl_collection/{repoid}'
     defaults:
@@ -85,3 +95,25 @@ oeaw_iiif_viewer:
         _access: 'TRUE'
 
 #arche apis
+oeaw_turtle_api:    
+    path: '/oeaw_turtle_api/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_turtle_api'
+    requirements:
+        data: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+
+
+
+
+
+repo_search:
+  path: '/repo_search/{data}'
+  defaults:
+    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::search_view'
+  requirements:
+    identifier: '^[^\?]*$'
+    _permission: 'access content'
+    _access: 'TRUE' 
