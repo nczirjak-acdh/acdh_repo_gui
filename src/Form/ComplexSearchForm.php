@@ -70,10 +70,10 @@ class ComplexSearchForm extends FormBase
         
         
         /****  Entities By date *****/
-        
+        /*
         $entititesTitle = $this->langConf->get('gui_entities_by_date') ? $this->langConf->get('gui_entities_by_date') :  'Entities by Date';
         $form['datebox']['title'] = [
-            '#markup' => '<h3 class="extra-filter-heading date-filter-heading closed">'.$entititesTitle.'</h3>'
+            '#markup' => '<h3 class="extra-filter-heading date-filter-heading">'.$entititesTitle.'</h3>'
         ];
         
         $form['datebox']['date_start_date'] = [
@@ -93,7 +93,7 @@ class ComplexSearchForm extends FormBase
                 'placeholder' => t('dd/mm/yyyy'),
             )
         ];
-        
+        */
         return $form;
     }
     
@@ -180,16 +180,7 @@ class ComplexSearchForm extends FormBase
             $extras["start_date"] = $startDate;
             $extras["end_date"] = $endDate;
         }
-        error_log("submit form");
-        error_log(print_r($metavalue, true));
-        echo "<pre>";
-        var_dump($metavalue);
-        echo "</pre>";
-
-        die();
-
-
-
+        
         /*
         $metaVal = $this->oeawFunctions->convertSearchString($metavalue, $extras);
         $metaVal = urlencode($metaVal);

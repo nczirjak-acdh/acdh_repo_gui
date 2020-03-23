@@ -79,7 +79,8 @@ class BlocksModel extends ArcheModel {
         try {
             $query = $this->repodb->query("
                 select
-                    count(EXTRACT(YEAR FROM CAST(value AS DATE))), EXTRACT(YEAR FROM CAST(value AS DATE)) as year
+                    count(EXTRACT(YEAR FROM to_date(value,'YYYY'))), 
+                    EXTRACT(YEAR FROM to_date(value,'YYYY')) as year
                 from metadata 
                 where property = 'https://vocabs.acdh.oeaw.ac.at/schema#hasAvailableDate'
                 group by year

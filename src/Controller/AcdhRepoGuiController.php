@@ -9,6 +9,7 @@ use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoLib\RepoResource;
 use acdhOeaw\acdhRepoLib\RepoDb;
 use acdhOeaw\acdhRepoLib\SearchConfig;
+use acdhOeaw\acdhRepoLib\RepoResourceInterface;
 use acdhOeaw\acdhRepoLib\SearchTerm;
 use Drupal\acdh_repo_gui\Controller\RootViewController as RVC;
 use Drupal\acdh_repo_gui\Controller\DetailViewController as DVC;
@@ -147,6 +148,14 @@ class AcdhRepoGuiController extends ControllerBase
      */
     public function repo_detail(string $identifier)
     {   
+        $ajax = false;
+        
+        if (strpos($identifier, '&') !== false) {
+            $identifier = explode('&', $identifier);
+            $identifier = $identifier[0];
+            $ajax = true;
+        }
+        
         $dv = array();
         $identifier = $this->generalFunctions->detailViewUrlDecodeEncode($identifier, 0);
         $dv = $this->detailViewController->generateDetailView($identifier);
@@ -159,8 +168,8 @@ class AcdhRepoGuiController extends ControllerBase
             );
             return array();
         }
-      
-        return [
+        
+        $return = [
             '#theme' => 'acdh-repo-gui-detail',
             '#basic' => $dv->basic,
             '#extra' => $dv->extra,
@@ -171,10 +180,32 @@ class AcdhRepoGuiController extends ControllerBase
                 ]
             ]
         ]; 
+        if($ajax){
+            return new Response(render($return));
+        }
+        return $return;
+        
         
     }
     
     public function search_view(string $data) {
+        
+        $config = new \acdhOeaw\acdhRepoLib\SearchConfig();
+        $config->metadataMode = RepoResourceInterface::META_RESOURCE; 
+        $config->ftsQuery             = 'Wollmilchsau';
+        $config->ftsProperty          = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
+        //$config->metadataMode = RepoResourceInterface::META_NEIGHBORS;  
+        
+        $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml', 'guest');
+        $results = $repodb->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config)->fetchAll();
+        
+        echo "<pre>";
+        var_dump($results);
+        echo "</pre>";
+        
+        
+        //getResourcesBySearchTerms
+        //parsePdoStatement
         
         //$this->config->getResourcesBySqlQuery($str, $parameters);
         /*
@@ -310,8 +341,27 @@ class AcdhRepoGuiController extends ControllerBase
     {
         
     }
-    public function oeaw_3d_viewer(string $repoid) : Response
-    {
+    public function oeaw_3d_viewer(string $repoid) : array
+    {   
+        if (!empty($repoid)) {
+            $result = array();
+            $result = $this->dissServController->generateView($repoid, '3d');
+            if(count($result) > 0 && isset($result['result'])) {
+                return
+                    array(
+                        '#theme' => 'acdh-repo-ds-3d-viewer',
+                        '#ObjectUrl' => $result['result'],
+                        '#basic' => ''
+                    );
+            }
+        }
+        return
+            array(
+                '#theme' => 'acdh-repo-ds-3d-viewer',
+                '#ObjectUrl' => $result['result'],
+                '#basic' => ''
+            );
+        
         
     }
     public function oeaw_iiif_viewer(string $repoid) : Response

@@ -34,10 +34,6 @@ class StartPageLeftBlock extends BlockBase
         $this->RVC = new RootViewController($this->config);
         $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
         $data = $this->RVC->generateRootView('3', '0', 'datedesc');
-       
-        echo "<pre>";
-        var_dump($data[0]->getRepoID());
-        echo "</pre>";
         
         //getRepoID
         return [

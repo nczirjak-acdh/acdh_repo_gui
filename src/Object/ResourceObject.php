@@ -6,6 +6,8 @@ class ResourceObject {
     private $config;
     private $properties;
     private $acdhid;
+    private $repoid;
+    private $repoUrl;
    
     public function __construct(array $data, $config) {
         $this->properties = array();
@@ -106,6 +108,18 @@ class ResourceObject {
     }
     
     /**
+     * Get the full repo url with the identifier for the actual resource
+     * 
+     * @return string
+     */
+    public function getRepoUrl(): string {
+        if(!isset($this->repoid) && empty($this->repoid)){
+            $this->getRepoID();
+        }
+        return $this->config->getBaseUrl().$this->repoid;
+    }
+    
+    /**
      * Get the repo identifier
      * @return string
      */
@@ -113,6 +127,7 @@ class ResourceObject {
         if(isset($this->properties["acdh:hasIdentifier"])){
             foreach($this->properties["acdh:hasIdentifier"] as $v){
                 if(isset($v->id) && !empty($v->id)){
+                    $this->repoid = $v->id;
                     return $v->id;
                 }
             }

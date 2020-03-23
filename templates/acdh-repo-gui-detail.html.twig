@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/browser/core/themes/classy/css/components/messages.css">
-
+{{ result.insideUri }}
 <!--   MAIN DETAIL VIEW -->
     <input type="hidden" id="insideUri" name="insideUri" value="{{ result.insideUri }}">
     <input type="hidden" id="accessRestriction" name="accessRestriction" value="{{ result.accessRestriction }}">
@@ -10,17 +10,17 @@
             <div class="loader"></div>
         </div>
     </div>
-    BREADCRUMB
-    {% if extras['breadcrumb'] %}
-        {% set breadcrumbLength = extras['breadcrumb']|length  %}
-        {% for key, value in extras['breadcrumb'] %}
-            {% if value["rootTitle"] %}
+    
+    {% if extra.breadcrumb %}
+        {% set breadcrumbLength = extra.breadcrumb|length  %}
+        {% for key, value in extra.breadcrumb %}
+            {% if value.parenttitle %}
                 {% if breadcrumbLength > 3 and key > 0 and key < breadcrumbLength - 1 %}
                     {% set breadcrumbTitle = "..." %}
                 {% else %}
-                    {% set breadcrumbTitle = value["rootTitle"]  %}
+                    {% set breadcrumbTitle = value.parenttitle  %}
                 {% endif %} 
-                <a href='/browser/oeaw_detail/{{value["insideUri"]}}' title='{{ value["rootTitle"] }}'>{{  breadcrumbTitle }}</a> 
+                <a href='/browser/oeaw_detail/{{value.parentid}}' title='{{ value.parenttitle }}'>{{  breadcrumbTitle }}</a> 
                 {% if breadcrumbLength -1 >= key %}
                     /  
                 {% endif %}
@@ -28,24 +28,23 @@
         {% endfor %}
     {% endif %}
     
-    NICE URI
     <h3 class="single-res-heading">
             {{ "Overview"|trans }}
         <div class="res-act-button res-act-button-expertview basic">
             <i class="material-icons">&#xE896;</i>
             <span>{{ "Switch to Expert-View"|trans }}</span>
         </div>
-        {% if extras.niceURI %}
-        <div class="res-act-button res-act-button-copy-url" id="res-act-button-copy-url" data-copyuri="{{ extras.niceURI }}">
+        {% if basic.getRepoUrl() %}
+        <div class="res-act-button res-act-button-copy-url" id="res-act-button-copy-url" data-copyuri="{{ basic.getRepoUrl() }}">
             <span id="copy-url-button">
                 <i class="material-icons">&#xE157;</i>
                 {{ "Copy Resource Link"|trans }}
             </span>
             <span id="copyLinkTextfield-wrapper">
-                <span type="text" name="copyLinkInputBtn" id="copyLinkInputBtn" data-copyuri="{{ extras.niceURI }}">
+                <span type="text" name="copyLinkInputBtn" id="copyLinkInputBtn" data-copyuri="{{ basic.getRepoUrl()}}">
                     <i class="material-icons">&#xE14D;</i>
                 </span>
-                <input type="text" name="copyLinkTextfield" id="copyLinkTextfield" value="{{ extras.niceURI }}"/>
+                <input type="text" name="copyLinkTextfield" id="copyLinkTextfield" value="{{ basic.getRepoUrl() }}"/>
             </span>
         </div>
         {% endif %}
@@ -76,7 +75,7 @@
         {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType() } ) }}
     {% endif %}
     
-    <br>
+    <br><br>
     {% if (basic.getData('acdh:hasDescription') or basic.getData('acdh:hasSpatialCoverage') or basic.getData('acdh:hasNote')) %}
         <h3 class="single-res-heading">{{ "Summary"|trans }}</h3>
         
@@ -109,7 +108,7 @@
                 {% endif %}
             </div>
         {% endif %}
-        
+        <br>
         {% if basic.getData('acdh:hasDescription')[0] %}
             <div class="res-property">
                 <i class="material-icons">info_outline</i>
@@ -117,7 +116,7 @@
                 <span class="res-prop-value">{{ basic.getData('acdh:hasDescription')[0].title|nl2br }}</span>
             </div>
         {% endif %}
-        
+        <br>
         {% if result.table['acdh:hasNote'][0] %}
             <div class="res-property">
                 <i class="material-icons">info_outline</i>
@@ -127,7 +126,7 @@
         {% endif %}
     {% endif%}
     
-    
+    <br>
     {% if extra.citeWidgetData %}
         {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-cite-block.html.twig', {'result': extra.citeWidgetData } ) }}
     {% endif%}
@@ -144,5 +143,5 @@
 
        <div id="child-div-content"></div>
    {% endif%}
-
+<br>
 

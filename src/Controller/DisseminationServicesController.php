@@ -34,7 +34,7 @@ class DisseminationServicesController extends ControllerBase {
             return array();
         }
         $vd = array();
-        if($dissemination != 'turtle_api') {
+        if($dissemination == 'collection') {
             $vd = $this->model->getViewData($identifier, $dissemination);
             if(count((array)$vd) == 0) {
                 return array();

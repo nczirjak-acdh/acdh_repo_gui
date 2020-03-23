@@ -19,6 +19,8 @@ class DetailViewController extends ControllerBase {
     private $model;
     private $helper;
     private $basicViewData;
+    private $repoUrl;
+    private $repoId;
     
     public function __construct($config) {
         $this->config = $config;
@@ -33,8 +35,13 @@ class DetailViewController extends ControllerBase {
      * @return type
      */
     public function generateDetailView(string $identifier): object {
+        $this->repoUrl = $identifier;
+        $this->repoid = str_replace($this->config->getBaseUrl(), '', $identifier);
         $dv = array();
-        $dv = $this->model->getViewData($identifier);
+        $dv = $this->model->getViewData($this->repoUrl);
+        
+        $breadcrumb = array();
+        $breadcrumb = $this->model->getBreadCrumbData($this->repoid);
         if(count((array)$dv) == 0) {
             return new \stdClass();
         } 
@@ -53,7 +60,10 @@ class DetailViewController extends ControllerBase {
         $cite = new CH($this->config);
         $this->basicViewData->extra = new \stdClass();
         $this->basicViewData->extra->citeWidgetData = $cite->createCiteThisWidget($this->basicViewData->basic);
-
+        if(count((array)$breadcrumb) > 0) {
+            $this->basicViewData->extra->breadcrumb = $breadcrumb;
+        } 
+        
         return $this->basicViewData;
     }
     

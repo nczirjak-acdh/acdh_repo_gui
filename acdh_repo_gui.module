@@ -55,6 +55,9 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
                     'acdh_repo_gui/repo-collection-dl', //include our custom library for this response
                 ]
             ]
+        ],
+        'acdh-repo-ds-3d-viewer' => [
+            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL]
         ]
     ];
 }
