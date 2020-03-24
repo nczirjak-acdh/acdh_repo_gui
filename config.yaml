@@ -2,7 +2,7 @@ dbConnStr:
     # admin connection should grant full data modification rights
     admin: "pgsql: user=repo dbname=www-data host=127.0.0.1"
     # guest connection should be read-only
-    guest: "pgsql: user=guest dbname=www-data host=127.0.0.1"
+    guest: "pgsql: user=guest dbname=www-data host=postgresql password=g57VOjXVKCsPrEx_6HOD-QXrj8KDaqQI"
 storage: 
     dir: /home/www-data/data
     tmpDir: /home/www-data/tmp
@@ -110,6 +110,7 @@ schema:
         pelagiosUrl: https://pleiades.stoa.org/
         gazetteerUrl: https://gazetteer.dainst.org/
         doiUrl: https://doi.org/
+        lorisUrl: https://loris.acdh.oeaw.ac.at/
     drupalBasicView:
         - https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier
         - https://vocabs.acdh.oeaw.ac.at/schema#hasTitle

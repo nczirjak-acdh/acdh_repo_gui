@@ -280,5 +280,4 @@ class GeneralFunctions {
         }
         return $text;
     }
-    
 }

@@ -59,15 +59,13 @@ class AcdhRepoGuiController extends ControllerBase
         $count = $this->rootViewController->countRoots();
         
         $roots = array();
+        
         $paging = array();
         if((int)$count > 0){
             $roots = $this->rootViewController->generateRootView($limit, $page, $order);
-            $paging['totalResultAmount'] = $count;
-            $paging['currentPage'] = $page+1;
-            $paging['totalPages'] = ceil($count / $limit);
         }
         
-        if(count($roots) <= 0) {
+        if(!isset($roots['data']) || count($roots['data']) <= 0) {
             drupal_set_message(
                 $this->langConf->get('errmsg_no_root_resources') ? $this->langConf->get('errmsg_no_root_resources') : 'You do not have Root resources',
                 'error',
@@ -76,9 +74,13 @@ class AcdhRepoGuiController extends ControllerBase
             return array();
         }
         
+        if( count($roots['pagination']) > 0 ) {
+            $paging = $roots['pagination'][0];
+        }
+       
         return [
             '#theme' => 'acdh-repo-gui-main',
-            '#data' => $roots,
+            '#data' => $roots['data'],
             '#paging' => $paging,
             '#attached' => [
                 'library' => [
@@ -150,7 +152,7 @@ class AcdhRepoGuiController extends ControllerBase
     {   
         $ajax = false;
         
-        if (strpos($identifier, '&') !== false) {
+        if (strpos($identifier, '&ajax') !== false) {
             $identifier = explode('&', $identifier);
             $identifier = $identifier[0];
             $ajax = true;
@@ -195,9 +197,11 @@ class AcdhRepoGuiController extends ControllerBase
         $config->ftsQuery             = 'Wollmilchsau';
         $config->ftsProperty          = 'https://vocabs.acdh.oeaw.ac.at/schema#hasTitle';
         //$config->metadataMode = RepoResourceInterface::META_NEIGHBORS;  
+        //RepoDb::getResourcesBySearchTerms()
         
         $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml', 'guest');
-        $results = $repodb->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config)->fetchAll();
+        
+        //$results = $repodb->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config)->fetchAll();
         
         echo "<pre>";
         var_dump($results);
@@ -374,9 +378,20 @@ class AcdhRepoGuiController extends ControllerBase
     }
     
     
-    public function oeaw_iiif_viewer(string $repoid) : Response
+    /**
+     * Generate loris url based on the repoid and passing it back to the iiif template
+     * 
+     * @param string $repoid -> repoid
+     * @return array
+     */
+    public function oeaw_iiif_viewer(string $repoid) : array
     {
-        
+        //RepoResource->getDissServ()['rawIIIf']->getUrl() -> when it is ready
+        return
+            array(
+                '#theme' => 'acdh-repo-ds-iiif-viewer',
+                '#lorisUrl' => $resData
+            );
     }
     
     

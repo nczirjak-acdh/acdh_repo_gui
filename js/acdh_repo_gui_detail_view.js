@@ -37,9 +37,11 @@
     if(window.location.href.indexOf("/oeaw_detail/") > -1) {
         
         if(window.location.href.indexOf("&page=") > -1) {
+            
             $(".loader-div").show();
             
             let searchParams = new URLSearchParams(window.location.href);
+            
             var urlPage = searchParams.get('page');
             var urlLimit = searchParams.get('limit');
             var urlOrder = searchParams.get('order');
@@ -108,6 +110,7 @@
     * @returns {undefined}
     */
    function getChildData(insideUri, limit, page, orderby) {
+       console.log('/browser/repo_child_api/'+insideUri+'/'+limit+'/'+page+'/'+orderby);
        $.ajax({
            url: '/browser/repo_child_api/'+insideUri+'/'+limit+'/'+page+'/'+orderby,
            data: {'ajaxCall':true},

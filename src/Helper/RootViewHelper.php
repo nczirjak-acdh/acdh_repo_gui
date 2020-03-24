@@ -20,7 +20,6 @@ class RootViewHelper extends ArcheHelper {
     private $lng = "en";
     
     
-            
     public function createView(array $data = array()): array {
         
         $this->formatResultToGui($data);  
