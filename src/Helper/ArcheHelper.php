@@ -17,10 +17,12 @@ abstract class ArcheHelper {
     
     protected $generalFunctions;
     protected $config;
+    protected $repo;
     
     public function __construct() {
         $this->generalFunctions = new GeneralFunctions();
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
+        $this->repo = Repo::factory($this->config);
     }
     
     /**

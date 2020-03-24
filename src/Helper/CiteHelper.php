@@ -17,9 +17,10 @@ class CiteHelper {
     
     private $cite = array();
     private $config;
+    private $repo;
     
-    public function __construct(\acdhOeaw\acdhRepoLib\Repo $config) {
-        $this->config = $config;
+    public function __construct(\acdhOeaw\acdhRepoLib\Repo $repo) {
+        $this->repo = $repo;
     }
     private function getCiteWidgetData(\Drupal\acdh_repo_gui\Object\ResourceObject $data, string $property): string
     {
@@ -141,10 +142,10 @@ class CiteHelper {
 
                 foreach ($acdhURIs as $id) {
                     if(isset($id->value)) {
-                        if (strpos($id->value, $this->config->getSchema()->__get('drupal')->uuidNamespace) !== false) {
+                        if (strpos($id->value, $this->repo->getSchema()->__get('drupal')->uuidNamespace) !== false) {
                             $uuid = $id->value;
                         //if the identifier is the normal acdh identifier then return it
-                        } elseif (strpos($id->value, $this->config->getSchema()->__get('id')) !== false) {
+                        } elseif (strpos($id->value, $this->repo->getSchema()->__get('id')) !== false) {
                             $uuid = $id->value;
                             break;
                         }

@@ -28,7 +28,7 @@ class RootViewHelper extends ArcheHelper {
         }
         
         foreach ($this->data as $k => $v) {
-            $this->rootViewObjectArray[] = new ResourceObject($v, $this->config);
+            $this->rootViewObjectArray[] = new ResourceObject($v, $this->repo);
         }
         
         return $this->rootViewObjectArray;
@@ -45,7 +45,7 @@ class RootViewHelper extends ArcheHelper {
                     $this->data[$k]['acdh:hasIdentifier'] = array(
                         $this->createObj(
                             $v->id, 
-                            $this->config->getSchema()->__get('id'), 
+                            $this->repo->getSchema()->__get('id'), 
                             $v->id, 
                             $v->id
                             )
@@ -54,7 +54,7 @@ class RootViewHelper extends ArcheHelper {
                         $this->data[$k]['acdh:hasTitle'] = array(
                             $this->createObj(
                                 $v->id, 
-                                $this->config->getSchema()->__get('drupal')->vocabsNamespace."hasTitle", 
+                                $this->repo->getSchema()->__get('drupal')->vocabsNamespace."hasTitle", 
                                 $v->title, 
                                 $v->title
                                 )
@@ -64,7 +64,7 @@ class RootViewHelper extends ArcheHelper {
                         $this->data[$k]['acdh:hasAvailableDate'] = array(
                             $this->createObj(
                                 $v->id, 
-                                $this->config->getSchema()->__get('drupal')->vocabsNamespace."hasAvailableDate", 
+                                $this->repo->getSchema()->__get('drupal')->vocabsNamespace."hasAvailableDate", 
                                 $v->avdate, 
                                 $v->avdate
                                 )
@@ -74,7 +74,7 @@ class RootViewHelper extends ArcheHelper {
                         $this->data[$k]['acdh:hasDescription'] = array(
                             $this->createObj(
                                 $v->id, 
-                                $this->config->getSchema()->__get('drupal')->vocabsNamespace."hasDescription", 
+                                $this->repo->getSchema()->__get('drupal')->vocabsNamespace."hasDescription", 
                                 $v->description, 
                                 $v->description
                                 )
@@ -84,7 +84,7 @@ class RootViewHelper extends ArcheHelper {
                         $this->data[$k]['acdh:hasAccessRestriction'] = array(
                             $this->createObj(
                                 $v->id, 
-                                $this->config->getSchema()->__get('drupal')->vocabsNamespace."hasAccessRestriction", 
+                                $this->repo->getSchema()->__get('drupal')->vocabsNamespace."hasAccessRestriction", 
                                 $v->accresres, 
                                 $v->accresres
                                 )
@@ -94,7 +94,7 @@ class RootViewHelper extends ArcheHelper {
                         $this->data[$k]['acdh:hasTitleImage'] = array(
                             $this->createObj(
                                 $v->id, 
-                                $this->config->getSchema()->__get('drupal')->vocabsNamespace."hasTitleImage", 
+                                $this->repo->getSchema()->__get('drupal')->vocabsNamespace."hasTitleImage", 
                                 $v->titleimage, 
                                 $v->titleimage
                                 )

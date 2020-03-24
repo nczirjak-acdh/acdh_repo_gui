@@ -22,10 +22,10 @@ class DetailViewController extends ControllerBase {
     private $repoUrl;
     private $repoId;
     
-    public function __construct($config) {
-        $this->config = $config;
+    public function __construct($repo) {
+        $this->repo = $repo;
         $this->model = new DetailViewModel();
-        $this->helper = new DetailViewHelper($config);
+        $this->helper = new DetailViewHelper($this->config);
     }
     
     /**
@@ -36,7 +36,7 @@ class DetailViewController extends ControllerBase {
      */
     public function generateDetailView(string $identifier): object {
         $this->repoUrl = $identifier;
-        $this->repoid = str_replace($this->config->getBaseUrl(), '', $identifier);
+        $this->repoid = str_replace($this->repo->getBaseUrl(), '', $identifier);
         $dv = array();
         $dv = $this->model->getViewData($this->repoUrl);
         
@@ -44,8 +44,8 @@ class DetailViewController extends ControllerBase {
         $breadcrumb = $this->model->getBreadCrumbData($this->repoid);
         if(count((array)$dv) == 0) {
             return new \stdClass();
-        } 
-       
+        }
+        
         //extend the data object with the shortcuts
         $this->basicViewData = new \stdClass();
         $this->basicViewData->basic = $this->helper->createView($dv);
@@ -57,7 +57,7 @@ class DetailViewController extends ControllerBase {
         }
         
         //get the cite widget data
-        $cite = new CH($this->config);
+        $cite = new CH($this->repo);
         $this->basicViewData->extra = new \stdClass();
         $this->basicViewData->extra->citeWidgetData = $cite->createCiteThisWidget($this->basicViewData->basic);
         if(count((array)$breadcrumb) > 0) {

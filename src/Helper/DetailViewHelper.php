@@ -6,6 +6,7 @@ use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
 use Drupal\acdh_repo_gui\Helper\ConfigConstants as CC;
 use Drupal\acdh_repo_gui\Object\ResourceObject;
 use acdhOeaw\acdhRepoLib\Repo;
+use acdhOeaw\acdhRepoLib\RepoDb;
 use acdhOeaw\acdhRepoDisserv\RepoResource;
 
 use Drupal\acdh_repo_gui\Helper\ArcheHelper;
@@ -33,7 +34,7 @@ class DetailViewHelper extends ArcheHelper {
         if(count((array)$this->data) == 0) {
             return array();
         }
-        $this->detailViewObjectArray[] = new ResourceObject($this->data, $this->config);
+        $this->detailViewObjectArray[] = new ResourceObject($this->data, $this->repo);
         
         return $this->detailViewObjectArray;
     }
@@ -47,18 +48,17 @@ class DetailViewHelper extends ArcheHelper {
     public function getDissServices(string $id): array {
         $result = array();
         //internal id 
-        $rep = new \acdhOeaw\acdhRepoDisserv\RepoResource($this->config->getBaseUrl().$id, $this->config);
-       
+        $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        $repDiss = new \acdhOeaw\arche\disserv\RepoResourceDb($this->repo->getBaseUrl().$id, $repodb);
         try {
             $dissServ = array();
-            $dissServ = $rep->getDissServices();
-            
+            $dissServ = $repDiss->getDissServices();
+            //echo (string)$rep->getDissServices()['thumbnail']->getRequest($rep)->getUri();
             foreach($dissServ as $k => $v) {
-                $result[$k] = (string) $v->getRequest($rep)->getUri();
+                $result[$k] = (string) $v->getRequest($repDiss)->getUri();
             }
             return $result;
         } catch (Exception $ex) {
-
             error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
             return array();
         } catch (\GuzzleHttp\Exception\ServerException $ex) {

@@ -75,7 +75,7 @@
         {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType() } ) }}
     {% endif %}
     
-    <br><br>
+    
     {% if (basic.getData('acdh:hasDescription') or basic.getData('acdh:hasSpatialCoverage') or basic.getData('acdh:hasNote')) %}
         <h3 class="single-res-heading">{{ "Summary"|trans }}</h3>
         
@@ -126,7 +126,6 @@
         {% endif %}
     {% endif%}
     
-    <br>
     {% if extra.citeWidgetData %}
         {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-cite-block.html.twig', {'result': extra.citeWidgetData } ) }}
     {% endif%}

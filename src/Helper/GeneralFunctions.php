@@ -13,11 +13,13 @@ use Drupal\acdh_repo_gui\Helper\ConfigConstants as CC;
 class GeneralFunctions {
     private $langConf;
     private $config;
+    private $repo;
     
     public function __construct()
     {        
         $this->langConf = \Drupal::config('oeaw.settings');
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
+        $this->repo = Repo::factory($this->config);
     }
     
     /**
@@ -69,9 +71,9 @@ class GeneralFunctions {
                 if (strpos($data, '&') !== false) {
                     $pos = strpos($data, '&');
                     $data = substr($data, 0, $pos);
-                    return $this->config->getBaseUrl().$data;
+                    return $this->repo->getBaseUrl().$data;
                 }
-                return $this->config->getBaseUrl().$data;
+                return $this->repo->getBaseUrl().$data;
             }
             
             $data = explode(":", $data);
@@ -90,50 +92,50 @@ class GeneralFunctions {
             
             switch (true) {
                 case strpos($identifier, 'id.acdh.oeaw.ac.at/uuid/') !== false:
-                    $identifier = str_replace('id.acdh.oeaw.ac.at/uuid/', $this->config->getSchema()->__get('drupal')->uuidNamespace, $identifier);
+                    $identifier = str_replace('id.acdh.oeaw.ac.at/uuid/', $this->repo->getSchema()->__get('drupal')->uuidNamespace, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     break;
                 case strpos($identifier, 'id.acdh.oeaw.ac.at/') !== false:
-                    $identifier = str_replace('id.acdh.oeaw.ac.at/', $this->config->getSchema()->__get('drupal')->idNamespace, $identifier);
+                    $identifier = str_replace('id.acdh.oeaw.ac.at/', $this->repo->getSchema()->__get('drupal')->idNamespace, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     break;
                 case strpos($identifier, 'hdl.handle.net') !== false:
-                    $identifier = str_replace('hdl.handle.net/', $this->config->getSchema()->__get('drupal')->epicResolver, $identifier);
+                    $identifier = str_replace('hdl.handle.net/', $this->repo->getSchema()->__get('drupal')->epicResolver, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier, true);
                     break;
                 case strpos($identifier, 'geonames.org') !== false:
-                    $identifier = str_replace('geonames.org/', $this->config->getSchema()->__get('drupal')->geonamesUrl, $identifier);
+                    $identifier = str_replace('geonames.org/', $this->repo->getSchema()->__get('drupal')->geonamesUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'd-nb.info') !== false:
-                    $identifier = str_replace('d-nb.info/', $this->config->getSchema()->__get('drupal')->dnbUrl, $identifier);
+                    $identifier = str_replace('d-nb.info/', $this->repo->getSchema()->__get('drupal')->dnbUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'viaf.org/') !== false:
-                    $identifier = str_replace('viaf.org/', $this->config->getSchema()->__get('drupal')->viafUrl, $identifier);
+                    $identifier = str_replace('viaf.org/', $this->repo->getSchema()->__get('drupal')->viafUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'orcid.org/') !== false:
-                    $identifier = str_replace('orcid.org/', $this->config->getSchema()->__get('drupal')->orcidUrl, $identifier);
+                    $identifier = str_replace('orcid.org/', $this->repo->getSchema()->__get('drupal')->orcidUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'pleiades.stoa.org/') !== false:
-                    $identifier = str_replace('pleiades.stoa.org/',$this->config->getSchema()->__get('drupal')->pelagiosUrl, $identifier);
+                    $identifier = str_replace('pleiades.stoa.org/',$this->repo->getSchema()->__get('drupal')->pelagiosUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'gazetteer.dainst.org/') !== false:
-                    $identifier = str_replace('gazetteer.dainst.org/', $this->config->getSchema()->__get('drupal')->gazetteerUrl, $identifier);
+                    $identifier = str_replace('gazetteer.dainst.org/', $this->repo->getSchema()->__get('drupal')->gazetteerUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;
                 case strpos($identifier, 'doi.org/') !== false:
-                    $identifier = str_replace('doi.org/', $this->config->getSchema()->__get('drupal')->doiUrl, $identifier);
+                    $identifier = str_replace('doi.org/', $this->repo->getSchema()->__get('drupal')->doiUrl, $identifier);
                     $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
                     $identifier = $this->specialIdentifierToUUID($identifier);
                     break;

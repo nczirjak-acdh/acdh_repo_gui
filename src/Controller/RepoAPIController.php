@@ -22,17 +22,19 @@ use GuzzleHttp\Client;
 class RepoApiController extends ControllerBase {
     
     private $config;
+    private $repo;
     
     public function __construct() {
         
         $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/';
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
+        $this->repo = Repo::factory($this->config);
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language'])  : $this->siteLang = "en";
         
         //$this->rootViewController = new RVC($this->config);
         //$this->detailViewController = new DVC($this->config);
         //$this->generalFunctions = new GeneralFunctions();
-        $this->langConf = $this->config('acdh_repo_gui.settings');
+        //$this->langConf = $this->config('acdh_repo_gui.settings');
     }
     
     /**
@@ -44,8 +46,8 @@ class RepoApiController extends ControllerBase {
      */
     public function repo_child_api(string $identifier, string $limit, string $page, string $order): Response
     {
-        if (strpos($identifier, $this->config->getSchema()->__get('drupal')->uuidNamespace) === false) {
-            $identifier = $this->config->getSchema()->__get('drupal')->uuidNamespace.$identifier;
+        if (strpos($identifier, $this->repo->getSchema()->__get('drupal')->uuidNamespace) === false) {
+            $identifier = $this->repo->getSchema()->__get('drupal')->uuidNamespace.$identifier;
         }
         
         $childArray = $this->oeawFunctions->generateChildAPIData($identifier, (int)$limit, (int)$page, $order);

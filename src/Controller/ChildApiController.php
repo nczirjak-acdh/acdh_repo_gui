@@ -28,11 +28,13 @@ class ChildApiController extends ControllerBase {
     private $data;
     private $childNum;
     private $pagingHelper;
+    private $repo;
     
     public function __construct() {
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
+        $this->repo = Repo::factory($this->config);
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language'])  : $this->siteLang = "en";
-        $this->langConf = $this->config('acdh_repo_gui.settings');
+        //$this->langConf = $this->config('acdh_repo_gui.settings');
         $this->model = new ChildApiModel();
         $this->helper = new ChildApiHelper();
         $this->data = new \stdClass();
@@ -50,9 +52,9 @@ class ChildApiController extends ControllerBase {
     {
         
         if (preg_match("/^\d+$/", $identifier)) {
-            $identifier = $this->config->getBaseUrl().$identifier;
-        } else if (strpos($identifier, $this->config->getSchema()->__get('drupal')->uuidNamespace) === false) {
-            $identifier = $this->config->getSchema()->__get('drupal')->uuidNamespace.$identifier;
+            $identifier = $this->repo->getBaseUrl().$identifier;
+        } else if (strpos($identifier, $this->repo->getSchema()->__get('drupal')->uuidNamespace) === false) {
+            $identifier = $this->repo->getSchema()->__get('drupal')->uuidNamespace.$identifier;
         }
         
         $this->childNum = $this->model->getCount($identifier);

@@ -27,7 +27,7 @@ class DisseminationServicesHelper extends ArcheHelper {
     public function createView(array $data = array(), string $dissemination = '', string $identifier = ''): array {
         
         $this->repoid = $identifier;
-        $this->repoUrl = $this->config->getBaseUrl().$this->repoid;
+        $this->repoUrl = $this->repo->getBaseUrl().$this->repoid;
         
         switch ($dissemination) {
             case 'collection':
@@ -128,7 +128,7 @@ class DisseminationServicesHelper extends ArcheHelper {
     private function modifyCollectionDataStructure() {
         foreach($this->data as $k => $v) {
             $v['uri'] = $v['mainid'];
-            $v['uri_dl'] = $this->config->getBaseUrl().$v['mainid'];
+            $v['uri_dl'] = $this->repo->getBaseUrl().$v['mainid'];
             $v['text'] = $v['title'];
             $v['resShortId'] = $v['mainid'];
             if($v['accesres'] == 'public'){
@@ -142,7 +142,7 @@ class DisseminationServicesHelper extends ArcheHelper {
                 $v['dir'] = false;
             }
             $v['accessRestriction'] = $v['accesres'];
-            $v['encodedUri'] = $this->config->getBaseUrl().$v['mainid'];
+            $v['encodedUri'] = $this->repo->getBaseUrl().$v['mainid'];
             $this->data[$k] = $v;
         }
         
@@ -160,7 +160,7 @@ class DisseminationServicesHelper extends ArcheHelper {
         $first = array(
             "mainid" => $identifier,
             "uri" => $identifier,
-            "uri_dl" => $this->config->getBaseUrl().$identifier,
+            "uri_dl" => $this->repo->getBaseUrl().$identifier,
             "filename" => "main",
             "resShortId" => $identifier,
             "title" => 'main',
@@ -169,7 +169,7 @@ class DisseminationServicesHelper extends ArcheHelper {
             "userAllowedToDL" => true,
             "dir" => true,
             "accessRestriction" => 'public',
-            "encodedUri" => $this->config->getBaseUrl().$identifier
+            "encodedUri" => $this->repo->getBaseUrl().$identifier
         );
         
         $new = array();

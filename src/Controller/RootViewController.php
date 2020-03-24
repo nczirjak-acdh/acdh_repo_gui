@@ -15,14 +15,15 @@ use Drupal\acdh_repo_gui\Helper\PagingHelper;
  */
 class RootViewController  extends ControllerBase {
     private $config;
+    private $repo;
     private $model;
     private $helper;
     private $siteLang;
     private $numberOfRoots = 0;
     private $pagingHelper;
     
-    public function __construct($config) {
-        $this->config = $config;
+    public function __construct($repo) {
+        $this->repo = $repo;
         $this->model = new RootViewModel();        
         $this->helper = new RootViewHelper();
         $this->pagingHelper = new PagingHelper();

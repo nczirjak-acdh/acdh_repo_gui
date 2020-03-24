@@ -24,6 +24,8 @@ use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
 class AcdhRepoGuiController extends ControllerBase 
 {    
     private $config;
+    private $repo;
+    private $repoDb;
     private $rootViewController;
     private $detailViewController;
     private $dissServController;
@@ -31,16 +33,16 @@ class AcdhRepoGuiController extends ControllerBase
     private $langConf;
     
     public function __construct() {
+        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
+        $this->repo = Repo::factory($this->config);
         
-        $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/';
-        $this->config = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
         (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language'])  : $this->siteLang = "en";
         
-        $this->rootViewController = new RVC($this->config);
-        $this->detailViewController = new DVC($this->config);
-        $this->dissServController = new DisseminationServicesController($this->config);
+        $this->rootViewController = new RVC($this->repo);
+        $this->detailViewController = new DVC($this->repo);
+        $this->dissServController = new DisseminationServicesController($this->repo);
         $this->generalFunctions = new GeneralFunctions();
-        $this->langConf = $this->config('acdh_repo_gui.settings');
+        //$this->langConf = $this->config('acdh_repo_gui.settings');
     }
     
     /**
@@ -201,7 +203,7 @@ class AcdhRepoGuiController extends ControllerBase
         
         $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml', 'guest');
         
-        //$results = $repodb->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config)->fetchAll();
+        $results = $repodb->getPdoStatementBySearchTerms([new SearchTerm('https://vocabs.acdh.oeaw.ac.at/schema#hasTitle', 'Wollmilchsau', '@@')], $config)->fetchAll();
         
         echo "<pre>";
         var_dump($results);
@@ -330,7 +332,7 @@ class AcdhRepoGuiController extends ControllerBase
         if (empty($repoid)) {
             $errorMSG = t('Missing').': Identifier';
         } else {
-            $DSC = new DisseminationServicesController($this->config);
+            $DSC = new DisseminationServicesController($this->repo);
             $result = $DSC->generateView($repoid, 'collection');
         }
         
@@ -350,7 +352,7 @@ class AcdhRepoGuiController extends ControllerBase
     {   
         $basic = array();
         if (!empty($repoid)) {
-            $repoUrl = $this->config->getBaseUrl().$repoid;
+            $repoUrl = $this->repo->getBaseUrl().$repoid;
             $result = array();
             $result = $this->dissServController->generateView($repoid, '3d');
             $basic = $this->detailViewController->generateObjDataForDissService($repoUrl);

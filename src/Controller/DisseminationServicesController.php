@@ -14,6 +14,7 @@ use Drupal\acdh_repo_gui\Helper\DisseminationServicesHelper;
 class DisseminationServicesController extends ControllerBase {
     
     private $config;
+    private $repo;
     private $model;
     private $helper;
     private $basicViewData;
@@ -23,10 +24,10 @@ class DisseminationServicesController extends ControllerBase {
         'collection', '3d', 'iiif', 'turtle_api'
     );
     
-    public function __construct($config) {
-        $this->config = $config;
+    public function __construct($repo) {
+        $this->repo = $repo;
         $this->model = new DisseminationServicesModel();
-        $this->helper = new DisseminationServicesHelper($config);
+        $this->helper = new DisseminationServicesHelper($this->repo);
     }
     
     public function generateView(string $identifier, string $dissemination): array {
