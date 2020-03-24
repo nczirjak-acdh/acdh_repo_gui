@@ -70,7 +70,8 @@ class DetailViewController extends ControllerBase {
     /**
      * 
      * generate the basic metadata for the root resource/collection in the dissemination services view
-     * @param string $identifier
+     * 
+     * @param string $identifier -> full repoUrl
      * @return object
      */
     public function generateObjDataForDissService(string $identifier): object {

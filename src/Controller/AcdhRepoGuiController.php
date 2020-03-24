@@ -295,9 +295,8 @@ class AcdhRepoGuiController extends ControllerBase
      */
     public function oeaw_dl_collection_view(string $repoid) {
         $view = array();
-        //$DSC = new DisseminationServicesController($this->config);
         $repoid = $this->generalFunctions->detailViewUrlDecodeEncode($repoid, 0);
-        //$view = $DSC->generateView($repoid, 'collection');
+        
         $extra['metadata'] = $this->detailViewController->generateObjDataForDissService($repoid);
         $extra['repoid'] = $repoid;
         
@@ -337,21 +336,27 @@ class AcdhRepoGuiController extends ControllerBase
         return $response;
     }
     
-    public function oeaw_dl_collection_binaries(string $repoid) : Response
-    {
-        
-    }
+    /**
+     * Display the 3d object (nxs, ply) inside a js viewer
+     * 
+     * @param string $repoid -> repoid only
+     * @return array
+     */
     public function oeaw_3d_viewer(string $repoid) : array
     {   
+        $basic = array();
         if (!empty($repoid)) {
+            $repoUrl = $this->config->getBaseUrl().$repoid;
             $result = array();
             $result = $this->dissServController->generateView($repoid, '3d');
+            $basic = $this->detailViewController->generateObjDataForDissService($repoUrl);
+        
             if(count($result) > 0 && isset($result['result'])) {
                 return
                     array(
                         '#theme' => 'acdh-repo-ds-3d-viewer',
                         '#ObjectUrl' => $result['result'],
-                        '#basic' => ''
+                        '#basic' => $basic
                     );
             }
         }
@@ -359,11 +364,16 @@ class AcdhRepoGuiController extends ControllerBase
             array(
                 '#theme' => 'acdh-repo-ds-3d-viewer',
                 '#ObjectUrl' => $result['result'],
-                '#basic' => ''
+                '#basic' => $basic
             );
-        
+    }
+    
+    public function oeaw_dl_collection_binaries(string $repoid) : Response
+    {
         
     }
+    
+    
     public function oeaw_iiif_viewer(string $repoid) : Response
     {
         

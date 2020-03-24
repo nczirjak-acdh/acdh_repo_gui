@@ -23,14 +23,14 @@
     <script type="text/javascript" src="/browser/modules/custom/acdh_repo_gui/js/3d/init.js"></script>
 
     <div>
-        {%  if basic['insideUri'] %}
+        {%  if basic.getRepoId() %}
             <div>
-                <a href="/browser/oeaw_detail/{{ basic['insideUri'] }}"><span>{{ "Back to the resource"|trans }}</span></a>
+                <a href="/browser/oeaw_detail/{{ basic.getRepoId() }}"><span>{{ "Back to the resource"|trans }}</span></a>
                 <br/><br/>
             </div>
         {% endif %}    
-        {%  if basic['title'] %}
-            <h2>{{ basic['title'] }} </h2>
+        {%  if basic.getTitle() %}
+            <h2>{{ basic.getTitle() }} </h2>
         {% endif %}
         
     </div>
