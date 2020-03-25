@@ -39,32 +39,6 @@ class DetailViewHelper extends ArcheHelper {
         return $this->detailViewObjectArray;
     }
   
-    /**
-     * Get the dissemination services
-     * 
-     * @param string $id
-     * @return array
-     */
-    public function getDissServices(string $id): array {
-        $result = array();
-        //internal id 
-        $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
-        $repDiss = new \acdhOeaw\arche\disserv\RepoResourceDb($this->repo->getBaseUrl().$id, $repodb);
-        try {
-            $dissServ = array();
-            $dissServ = $repDiss->getDissServices();
-            //echo (string)$rep->getDissServices()['thumbnail']->getRequest($rep)->getUri();
-            foreach($dissServ as $k => $v) {
-                $result[$k] = (string) $v->getRequest($repDiss)->getUri();
-            }
-            return $result;
-        } catch (Exception $ex) {
-            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
-            return array();
-        } catch (\GuzzleHttp\Exception\ServerException $ex) {
-            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
-            return array();
-        }
-    }
+   
     
 }

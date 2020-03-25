@@ -72,7 +72,7 @@
    
     <!-- DISSEMINATION BLOCK -->
     {% if dissemination %}
-        {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType() } ) }}
+        {{ include('/modules/custom/acdh_repo_gui/templates/acdh-repo-gui-detail-dissemination-block.html.twig', {'result': dissemination, 'acdhType':  basic.getAcdhType(), 'repoid': basic.getRepoId() } ) }}
     {% endif %}
     
     

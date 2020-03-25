@@ -87,7 +87,6 @@
             plugins : [ 'checkbox', 'search' ]
         })//treeview before load the data to the ui
         .on("loaded.jstree", function (e, d) {
-            console.log(d);
             loadedData = d;
             var userAllowedToDL = false;
             $.each( d.instance._model.data, function( key, value ) {
@@ -161,8 +160,6 @@
     }
 
     $(document).ready(function() {
-        
-        console.log("itt");
         $('#selected_files_size_div').hide();
         $('#success_login_msg').hide();
         $('#error_login_msg').hide();
@@ -198,7 +195,6 @@
             
             if(data.selected.length == 1) {
                 //if we have a directory then do not open the fedora url
-                console.log(data.node.original);
                 if(data.node.original.dir === false){
                     let id = data.instance.get_node(data.selected[0]).id;
                     //check the permissions for the file download

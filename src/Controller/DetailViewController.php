@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\acdh_repo_gui\Model\DetailViewModel;
 use Drupal\acdh_repo_gui\Helper\DetailViewHelper;
 use Drupal\acdh_repo_gui\Helper\CiteHelper as CH;
+use Drupal\acdh_repo_gui\Helper\GeneralFunctions as GF;
 
 
 /**
@@ -21,11 +22,14 @@ class DetailViewController extends ControllerBase {
     private $basicViewData;
     private $repoUrl;
     private $repoId;
+    private $generalFunctions;
     
     public function __construct($repo) {
         $this->repo = $repo;
         $this->model = new DetailViewModel();
         $this->helper = new DetailViewHelper($this->config);
+        $this->generalFunctions = new GF();
+        
     }
     
     /**
@@ -53,7 +57,7 @@ class DetailViewController extends ControllerBase {
         
         // check the dissemination services
         if(isset($dv[0]->id) && !is_null($dv[0]->id)) {
-            $this->basicViewData->dissemination = $this->helper->getDissServices($dv[0]->id);
+            $this->basicViewData->dissemination = $this->generalFunctions->getDissServices($dv[0]->id);
         }
         
         //get the cite widget data

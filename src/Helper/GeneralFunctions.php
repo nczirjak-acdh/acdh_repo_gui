@@ -264,13 +264,28 @@ class GeneralFunctions {
     {
         $text = "";
         try {
-            $fileName = $_SERVER["DOCUMENT_ROOT"].'/sites/default/files/coll_dl_script/collection_download.py';
+            $fileName = $_SERVER["DOCUMENT_ROOT"].'/sites/default/files/coll_dl_script/collection_download_repo.py';
             
             if (!file_exists($fileName)) {
                 return $text;
             }
-            
+         
             $text = file_get_contents($fileName);
+            
+            if (strpos($text, '{ingest.location}') !== false) {
+                 $text = str_replace("{ingest.location}", $this->repo->getSchema()->ingest->location, $text);
+            }
+            
+            if (strpos($text, '{fileName}') !== false) {
+                 $text = str_replace("{fileName}", $this->repo->getSchema()->fileName, $text);
+            }
+            
+            if (strpos($text, '{parent}') !== false) {
+                 $text = str_replace("{parent}", $this->repo->getSchema()->parent, $text);
+            }
+            if (strpos($text, '{metadataReadMode}') !== false) {
+                 $text = str_replace("{metadataReadMode}", 'X-METADATA-READ-MODE', $text);
+            }
             
             if (strpos($text, 'args = args.parse_args()') !== false) {
                 $text = str_replace("args = args.parse_args()", "args = args.parse_args(['".$repoUrl."', '--recursive'])", $text);
@@ -281,5 +296,32 @@ class GeneralFunctions {
             return;
         }
         return $text;
+    }
+    
+     /**
+     * Get the dissemination services
+     * 
+     * @param string $id
+     * @return array
+     */
+    public function getDissServices(string $id): array {
+        $result = array();
+        //internal id 
+        $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($this->config);
+        $repDiss = new \acdhOeaw\arche\disserv\RepoResourceDb($this->repo->getBaseUrl().$id, $repodb);
+        try {
+            $dissServ = array();
+            $dissServ = $repDiss->getDissServices();
+            foreach($dissServ as $k => $v) {
+                $result[$k] = (string) $v->getRequest($repDiss)->getUri();
+            }
+            return $result;
+        } catch (Exception $ex) {
+            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
+            return array();
+        } catch (\GuzzleHttp\Exception\ServerException $ex) {
+            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
+            return array();
+        }
     }
 }

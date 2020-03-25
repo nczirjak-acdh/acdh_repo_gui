@@ -12,16 +12,15 @@
             {% endfor %} 
 
             <div class="res-act-button">
-                <a href="/browser/oeaw_turtle_api/{{ result.insideUri }}" class="dissServAhref" >
+                <a href="/browser/oeaw_turtle_api/{{ repoid }}" class="dissServAhref" >
                     <span>Turtle File</span>
                 </a>        
             </div>
 
-                {% if acdhType|lower == "collection" %}
-                {% set fedoraUrl = result.getFedoraUri %}
-                {% if fedoraUrl %}
+            {% if acdhType|lower == "collection" %}
+                {% if repoid %}
                     <div class="res-act-button">
-                        <a href="/browser/oeaw_coll_dl_script/{{ fedoraUrl|replace({'https://': ""}) }}" class="dissServAhref" >
+                        <a href="/browser/oeaw_coll_dl_script/{{ repoid }}" class="dissServAhref" >
                             <span>Collection Download Script</span>
                         </a>
                     </div>

@@ -6,6 +6,7 @@ namespace Drupal\acdh_repo_gui\Helper;
 use acdhOeaw\acdhRepoLib\Repo;
 use acdhOeaw\acdhRepoDisserv\RepoResource;
 use Drupal\acdh_repo_gui\Helper\ArcheHelper;
+use Drupal\acdh_repo_gui\Helper\GeneralFunctions;
 
 use EasyRdf\Graph;
 use EasyRdf\Resource;
@@ -22,12 +23,14 @@ class DisseminationServicesHelper extends ArcheHelper {
     private $repoUrl;
     private $result = array();    
     private $dataFor3dObj = array();    
+    
 
 
     public function createView(array $data = array(), string $dissemination = '', string $identifier = ''): array {
         
         $this->repoid = $identifier;
         $this->repoUrl = $this->repo->getBaseUrl().$this->repoid;
+       
         
         switch ($dissemination) {
             case 'collection':
@@ -39,10 +42,20 @@ class DisseminationServicesHelper extends ArcheHelper {
                 break;
             case '3d':
                 $this->result = $this->threeDDissService();
+                break;
+            case 'iiif':
+                $this->result = $this->getLorisUrl();
+                break;
             default:
                 break;
         }
         return $this->result;
+    }
+    
+    private function getLorisUrl() {
+        
+        //$this->generalFunctions->getDissServices($this->repoid);
+        return array();
     }
     
     private function threeDDissService() {

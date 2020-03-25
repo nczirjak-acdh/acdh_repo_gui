@@ -263,7 +263,7 @@ class AcdhRepoGuiController extends ControllerBase
         if(empty($repoid)) {
             $result = '';
         }else {
-            $repoid = $this->config->getBaseUrl().$repoid;
+            $repoid = $this->repo->getBaseUrl().$repoid;
             $result = $this->generalFunctions->changeCollDLScript($repoid);
         }
         
@@ -389,10 +389,20 @@ class AcdhRepoGuiController extends ControllerBase
     public function oeaw_iiif_viewer(string $repoid) : array
     {
         //RepoResource->getDissServ()['rawIIIf']->getUrl() -> when it is ready
+        $basic = array();
+        $lorisUrl = '';
+        
+         $repoUrl = $this->repo->getBaseUrl().$repoid;
+        $result = array();
+        $result = $this->dissServController->generateView($repoid, 'iiif');
+        $basic = $this->detailViewController->generateObjDataForDissService($repoUrl);
+        
         return
             array(
                 '#theme' => 'acdh-repo-ds-iiif-viewer',
-                '#lorisUrl' => $resData
+                '#basic' => $basic,
+                '#lorisUrl' => $lorisUrl,
+                
             );
     }
     
