@@ -1,5 +1,5 @@
 rest:
-    urlBase: http://127.0.0.1
+    urlBase: http://127.0.0.1:8080
     pathBase: /api/
     verifyCert: false
     headers:
