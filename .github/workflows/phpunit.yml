@@ -88,6 +88,9 @@ jobs:
         #echo "simple phpunit version"
         #phpunit --version
        
+       echo "PING API SERVER"
+       ping http://127.0.0.1/api
+       
         echo "run test"
         XDEBUG_MODE=coverage ./drupal/web/modules/arche-gui/vendor/bin/phpunit   
         #XDEBUG_MODE=coverage ./drupal/vendor/phpunit/phpunit/phpunit --coverage-clover ./build/logs/clover.xml --configuration ./drupal/web/modules/arche-gui/phpunit.xml            
@@ -119,5 +122,6 @@ jobs:
         #composer fund
         export COVERALLS_RUN_LOCALLY=1
         export COVERALLS_REPO_TOKEN=${{ secrets.coverallsLocalToken }}
-        composer require php-coveralls/php-coveralls --with-all-dependencies
+        #composer require php-coveralls/php-coveralls --with-all-dependencies
+        composer require -W php-coveralls/php-coveralls
         php vendor/bin/php-coveralls -v    
