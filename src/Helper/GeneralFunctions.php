@@ -2,55 +2,22 @@
 
 namespace Drupal\acdh_repo_gui\Helper;
 
-use acdhOeaw\acdhRepoLib\Repo;
-use Drupal\acdh_repo_gui\Helper\ConfigConstants as CC;
+use acdhOeaw\arche\lib\Repo;
 
 /**
  * Description of GeneralFunctions
  *
  * @author nczirjak
  */
-class GeneralFunctions {
-    private $langConf;
+class GeneralFunctions
+{
     private $config;
     private $repo;
     
-    public function __construct()
-    {        
-        $this->langConf = \Drupal::config('oeaw.settings');
-        $this->config = $_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml';
-        $this->repo = Repo::factory($this->config);
-    }
-    
-    /**
-     *
-     * Check the data array for the PID, identifier or uuid identifier
-     *
-     * @param array $data
-     * @return string
-     */
-    public function createDetailViewUrl(array $data): string
+    public function __construct($cfg = null)
     {
-        //check the PID
-        if (isset($data['pid']) && !empty($data['pid'])) {
-            if (strpos($data['pid'], RC::get('epicResolver')) !== false) {
-                return $data['pid'];
-            }
-        }
-        
-        if (isset($data['identifier'])) {
-            //if we dont have pid then check the identifiers
-            $idArr = explode(",", $data['identifier']);
-            $uuid = "";
-            foreach ($idArr as $id) {
-                //the id contains the acdh uuid
-                if (strpos($id, RC::get('fedoraUuidNamespace')) !== false) {
-                    return $id;
-                }
-            }
-        }
-        
-        return "";
+        ($cfg && is_string($cfg)) ?  $this->config = $cfg : $this->config = \Drupal::service('extension.list.module')->getPath('acdh_repo_gui').'/config/config.yaml';
+        $this->repo = \acdhOeaw\arche\lib\Repo::factory($this->config);
     }
     
     /**
@@ -63,7 +30,9 @@ class GeneralFunctions {
     */
     public function detailViewUrlDecodeEncode(string $data, int $code = 0): string
     {
-        if (empty($data)) { return ""; }
+        if (empty($data)) {
+            return "";
+        }
       
         if ($code == 0) {
             //if we have the repo id then we need to add the repo baseurl
@@ -81,7 +50,6 @@ class GeneralFunctions {
 
             foreach ($data as $ra) {
                 if (strpos($ra, '&') !== false) {
-                    
                     $pos = strpos($ra, '&');
                     $ra = substr($ra, 0, $pos);
                     $identifier .= $ra."/";
@@ -92,52 +60,34 @@ class GeneralFunctions {
             
             switch (true) {
                 case strpos($identifier, 'id.acdh.oeaw.ac.at/uuid/') !== false:
-                    $identifier = str_replace('id.acdh.oeaw.ac.at/uuid/', $this->repo->getSchema()->__get('drupal')->uuidNamespace, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
+                    $identifier = $this->replaceIdString($identifier, 'id.acdh.oeaw.ac.at/uuid/', $this->repo->getSchema()->namespaces->id.'uuid/');
                     break;
                 case strpos($identifier, 'id.acdh.oeaw.ac.at/') !== false:
-                    $identifier = str_replace('id.acdh.oeaw.ac.at/', $this->repo->getSchema()->__get('drupal')->idNamespace, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
+                    $identifier = $this->replaceIdString($identifier, 'id.acdh.oeaw.ac.at/', $this->repo->getSchema()->namespaces->id);
                     break;
                 case strpos($identifier, 'hdl.handle.net') !== false:
-                    $identifier = str_replace('hdl.handle.net/', $this->repo->getSchema()->__get('drupal')->epicResolver, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier, true);
+                    $identifier = $this->replaceIdString($identifier, 'hdl.handle.net/', 'http://hdl.handle.net/', true);
                     break;
                 case strpos($identifier, 'geonames.org') !== false:
-                    $identifier = str_replace('geonames.org/', $this->repo->getSchema()->__get('drupal')->geonamesUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'geonames.org/', 'https://www.geonames.org/', true);
                     break;
                 case strpos($identifier, 'd-nb.info') !== false:
-                    $identifier = str_replace('d-nb.info/', $this->repo->getSchema()->__get('drupal')->dnbUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'd-nb.info/', 'http://d-nb.info/', true);
                     break;
                 case strpos($identifier, 'viaf.org/') !== false:
-                    $identifier = str_replace('viaf.org/', $this->repo->getSchema()->__get('drupal')->viafUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'viaf.org/', 'http://viaf.org/', true);
                     break;
                 case strpos($identifier, 'orcid.org/') !== false:
-                    $identifier = str_replace('orcid.org/', $this->repo->getSchema()->__get('drupal')->orcidUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'orcid.org/', 'https://orcid.org/', true);
                     break;
                 case strpos($identifier, 'pleiades.stoa.org/') !== false:
-                    $identifier = str_replace('pleiades.stoa.org/',$this->repo->getSchema()->__get('drupal')->pelagiosUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'pleiades.stoa.org/', 'https://pleiades.stoa.org/', true);
                     break;
                 case strpos($identifier, 'gazetteer.dainst.org/') !== false:
-                    $identifier = str_replace('gazetteer.dainst.org/', $this->repo->getSchema()->__get('drupal')->gazetteerUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'gazetteer.dainst.org/', 'https://gazetteer.dainst.org/', true);
                     break;
                 case strpos($identifier, 'doi.org/') !== false:
-                    $identifier = str_replace('doi.org/', $this->repo->getSchema()->__get('drupal')->doiUrl, $identifier);
-                    $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
-                    $identifier = $this->specialIdentifierToUUID($identifier);
+                    $identifier = $this->replaceIdString($identifier, 'doi.org/', 'https://doi.org/', true);
                     break;
             }
             return $identifier;
@@ -146,6 +96,8 @@ class GeneralFunctions {
         if ($code == 1) {
             if (strpos($data, 'hdl.handle.net') !== false) {
                 $data = str_replace("http://", "", $data);
+            } elseif (strpos($data, $this->repo->getBaseUrl()) !== false) {
+                $data = str_replace($this->repo->getBaseUrl(), "", $data);
             } elseif (strpos($data, 'https') !== false) {
                 $data = str_replace("https://", "", $data);
             } else {
@@ -157,41 +109,6 @@ class GeneralFunctions {
     
     
     /**
-     *
-     * create prefix from string based on the  prefixes
-     *
-     * @param string $string
-     * @return string
-     */
-    public static function createPrefixesFromString(string $string): string
-    {
-        if (empty($string)) {
-            return false;
-        }
-        $result = array();
-        $endValue = explode('/', $string);
-        $endValue = end($endValue);
-        
-        if (strpos($endValue, '#') !== false) {
-            $endValue = explode('#', $string);
-            $endValue = end($endValue);
-        }
-        
-        $newString = array();
-        $newString = explode($endValue, $string);
-        $newString = $newString[0];
-        
-        if (!empty(CC::$prefixesToChange[$newString])) {
-            $result = CC::$prefixesToChange[$newString].':'.$endValue;
-        } else {
-            $result = $string;
-        }
-        return $result;
-    }
-    
-    /**
-     * NOT CHANGED YET
-     *
      * This function is get the acdh identifier by the PID, because all of the functions
      * are using the identifier and not the pid :)
      *
@@ -201,127 +118,225 @@ class GeneralFunctions {
     private function specialIdentifierToUUID(string $identifier, bool $pid = false): string
     {
         $return = "";
-        $oeawStorage = new OeawStorage();
+        $model = new \Drupal\acdh_repo_gui\Model\GeneralFunctionsModel();
         
         try {
-            if ($pid === true) {
-                $idsByPid = $oeawStorage->getACDHIdByPid($identifier);
-            } else {
-                $idsByPid = $oeawStorage->getUUIDBySpecialIdentifier($identifier);
-            }
-        } catch (Exception $ex) {
-            drupal_set_message($ex->getMessage(), 'error');
+            $idsByPid = $model->getViewData($identifier);
+        } catch (\Exception $ex) {
+            \Drupal::messenger()->addError($ex->getMessage());
             return "";
         } catch (\InvalidArgumentException $ex) {
-            drupal_set_message($ex->getMessage(), 'error');
+            \Drupal::messenger()->addError($ex->getMessage());
             return "";
         }
-        
+
         if (count($idsByPid) > 0) {
             foreach ($idsByPid as $d) {
-                if (strpos((string)$d['id'], RC::get('fedoraIdNamespace')) !== false) {
-                    $return = $d['id'];
-                    break;
-                }
+                $return = $this->repo->getBaseUrl().$d->id;
             }
         }
         return $return;
     }
     
+    
     /**
+    * Get the dissemination services
     *
-    * Create nice format from file sizes
-    *
-    * @param type $bytes
-    * @return string
+    * @param string $id
+    * @return array
     */
-    public function formatSizeUnits(string $bytes): string
+    public function getDissServices(string $id): array
     {
-        if ($bytes >= 1073741824) {
-            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-        } elseif ($bytes >= 1048576) {
-            $bytes = number_format($bytes / 1048576, 2) . ' MB';
-        } elseif ($bytes >= 1024) {
-            $bytes = number_format($bytes / 1024, 2) . ' KB';
-        } elseif ($bytes > 1) {
-            $bytes = $bytes . ' bytes';
-        } elseif ($bytes == 1) {
-            $bytes = $bytes . ' byte';
-        } else {
-            $bytes = '0 bytes';
-        }
-
-        return $bytes;
-    }
-    
-    /**
-     * Extend the collection download python script with the url
-     *
-     * @param string $fdUrl
-     * @return string
-     */
-    public function changeCollDLScript(string $repoUrl)
-    {
-        $text = "";
-        try {
-            $fileName = $_SERVER["DOCUMENT_ROOT"].'/sites/default/files/coll_dl_script/collection_download_repo.py';
-            
-            if (!file_exists($fileName)) {
-                return $text;
-            }
-         
-            $text = file_get_contents($fileName);
-            
-            if (strpos($text, '{ingest.location}') !== false) {
-                 $text = str_replace("{ingest.location}", $this->repo->getSchema()->ingest->location, $text);
-            }
-            
-            if (strpos($text, '{fileName}') !== false) {
-                 $text = str_replace("{fileName}", $this->repo->getSchema()->fileName, $text);
-            }
-            
-            if (strpos($text, '{parent}') !== false) {
-                 $text = str_replace("{parent}", $this->repo->getSchema()->parent, $text);
-            }
-            if (strpos($text, '{metadataReadMode}') !== false) {
-                 $text = str_replace("{metadataReadMode}", 'X-METADATA-READ-MODE', $text);
-            }
-            
-            if (strpos($text, 'args = args.parse_args()') !== false) {
-                $text = str_replace("args = args.parse_args()", "args = args.parse_args(['".$repoUrl."', '--recursive'])", $text);
-            }
-            
-            return $text;
-        } catch (\Exception $e) {
-            return;
-        }
-        return $text;
-    }
-    
-     /**
-     * Get the dissemination services
-     * 
-     * @param string $id
-     * @return array
-     */
-    public function getDissServices(string $id): array {
         $result = array();
-        //internal id 
-        $repodb = \acdhOeaw\acdhRepoLib\RepoDb::factory($this->config);
-        $repDiss = new \acdhOeaw\arche\disserv\RepoResourceDb($this->repo->getBaseUrl().$id, $repodb);
+        //internal id
+        $repodb = \acdhOeaw\arche\lib\RepoDb::factory($this->config);
+        $repDiss = new \acdhOeaw\arche\lib\disserv\RepoResourceDb($this->repo->getBaseUrl().$id, $repodb);
         try {
             $dissServ = array();
             $dissServ = $repDiss->getDissServices();
-            foreach($dissServ as $k => $v) {
-                $result[$k] = (string) $v->getRequest($repDiss)->getUri();
+            $shown = [];
+            foreach ($dissServ as $k => $v) {
+                //we need to remove the gui from the diss serv list because we are on the gui
+                if (strtolower($k) != 'gui') {
+                    $hash = spl_object_hash($v);
+                    if (!isset($shown[$hash])) {
+                        try {
+                            //if the dissemination services has a title then i will use it, if not then the hasReturnType as a label
+                            if ($v->getGraph()->get($this->repo->getSchema()->label)->__toString()) {
+                                $k = $v->getGraph()->get($this->repo->getSchema()->label)->__toString();
+                            }
+                            $result[$k]['uri'] = (string) $v->getRequest($repDiss)->getUri();
+                            $result[$k]['title'] = (string) $k;
+                            //if we have a description then we will use it
+                            if ($v->getGraph()->get($this->repo->getSchema()->__get('namespaces')->ontology.'hasDescription')->__toString()) {
+                                $result[$k]['description'] = $v->getGraph()->get($this->repo->getSchema()->__get('namespaces')->ontology.'hasDescription')->__toString();
+                            }
+                            $shown[$hash] = true;
+                        } catch (\Exception $ex) {
+                            error_log(print_r($ex->getMessage(), true));
+                            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
+                        }
+                    }
+                }
             }
             return $result;
-        } catch (Exception $ex) {
-            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
+        } catch (\Exception $ex) {
             return array();
         } catch (\GuzzleHttp\Exception\ServerException $ex) {
-            error_log("DetailViewhelper-getDissServices: ".$ex->getMessage());
+            return array();
+        } catch (\acdhOeaw\arche\lib\exception\RepoLibException $ex) {
             return array();
         }
+    }
+    
+    /**
+     * Handle the default shibboleth user for the federated login
+     *
+     * @return void
+     */
+    public function handleShibbolethUser(string $eppn = "", string $email = ""): void
+    {
+        $userEmail = "";
+        if ($this->checkEmail($eppn)) {
+            $shib = user_load_by_mail($eppn);
+            $userEmail = $eppn;
+        } elseif ($this->checkEmail($email)) {
+            $shib = user_load_by_mail($email);
+            $userEmail = $email;
+        } else {
+            $shib = user_load_by_name('shibboleth');
+        }
+       
+        //if we dont have it then we will create it
+        if ($shib === false) {
+            $this->createShibbolethUser($userEmail);
+        } elseif ($shib->id() != 0) {
+            $this->loadTheUserData($shib);
+        }
+    }
+    
+    /**
+     * Load the user from the drupal db
+     * @param object $shib
+     * @return void
+     */
+    private function loadTheUserData(object &$shib): void
+    {
+        $user = \Drupal\User\Entity\User::load($shib->id());
+        $user->activate();
+        user_login_finalize($user);
+    }
+    
+    /**
+     * create the shibboleth users drupal user
+     * @param string $email
+     * @return void
+     */
+    private function createShibbolethUser(string $email = ""): void
+    {
+        $this->checkShibbolethGroup();
+        $user = \Drupal\user\Entity\User::create();
+        // Mandatory.
+        (!empty($email) ? $user->setPassword($this->createShibbiolethUserPwd(9)) : $user->setPassword($this->repo->getSchema()->__get('drupal')->shibbolethPwd));
+        $user->enforceIsNew();
+        (!empty($email) ? $user->setEmail($email) : $user->setEmail('sh_guest@acdh.oeaw.ac.at'));
+        (!empty($email) ? $user->setUsername($email) : $user->setUsername('shibboleth'));
+        $user->addRole('shibboleth');
+        $user->activate();
+        $user->save();
+        (!empty($email) ? $shib = user_load_by_name($email) : $shib = user_load_by_name('shibboleth'));
+        user_login_finalize($user);
+    }
+    
+    /**
+     * check the string for email address
+     * @param string $str
+     * @return bool
+     */
+    private function checkEmail(string $str): bool
+    {
+        if (strpos($str, '@') !== false) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Generate a new custom password for the new shibboleth drupal user
+     * @param int $length
+     * @return string
+     */
+    private function createShibbiolethUserPwd(int $length): string
+    {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return substr(str_shuffle($chars), 0, $length);
+    }
+    
+    /**
+     * Return the json decoded string
+     * @param string $json
+     * @return array
+     */
+    public function jsonDecodeData(string $json): array
+    {
+        return (json_decode($json, true)) ? json_decode($json, true) : array();
+    }
+
+    /**
+     * Check the shibboleth user role exists or not
+     * @return void
+     */
+    private function checkShibbolethGroup(): void
+    {
+        $roles = \Drupal\user\Entity\Role::loadMultiple();
+        if (!array_key_exists('shibboleth', $roles)) {
+            $this->createShobbolethGroup();
+        }
+    }
+    
+    /**
+     * Create the shibboleth user role
+     * @return void
+     */
+    private function createShobbolethGroup(): void
+    {
+        $role = \Drupal\user\Entity\Role::create(array('id' => 'shibboleth', 'label' => 'Shibboleth'));
+        $role->save();
+    }
+    
+    public function getRepoIdFromApiUrl(string $apiUrl): string
+    {
+        if (strpos($apiUrl, $this->repo->getBaseUrl()) !== false) {
+            return str_replace($this->repo->getBaseUrl(), '', $apiUrl);
+        }
+        return '';
+    }
+    
+    public function initClarinVcrUrl(): string
+    {
+        $yaml = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($this->config));
+        if (isset($yaml['clarinVcrUrl'])) {
+            return $yaml['clarinVcrUrl'];
+        }
+        return "";
+    }
+
+    /**
+     * Format the URL identifier to SQL QUERY acceptable format (adding http/https)
+     * And if it is a special identifier then we query the acdh identifier
+     * @param string $identifier
+     * @param string $prop
+     * @param string $httpProp
+     * @param bool $specialId
+     * @return string
+     */
+    private function replaceIdString(string $identifier, string $prop, string $httpProp, bool $specialId = false): string
+    {
+        $identifier = str_replace($prop, $httpProp, $identifier);
+        $identifier = (substr($identifier, -1) == "/") ? substr_replace($identifier, "", -1) : $identifier;
+        if ($specialId) {
+            return $this->specialIdentifierToUUID($identifier, true);
+        }
+        return $identifier;
     }
 }

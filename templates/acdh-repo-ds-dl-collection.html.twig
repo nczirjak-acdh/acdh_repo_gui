@@ -2,27 +2,20 @@
 {% set properties = {
     'acdh:isPartOf': {
         'icon': 'device_hub',
-        'label': 'Part Of',
-        'url_only': false, 
-        'repoid': true
+        'label': 'Part Of'
     },
     'acdh:hasLicense': {
 	'icon': 'copyright',
-        'label': 'License',
-        'url_only': false,
-        'repoid': true
+        'label': 'License'
     },
     'acdh:hasNumberOfItems': {
         'icon': 'attachment',
-        'label': 'Number of files',
-        'url_only': false,
-        'repoid': true
+        'label': 'Number of files'
     },
     'acdh:hasBinarySize': {
         'icon': 'attachment',
         'label': 'Summary Size',
-        'url_only': false,
-        'isbinary': 'binary'
+        'type': 'binary'
     }
 }
 %}
@@ -72,13 +65,13 @@
         }
         
     </style>
-    <!--
+    
     <div id="loader-div">
         <div class="loader-bg">
             <div class="loader"></div>
         </div>
     </div>
-   -->
+   
     <div>
         
         {%  if extra.metadata.getRepoId() %}
@@ -94,7 +87,7 @@
         
     </div>
     
-    <input type="hidden" id="insideUri" name="insideUri" value="{{ extra.metadata.getRepoId() }}">
+    <input type="hidden" id="repoid" name="repoid" value="{{ extra.metadata.getRepoId() }}">
     <input type="hidden" id="estDLTime" name="estDLTime" value="{{ extra.estDLTime }}">
     
     <div id="content_collection">
@@ -113,11 +106,10 @@
            
             {% for key, value in properties %}
                 {% if extra.metadata.getData(key) %}
-                     {{ include('/modules/custom/acdh_repo_gui/templates/helper-displayField.html.twig', {'data': extra.metadata.getData(key), 'icon': value.icon, 'label':  value.label, 'url_only': value.url_only, 'dateformat': value.dateformat, 'isbinary': value.isbinary, 'repoid': value.repoid } ) }}
+                     {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', {'data': extra.metadata.getData(key), 'icon': value.icon, 'label':  value.label, 'type': value.type, 'dateformat': value.dateformat, 'delimiter': value.delimiter } ) }}
                 {% endif%}
-            {% endfor %}    
-                
-           
+            {% endfor %}
+            
             {% if resourceData['metadata'].data.estDLTime %}                
             <div class="res-property">
                 <i class="material-icons">&#xE54E;</i>
@@ -130,8 +122,8 @@
             
             <div>
                 <br>
-                {{ "By downloading you agree to the"|trans }} <a href='https://arche.acdh.oeaw.ac.at/browser/terms-of-use'>Terms of Use</a>, 
-                {{ "which includes compliance with the licenses accompanying every Resource and adhering to the"|trans }} <a href='http://www.allea.org/wp-content/uploads/2017/03/ALLEA-European-Code-of-Conduct-for-Research-Integrity-2017-1.pdf'>European Code of Conduct for Research Integrity</a>.
+                {{ "By downloading you agree to the"|trans }} <a href='https://arche.acdh.oeaw.ac.at/browser/terms-of-use'>{{ "Terms of Use"|trans }}</a>  
+                {{ "which includes compliance with the licenses accompanying every Resource and adhering to the"|trans }} <a href='http://www.allea.org/wp-content/uploads/2017/03/ALLEA-European-Code-of-Conduct-for-Research-Integrity-2017-1.pdf'>{{ "European Code of Conduct for Research Integrity"|trans }}</a>.
             </div>
             
             <div id="collection_dl_info">

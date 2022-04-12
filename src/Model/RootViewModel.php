@@ -3,89 +3,104 @@
 namespace Drupal\acdh_repo_gui\Model;
 
 use Drupal\acdh_repo_gui\Model\ArcheModel;
+
 /**
  * Description of RootModel
  *
  * @author nczirjak
  */
-class RootViewModel extends ArcheModel {
-    
-    private $repodb;
+class RootViewModel extends ArcheModel
+{
+    protected $repodb;
     private $sqlResult;
+    protected $siteLang = 'en';
     
-    public function __construct() {
-        //set up the DB connections
-        \Drupal\Core\Database\Database::setActiveConnection('repo');
-        $this->repodb = \Drupal\Core\Database\Database::getConnection('repo');
+    public function __construct()
+    {
+        parent::__construct();
+        (isset($_SESSION['language'])) ? $this->siteLang = strtolower($_SESSION['language']) : $this->siteLang = "en";
     }
-    
-    /**
-     * The ordering for the root sql
-     * 
-     * @param type $order
-     * @return string
-     */
-    private function ordering($order = "datedesc"): string {
-        
+
+    private function initPaging(int $limit, int $page, string $order)
+    {
+        $this->limit = $limit;
+        ($page == 0 || $page == 1) ? $this->offset = 0 : $this->offset = $limit * ($page - 1);
+
         switch ($order) {
             case 'dateasc':
-                $order = "avdate asc";
+                $this->order = "avdate asc";
                 break;
             case 'datedesc':
-                $order = "avdate desc";
+                $this->order = "avdate desc";
                 break;
             case 'titleasc':
-                $order = "title asc";
+                $this->order = "title asc";
                 break;
             case 'titledesc':
-                $order = "title desc";
+                $this->order = "title desc";
                 break;
             default:
-                $order = "avdate desc";
+                $this->order = "avdate desc";
         }
-        return $order;
     }
-        
+
     /**
      * get the root views data
-     * 
+     *
      * @return array
      */
-    public function getViewData(string $limit = "10", string $page = "0", string $order = "datedesc"): array {
-        
-        if($page > 0) {
-            $page = $limit * $page;
-        }
-        $order = $this->ordering($order);
+    public function getViewData(int $limit = 10, int $page = 0, string $order = "datedesc"): array
+    {
+        $this->initPaging($limit, $page, $order);
+
         try {
-            
-            $query = $this->repodb->query("SELECT * FROM public.root_views_func() order by ".$order." limit ".$limit." offset ".$page.";");
+            $this->setSqlTimeout();
+            $query = $this->repodb->query(
+                "SELECT 
+                    id, title, avdate, string_agg(DISTINCT description, '.') as description, acdhid
+                from gui.root_views_func( :lang ) 
+                where title is not null
+                group by id, title, avdate, acdhid
+                order by " . $this->order . " limit " . $this->limit . " offset " . $this->offset . "
+                 ; ",
+                array(
+                        ':lang' => $this->siteLang
+                    )
+            );
+
             $this->sqlResult = $query->fetchAll();
+
             $this->changeBackDBConnection();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             return array();
         } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             return array();
         }
         return $this->sqlResult;
     }
-    
+
     /**
      * Count the actual root resources
      * @return int
      */
-    public function countRoots(): int {
+    public function countRoots(): int
+    {
         $result = array();
         try {
-            $query = $this->repodb->query("select count(*) from public.root_views_func();");
+            $this->setSqlTimeout();
+            $query = $this->repodb->query("select id from gui.count_root_views_func();  ");
             $this->sqlResult = $query->fetch();
             $this->changeBackDBConnection();
-            if(isset($this->sqlResult->count)) {
-                return $this->sqlResult->count;
-            }    
-        } catch (Exception $ex) {
+            if (isset($this->sqlResult->id)) {
+                return (int) $this->sqlResult->id;
+            }
+        } catch (\Exception $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             return 0;
         } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             return 0;
         }
         return 0;

@@ -7,33 +7,35 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\acdh_repo_gui\Model\BlocksModel;
 use Drupal\acdh_repo_gui\Helper\FormHelper;
 
-
 class ComplexSearchForm extends FormBase
 {
-    private $langConf;
     private $model;
     private $helper;
     private $entityData = array();
     private $yearsData = array();
+    private $categoryData = array();
+    private $lastModifyDateTime;
+    private $reCache= false;
+    private $searchStr = "";
+
     /**
      * Set up necessary properties
      */
     public function __construct()
     {
-        $this->langConf = $this->config('arche.settings');
         $this->model = new BlocksModel();
         $this->helper = new FormHelper();
     }
-    
+
     /**
      * Set up the form id
      * @return string
      */
     public function getFormId()
     {
-        return "repo_search_form";
+        return "sks_form";
     }
-    
+
     /**
      * Build form
      * @param array $form
@@ -42,63 +44,54 @@ class ComplexSearchForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        
+        $form['#prefix'] = '<div class="sks-form">';
         //the input field
         $this->createSearchInput($form);
+
+        $binarySearch["title"] = 'Search in payload?';
+        $binarySearch["type"] = "payloadSearch";
+        $binarySearch["fields"] = array('Yes' => 'Yes');
+        $this->createBox($form, $binarySearch);
+        $this->lastModifyDateTime = $this->getCacheLastModificationDate();
+        //do we need to recache the data?
+        $this->reCache = $this->helper->checkCacheData('entity', $this->lastModifyDateTime);
+  
+        //get the data based on the recache and type value
+        $this->entityData = $this->getBoxData('entity');
         
-        //the entity box section
-        $this->entityData = $this->model->getViewData("entity");
-        if(count($this->entityData) > 0) {
-            $this->entityData = $this->helper->formatEntityYears($this->entityData);
-            $resData["title"] = $this->langConf->get('gui_type_of_entity') ? $this->langConf->get('gui_type_of_entity') : 'Type of Entity' ;
+        if (count((array)$this->entityData) > 0) {
+            $this->entityData = $this->helper->formatEntityTypes($this->entityData);
+            $resData["title"] = t('Type of Entity')->__toString();
             $resData["type"] = "searchbox_types";
             $resData["fields"] = $this->entityData['fields'];
             $this->createBox($form, $resData);
-            
         }
         
+        $this->categoryData = $this->getBoxData('category');
+        if (count((array)$this->categoryData) > 0) {
+            $this->categoryData = $this->helper->formatCategoryTypes($this->categoryData);
+            $resData["title"] = t('Category')->__toString();
+            $resData["type"] = "searchbox_category";
+            $resData["fields"] = $this->categoryData['fields'];
+            $this->createBox($form, $resData);
+        }
+
         //the years box section
-        $this->yearsData = $this->model->getViewData("years");
-        if(count($this->yearsData) > 0) {
+        $this->yearsData = $this->getBoxData('years');
+        if (count((array)$this->yearsData) > 0) {
             $this->yearsData = $this->helper->formatEntityYears($this->yearsData, true);
-            $dateData["title"] = $this->langConf->get('gui_entities_by_year') ? $this->langConf->get('gui_entities_by_year') :  'Entities by Year';
+            $dateData["title"] = t('Entities by Year')->__toString();
             $dateData["type"] = "datebox_years";
             $dateData["fields"] = $this->yearsData['fields'];
             $this->createBox($form, $dateData);
-            
         }
-        
-        
-        /****  Entities By date *****/
-        /*
-        $entititesTitle = $this->langConf->get('gui_entities_by_date') ? $this->langConf->get('gui_entities_by_date') :  'Entities by Date';
-        $form['datebox']['title'] = [
-            '#markup' => '<h3 class="extra-filter-heading date-filter-heading">'.$entititesTitle.'</h3>'
-        ];
-        
-        $form['datebox']['date_start_date'] = [
-          '#type' => 'textfield',
-          '#title' => $this->t('From'),
-            '#attributes' => array(
-                'class' => array('date-filter start-date-filter'),
-                'placeholder' => t('dd/mm/yyyy'),
-            )
-        ];
-        
-        $form['datebox']['date_end_date'] = [
-          '#type' => 'textfield',
-          '#title' => $this->t('Until'),
-            '#attributes' => array(
-                'class' => array('date-filter end-date-filter'),
-                'placeholder' => t('dd/mm/yyyy'),
-            )
-        ];
-        */
+      
+        $this->addSubmitButton($form);
+       
+        $form['#suffix'] = '</div>';
         return $form;
     }
-    
-   
-    
+
     /**
      * Validate the form
      *
@@ -107,37 +100,27 @@ class ComplexSearchForm extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
-        error_log("validate form");
         $metavalue = $form_state->getValue('metavalue');
-        error_log("metavalue");
-        error_log(print_r($metavalue, true));
-        
         $types = $form_state->getValue('searchbox_types');
-        error_log("types");
-        error_log(print_r($types, true));
-        if (count($types) > 0) {
+        if (count((array)$types) > 0) {
             $types = array_filter($types);
         }
-        
-        $formats = $form_state->getValue('searchbox_format');
-        
-        error_log("formats");
-        error_log(print_r($formats, true));
-        if (count($formats) > 0) {
-            $formats = array_filter($formats);
+
+        $categories = $form_state->getValue('searchbox_category');
+        if (count((array)$categories) > 0) {
+            $categories = array_filter($categories);
         }
         
-        if ((empty($metavalue)) && (count($types) <= 0)
-                &&  (count($formats) <= 0)  && empty($form_state->getValue('date_start_date'))
-                && empty($form_state->getValue('date_end_date'))) {
-            $form_state->setErrorByName('metavalue', $this->t('Missing').': '.t('Keyword').' '.t('or').' '.t('Type'));
+        $years = $form_state->getValue('datebox_years');
+        if (count((array)$years) > 0) {
+            $years = array_filter($years);
         }
-        
-        
-        
-            
+
+        if ((empty($metavalue)) && (count((array)$types) <= 0) && (count((array)$categories) <= 0) && (count((array)$years) <= 0)) {
+            $form_state->setErrorByName('metavalue', $this->t('Missing')->__toString() . ': ' . t('Keyword')->__toString() . ' ' . t('or')->__toString() . ' ' . t('Type')->__toString());
+        }
     }
-    
+
     /**
      * Form submit
      *
@@ -146,51 +129,100 @@ class ComplexSearchForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        
-        $metavalue = $form_state->getValue('metavalue');
-        
-        $extras = array();
-        
-        $types = $form_state->getValue('searchbox_types');
-        $types = array_filter($types);
-        
-        $formats = $form_state->getValue('searchbox_format');
-        $formats = array_filter($formats);
-        
-        $startDate = $form_state->getValue('date_start_date');
-        $endDate = $form_state->getValue('date_end_date');
-                
-        if (count($types) > 0) {
-            foreach ($types as $t) {
-                $extras["type"][] = strtolower($t);
-            }
-        }
-        
-        if (count($formats) > 0) {
-            foreach ($formats as $f) {
-                $extras["formats"][] = strtolower($f);
-            }
-        }
-        
-        if (!empty($startDate) && !empty($endDate)) {
-            $startDate = str_replace('/', '-', $startDate);
-            $startDate = date("Ymd", strtotime($startDate));
-            $endDate = str_replace('/', '-', $endDate);
-            $endDate = date("Ymd", strtotime($endDate));
-            $extras["start_date"] = $startDate;
-            $extras["end_date"] = $endDate;
-        }
-        
-        /*
-        $metaVal = $this->oeawFunctions->convertSearchString($metavalue, $extras);
-        $metaVal = urlencode($metaVal);
-        $form_state->setRedirect('oeaw_complexsearch', ["metavalue" => $metaVal, "limit" => 10,  "page" => 1]);
-         * 
-         */
+        $this->generateMetaUrlString($form_state);
+        $form_state->setRedirect(
+            'repo_search_v2',
+            [
+                    "metavalue" => $this->searchStr,
+                    "order" => "datedesc",
+                    "limit" => "10",
+                    "page" => "1"]
+        );
     }
     
+    private function generateMetaUrlString(FormStateInterface &$form_state)
+    {
+        $this->addSearchText($form_state->getValue('metavalue'));
+        $this->addSearchType($form_state->getValue('searchbox_types'));
+        $this->addSearchCategory($form_state->getValue('searchbox_category'));
+        $this->addSearchDate($form_state->getValue('datebox_years'));
+        $this->addPayload($form_state->getValue('payloadSearch'));
+    }
     
-     /**
+    private function addPayload($payload = "")
+    {
+        if (is_array($payload)) {
+            $this->searchStr .= "&payload=false";
+            foreach ($payload as $p) {
+                if (strtolower($p) === "yes") {
+                    $this->searchStr .= "&payload=true";
+                }
+            }
+        }
+    }
+    
+    private function addSearchText($text = "")
+    {
+        if (!empty($text)) {
+            $this->searchStr .= "words=".str_replace(" ", "+", $text);
+        }
+    }
+    
+    private function addSearchType(mixed $types = "")
+    {
+        $types = array_filter($types);
+        if (count((array)$types) > 0) {
+            if (!empty($this->searchStr)) {
+                $this->searchStr .= "&";
+            }
+            $this->searchStr .= "type=";
+            $lastElement = end($types);
+            foreach ($types as $t) {
+                $this->searchStr .=$t;
+                if ($t !== $lastElement) {
+                    $this->searchStr .= '+';
+                }
+            }
+        }
+    }
+    
+    private function addSearchCategory(mixed $category = "")
+    {
+        $category = array_filter($category);
+        if (count((array)$category) > 0) {
+            if (!empty($this->searchStr)) {
+                $this->searchStr .= "&";
+            }
+            $this->searchStr .= "category=";
+            $lastElement = end($category);
+            foreach ($category as $c) {
+                $this->searchStr .=$c;
+                if ($c !== $lastElement) {
+                    $this->searchStr .= '+';
+                }
+            }
+        }
+    }
+    
+    private function addSearchDate(mixed $years)
+    {
+        $years = array_filter($years);
+        if (count((array)$years) > 0) {
+            if (!empty($this->searchStr)) {
+                $this->searchStr .= "&";
+            }
+            $this->searchStr .= "years=";
+            $lastElement = end($years);
+            foreach ($years as $y) {
+                $this->searchStr .= $y;
+                if ($y !== $lastElement) {
+                    $this->searchStr .= '+';
+                }
+            }
+        }
+    }
+    
+    /**
      * Create the checkbox templates
      *
      * @param array $form
@@ -203,12 +235,18 @@ class ComplexSearchForm extends FormBase
             '#title' => $this->t($data["title"]),
             '#attributes' => array(
                 'class' => array('checkbox-custom', $data["type"]),
+                'id' => 'my-checkbox'
             ),
             '#options' =>
-                $data["fields"]
+            $data["fields"],
+            '#options_attributes' => array(
+                
+            )
         );
     }
     
+   
+
     /**
      * this function creates the search input field
      *
@@ -222,17 +260,40 @@ class ComplexSearchForm extends FormBase
             '#attributes' => array(
                 'class' => array('form-control')
             ),
-            #'#required' => TRUE,
+                #'#required' => TRUE,
         );
-        
+    }
+    
+    private function addSubmitButton(array &$form)
+    {
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = array(
             '#type' => 'submit',
-            '#value' => $this->langConf->get('gui_apply_selected_filters') ? $this->langConf->get('gui_apply_selected_filters') : 'Apply the selected search filters',
+            '#value' => t('Apply the selected search filters'),
             '#attributes' => array(
                 'class' => array('complexsearch-btn')
             ),
             '#button_type' => 'primary',
         );
+    }
+
+    private function getCacheLastModificationDate(): string
+    {
+        $data = $this->model->lastModificationDate();
+        return (isset($data->max)) ? (string)$data->max : "";
+    }
+
+    private function getBoxData(string $type): array
+    {
+        //we need to get the DB
+        if ($this->reCache) {
+            $data = $this->model->getViewData($type);
+            $time = strtotime($this->lastModifyDateTime);
+            \Drupal::cache()->set('archeCacheSF_'.$type, $data, \Drupal\Core\Cache\CacheBackendInterface::CACHE_PERMANENT, array(date('Y-m-d H:i:s', $time)));
+            return $data;
+        } else {
+            return (isset(\Drupal::cache()->get('archeCacheSF_'.$type)->data)) ? \Drupal::cache()->get('archeCacheSF_'.$type)->data : array();
+        }
+        return array();
     }
 }

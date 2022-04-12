@@ -7,14 +7,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Url;
-use acdhOeaw\acdhRepoLib\Repo;
+use acdhOeaw\arche\lib\Repo;
 
 class AcdhRepoGuiConfigEventSubscriber implements EventSubscriberInterface
 {
-     public function initRepoGuiCfg(GetResponseEvent $event)
+    public function initRepoGuiCfg(GetResponseEvent $event)
     {
-        global $archeCfg;
-        $archeCfg = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/custom/acdh_repo_gui/config.yaml');
+        //global $archeCfg;
+        //$archeCfg = Repo::factory($_SERVER["DOCUMENT_ROOT"].'/modules/contrib/arche-gui/config/config.yaml');
     }
     
     /**

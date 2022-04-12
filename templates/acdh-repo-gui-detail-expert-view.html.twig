@@ -1,35 +1,73 @@
+{% set properties = {
+    'acdh:hasBinarySize': {
+        'type': 'binary'
+    },
+    'acdh:hasCreatedDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasCreatedStartDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasCreatedEndDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasAvailableDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasStartDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasEndDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasCoverageStartDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    },
+    'acdh:hasCoverageEndDate': {
+        'type': 'date',
+        'dateformat': 'Y-m-d'
+    }
+}
+%}
+
 <!-- expert view -->
 <div class="single-res-overview single-res-overview-expert">
-    TOOLTIPs
+    
      {% if  basic.getTitle() %}
         <div class="res-property">
             <span class="res-title">
                 {%  if basic.getAccessRestriction() %}
-                    {{ include('/modules/custom/acdh_repo_gui/templates/helper-accesResFormat.html.twig', {'data': basic.getAccessRestriction() } ) }}
+                    {{ include('/modules/contrib/arche-gui/templates/helper-accesResFormat.html.twig', {'data': basic.getAccessRestriction() } ) }}
                 {% endif%}
                 {{  basic.getTitle() }}
             </span>
         </div>
     {% endif%} 
 
-    <table class="display table table-striped" cellspacing="0" width="100%">
-        <thead>
+    <table class="table table-striped" id='expertTable' cellspacing="0" width="100%" style="display: block;">
+        <thead style="width: 100%; display: table;">
             <tr>
                 <th>Property</th>
                 <th>Value(s)</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="width: inherit; display: table; word-break: break-all;">
             {% for key,value in basic.getExpertTableData() %}
-
                 <tr>
                     <td width='40%'>
-                        {% if extras["tooltip"][key]['desc'] %}
+                        {% if extra.getData(key).description %}
                             <div style='float:left;'>
                                 {{ key }}
                             </div>
                             <div style='float:right;'>
-                                <a  class="" data-toggle="tooltip" data-placement="right" data-html="true" title="{{ extras["tooltip"][key]['desc'] }}">
+                                <a  class="" data-toggle="tooltip" data-placement="right" data-html="true" title="{{ extra.getData(key).description}}">
                                     <i class="material-icons" style='font-size:17px; color: #88DBDF;'>&#xE88F;</i>
                                 </a>
                             </div>
@@ -38,49 +76,18 @@
                         {% endif %}
                     </td>
                     <td width='60%'>
-                        
-                            {% if ( (key == "acdh:hasDescription") or (key == "acdh:hasAppliedMethodDescription") or (key == "acdh:hasTechnicalInfo") )  %}
-                                {% set separator = '<br/>' %}
-                            {% else  %}
-                                {% set separator = ', ' %}
-                            {% endif %}
-                            
-                            {% for val in value %}
-                                {% if (loop.length <= loop.index)  %}
-                                    {% set separator = '' %}
-                                {% endif %}
-
-                                {% if ( (key == "acdh:hasPid") 
-                                    or (key == "acdh:hasLifeCycleStatus") or (key == "acdh:hasCategory")  )  %}
-                                    <a href="{{ val.uri }}">{{ val.uri }}</a> {{ separator|raw }}
-                                {% elseif ( key == "acdh:hasAccessRestriction") %}
-                                    <a href="{{ val.accessrestriction }}">{{ val.title }}</a> {{ separator|raw }}
-                                {% elseif (val.title is defined and val.insideUri is defined) %}
-                                    <a href="/browser/oeaw_detail/{{ val.insideUri }}">{{ val.title }} </a>  {{ separator|raw }}
-                                {% elseif (val.title is defined and val.uri is defined) %}
-                                    <a href="{{ val.uri }}">{{ val.title }}</a> {{ separator|raw }}
-                                {% elseif val.uri is defined %}
-                                    <a href="{{ val.uri }}">{{ val.uri }}</a> {{ separator|raw }}
-                                {% elseif val.title is defined %}
-                                    {{ val.title }} {{ separator|raw }}
-                                {% else %}
-                                    <!--  not an object -->
-                                    {% if ( val is not defined ) %}
-                                        {{ val }}
-                                    {% endif %}
-                                        
-                                {% endif %}
-                           {% endfor %} 
-                        
+                        {{ include('/modules/contrib/arche-gui/templates/helper-displayFields.html.twig', 
+                            {'data': value, 'type':properties[key].type, 'dateformat': properties[key].dateformat, 'delimiter': properties[key].delimiter } 
+                            ) 
+                        }}  
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    INVERSE DATA
     <div class="res-act-button">
-        <a href="#" id="showInverse" data-tableuri="{{result.insideUri}}">{{ "Show Inverse Table"|trans }}</a>
+        <a href="#" id="showInverse" data-tableuri="{{basic.getRepoId()}}">{{ "Show Inverse Table"|trans }}</a>
     </div>
 
     <div id="inverseTableDiv" style="display: none;">

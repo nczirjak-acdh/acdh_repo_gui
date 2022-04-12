@@ -9,19 +9,18 @@ use Drupal\acdh_repo_gui\Model\ArcheModel;
  *
  * @author nczirjak
  */
-class DisseminationServicesModel extends ArcheModel {
-    
-    private $repodb;
+class DisseminationServicesModel extends ArcheModel
+{
+    protected $repodb;
     private $sqlResult = array();
     
-    public function __construct() {
-        //set up the DB connections
-        \Drupal\Core\Database\Database::setActiveConnection('repo');
-        $this->repodb = \Drupal\Core\Database\Database::getConnection('repo');
+    public function __construct()
+    {
+        parent::__construct();
     }
   
-    public function getViewData(string $identifier = "", string $dissemination = '' ): array {
-        
+    public function getViewData(string $identifier = "", string $dissemination = ''): array
+    {
         switch ($dissemination) {
             case "collection":
                 $this->getCollectionData($identifier);
@@ -32,16 +31,24 @@ class DisseminationServicesModel extends ArcheModel {
         return $this->sqlResult;
     }
     
-    private function getCollectionData(string $identifier) {
+    private function getCollectionData(string $identifier)
+    {
         try {
-            $query = $this->repodb->query("select * from collection_views_func('".$identifier."');");
+            $this->setSqlTimeout('60000');
+            $query = $this->repodb->query(
+                "select * from gui.collection_views_func(:id);",
+                array(
+                       'id' => $identifier
+                    )
+            );
             $this->sqlResult = $query->fetchAll(\PDO::FETCH_ASSOC);
             $this->changeBackDBConnection();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             $this->sqlResult = array();
         } catch (\Drupal\Core\Database\DatabaseExceptionWrapper $ex) {
+            \Drupal::logger('acdh_repo_gui')->notice($ex->getMessage());
             $this->sqlResult = array();
         }
     }
-        
 }

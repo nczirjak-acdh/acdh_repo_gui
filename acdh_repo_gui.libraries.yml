@@ -1,58 +1,71 @@
 repo-styles:  
-    version: 1.0.0
+    version: 1.0.1
+    header: true
     css:
         base:
             css/acdh_repo_gui.css: {}
             css/dataTables.bootstrap4.min.css: {}
             css/font-awesome/css/font-awesome.min.css: {}
             css/jqtree/themes/default/style.min.css: {}
+            css/lightbox.css: {}
+            css/leaflet.css: {}
     js:
         js/jquery-1.12.3.min.js: {}
+        js/citation-js-0.5.0.min.js: {}
         js/acdh_repo_gui.js: {}
         js/acdh_repo_gui_detail_view.js: {}
         js/jquery.dataTables.min.js: {}
         js/jstree.min.js: {}
         js/dataTables.bootstrap4.min.js: {}
         js/datatable_init.js: {}
+        js/acdh_repo_gui_pager.js: {}
+        js/lightbox.js: {}
+        js/leaflet.js: {}
+        js/wicket.js: {}
+        js/wicket-leaflet.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
     dependencies:
         - core/drupal
-        - core/drupal.form   
-        
-        
-acdh-repo-gui-css-and-js:
-  css:
-    theme:
-      css/acdh_repo_gui.css: {}
-  js:
-    js/acdh_repo_gui.js: {}
-    js/jquery-1.12.3.min.js: {}
-  
-  
-repo-3d-page:
-    version: 1.0.0
-    css:
-        base:
-            css/3d/3dhop.css: {}
-    js:
-        js/3d/init.js: {}
-        js/jquery-1.12.3.min.js: {}
-        js/3d/meshcoder_worker.js: {}
-        js/3d/nexus.js: {}
-        js/3d/ply.js: {}
-        js/3d/presenter.js: {}
-        js/3d/spidergl.js: {}
-        js/3d/trackball_pantilt.js: {}
-        js/3d/trackball_rail.js: {}
-        js/3d/trackball_sphere.js: {}
-        js/3d/trackball_turntable.js: {}
-        js/3d/trackball_turntable_pan.js: {}
-    dependencies:
-        - core/drupal
-        - core/drupal.form   
+        - core/drupal.form
         
 
+repo-search:
+    version: 1.0.1
+    css:
+        base:
+            css/acdh_repo_gui.css: {}
+            css/font-awesome/css/font-awesome.min.css: {}
+            css/lightbox.css: {}
+    js:        
+        js/acdh_repo_gui.js: {}
+        js/acdh_repo_gui_pager.js: {}
+        js/lightbox.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupal.form
+        - core/jquery    
+
+repo-root-view:
+    version: 1.0.1
+    css:
+        base:
+            css/acdh_repo_gui.css: {}
+            css/lightbox.css: {}
+    js:
+        js/jquery-1.12.3.min.js: {}
+        js/acdh_repo_gui_pager.js: {}
+        js/lightbox.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
+    dependencies:
+        - core/drupal
+        - core/drupal.form  
+
 repo-collection-dl:
-    version: 1.0.0
+    version: 1.0.1
     css:
         base:
             css/arche.css: {}
@@ -61,7 +74,61 @@ repo-collection-dl:
         js/jquery-1.12.3.min.js: {}        
         js/jstree.min.js: {}
         js/dl_collection.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
     dependencies:
         - core/drupal
-        - core/drupal.form    
+        - core/drupal.form
+        - core/jquery    
+
+ds-pdf-styles:  
+    version: 1.0.1
+    css:
+        base:
+            css/arche-pdf-view.css: {}
+    js:
+        js/pdf/pdfjs-dist/build/pdf.js: {}
+        js/pdf/pdfviewer.js: {}
+        js/pdf/arche-ds-pdf.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery
+
+ds-pdf-modal-styles:  
+    version: 1.0.1
+    css:
+        base:
+            css/arche-pdf-view.css: {}
+    js:
+        js/pdf/pdfjs-dist/build/pdf.js: {}
+        js/pdf/pdfviewer.js: {}
+        js/pdf/arche-ds-pdf-modal.js: {}
+        js/vcrSubmit.js: {}
+        js/search.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery
+
+ds-3d-viewer-kovacs-styles:
+    version: 1.0
+    header: true
+    css:
+        base:
+            css/3dviewer_kovacs/pickr.monolith.min-1.8.2.css: {}
+    js:
+        js/3dviewer_kovacs/jquery-3.5.1.min.js: {}
+        js/3dviewer_kovacs/pickr.es5.min-1.8.2.js: {}
+        js/3dviewer_kovacs/three.min-129.js: {}
+        js/3dviewer_kovacs/o3dv/o3dv.min.js: {}
+        js/3dviewer_kovacs/o3dv/o3dv.website.min.js: {}
         
+ds-3d-viewer-v3-styles:
+    version: 1.0
+    header: true
+    js:
+        js/ara3d/ara3d-viewer.js: {}
+    dependencies:
+        - core/drupal
+        - core/jquery    

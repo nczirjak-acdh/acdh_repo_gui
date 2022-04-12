@@ -1,6 +1,10 @@
- jQuery(function($) {
-    "use strict";
+jQuery(function ($) {
+
+    $(document).ready(function () {
+    });
+
     
-            
+
+
 });
 

@@ -14,7 +14,7 @@ use Drupal\Core\Block\BlockBase;
  * @Block(
  *   id = "lang_switcher_block",
  *   admin_label = @Translation("OEAW Language Switcher"),
- *   category = @Translation("Custom oeaw language switcher")
+ *   category = @Translation("Custom arche language switcher")
  * )
  */
 class LangSwitcherBlock extends BlockBase
@@ -35,12 +35,7 @@ class LangSwitcherBlock extends BlockBase
         
         $return = array(
             '#theme' => 'helper-lng-switcher',
-            '#language' => $lang,
-            '#attached' => [
-                'library' => [
-                'acdh_repo_gui/repo-styles', //include our custom library for this response
-                ]
-            ]
+            '#language' => $lang
         );
         return $return;
     }

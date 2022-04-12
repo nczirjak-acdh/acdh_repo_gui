@@ -12,6 +12,11 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
     return [
         'acdh-repo-gui-main' => [
             'variables' => ['data' => NULL, 'paging' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-root-view', //include our custom library for this response
+                ]
+            ]
         ],
         'acdh-repo-gui-detail' => [
             'variables' => ['basic' => NULL, 'extra' => NULL, 'dissemination' => NULL],
@@ -47,6 +52,17 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
         ],
         'acdh-repo-gui-main-page-left-block' => [
             'variables' => ['result' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-search', //include our custom library for this response
+                ]
+            ]
+        ],
+        'acdh-repo-gui-detail-versions-block' => [
+            'variables' => ['result' => NULL]
+        ],
+        'acdh-repo-gui-vcr-block' => [
+            'variables' => ['vcrUrl' => NULL]
         ],
         'acdh-repo-ds-dl-collection' => [
             'variables' => ['basic' => NULL, 'extra' => NULL],
@@ -57,10 +73,53 @@ function acdh_repo_gui_theme($existing, $type, $theme, $path)
             ]
         ],
         'acdh-repo-ds-3d-viewer' => [
-            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL]
+            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL, 'error' => NULL],
+            
+        ],
+        'acdh-repo-ds-3d-viewer-v2' => [
+            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL, 'error' => NULL],
+            
+        ],
+        'acdh-repo-ds-3d-viewer-v3' => [
+            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL, 'error' => NULL],
+            
+        ],
+        'acdh-repo-ds-pdf-viewer' => [
+            'variables' => ['ObjectUrl' => NULL, 'basic' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/ds-pdf-styles', //include our custom library for this response
+                ]
+            ]
         ],
         'acdh-repo-ds-iiif-viewer' => [
-            'variables' => ['basic' => NULL, 'lorisUrl' => NULL]
+            'variables' => ['basic' => NULL, 'lorisUrl' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/ds-iiif-viewer-styles', //include our custom library for this response
+                ]
+            ]
+        ],
+        'helper-lng-switcher' => [
+            'variables' => ['language' => NULL]
+        ],
+        'acdh-repo-gui-search-full' => [
+            'variables' => ['data' => NULL, 'paging' => NULL, 'extra' => NULL],
+            '#attached' => [
+                'library' => [
+                    'acdh_repo_gui/repo-search', //include our custom library for this response
+                ]
+            ]
+            
+        ],
+        'acdh-repo-gui-shibboleth-login' => [
+            'variables' => []
+        ],
+        'acdh-repo-gui-detail-skos-concept' => [
+            'variables' => []
+        ],
+        'acdh-repo-gui-detail-skos-concepschema' => [
+            'variables' => []
         ]
     ];
 }
@@ -94,13 +153,13 @@ function acdh_repo_gui_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $
  
     //form and user permission settings for the collection download views
     $form['#attached']['library'][] = 'acdh_repo_gui/mylibrary';
-    $form['#attached']['drupalSettings']['oeaw']['users']['id'] = \Drupal::currentUser()->id();
+    $form['#attached']['drupalSettings']['acdh_repo_gui']['users']['id'] = \Drupal::currentUser()->id();
     $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
-    $form['#attached']['drupalSettings']['oeaw']['users']['name'] = $account->getUsername();
+    $form['#attached']['drupalSettings']['acdh_repo_gui']['users']['name'] = $account->getAccountName();
     $roles = array();
     $roles = \Drupal::currentUser()->getRoles();
     if(count($roles) > 0){ $roles = implode(",", $roles); }
-    $form['#attached']['drupalSettings']['oeaw']['users']['roles'] = $roles;
+    $form['#attached']['drupalSettings']['acdh_repo_gui']['users']['roles'] = $roles;
     
     $current_path = \Drupal::service('path.current')->getPath();
     

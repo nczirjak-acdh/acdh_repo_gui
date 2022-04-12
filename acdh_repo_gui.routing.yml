@@ -1,7 +1,10 @@
-repo_root:
-  path: '/repo_root'
+repo_root_view:
+  path: '/discover/root/{order}/{limit}/{page}'
   defaults:
-    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_root'
+    _controller: '\Drupal\acdh_repo_gui\Controller\RootViewController::generateView'
+    order: "datedesc"
+    limit: "10"
+    page: "1"
   requirements:
     _permission: 'access content'
     _access: 'TRUE'
@@ -9,7 +12,7 @@ repo_root:
 oeaw_detail:
   path: '/oeaw_detail/{identifier}'
   defaults:
-    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_detail'
+    _controller: '\Drupal\acdh_repo_gui\Controller\DetailViewController::detailViewMainMethod'
   requirements:
     identifier: '^[^\?]*$'
     _permission: 'access content'
@@ -18,39 +21,17 @@ oeaw_detail:
 repo_child_api:    
     path: '/repo_child_api/{identifier}/{limit}/{page}/{order}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\ChildApiController::repo_child_api'
+        _controller: '\Drupal\acdh_repo_gui\Controller\ChildApiController::generateView'
     requirements:
         _permission: 'access content'
         _access: 'TRUE'    
-
-repo_complexsearch:
-  path: '/discover/{metavalue}/{order}/{limit}/{page}'
-  defaults:
-    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::repo_complexsearch'
-    metavalue: ""
-    order: "datedesc"
-    limit: "10"
-    page: "1"
-  requirements:
-    _permission: 'access content'
-    _access: 'TRUE'
     
 #dissemination services
 
-## the collection download python script
-oeaw_dlc_script:
-    path: '/oeaw_coll_dl_script/{repoid}'
-    defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_get_collection_dl_script'
-    requirements:
-        uri: '^[^\?]*$'
-        _permission: 'access content'
-        _access: 'TRUE'
-        
 oeaw_dl_collection:
     path: '/oeaw_dl_collection/{repoid}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_dl_collection_view'
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_dl_collection_view'
     requirements:
         uri: '^[^\?]*$'
         _permission: 'access content'
@@ -58,62 +39,87 @@ oeaw_dl_collection:
     options:
         no_cache: 'TRUE' 
 
-oeaw_get_collection_data:    
-    path: '/get_collection_data/{repoid}'
-    defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_get_collection_data'
-    requirements:
-        uri: '^[^\?]*$'
-        _permission: 'access content'
-        _access: 'TRUE'
-
-oeaw_3d_viewer:
+repo_3d_viewer:
     path: '/oeaw_3d_viewer/{repoid}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_3d_viewer'
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_3d_viewer'
     requirements:
         data: '^[^\?]*$'
         _permission: 'access content'
         _access: 'TRUE'
 
-oeaw_dlc:
-    path: '/oeaw_dlc/{repoid}'
+repo_3d_viewer_v2:
+    path: '/3d_viewer/{repoid}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_dl_collection_binaries'
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_3d_viewer_v2'
     requirements:
-        uri: '^[^\?]*$'
+        data: '^[^\?]*$'
         _permission: 'access content'
         _access: 'TRUE'
 
-oeaw_iiif_viewer:
+repo_3d_viewer_v3:
+    path: '/3d_viewer_v3/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_3d_viewer_v3'
+    requirements:
+        data: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+repo_pdf_viewer:
+    path: '/oeaw_pdf_viewer/{repoid}'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_pdf_viewer'
+    requirements:
+        data: '^[^\?]*$'
+        _permission: 'access content'
+        _access: 'TRUE'
+
+repo_iiif_viewer:
     path: '/iiif_viewer/{repoid}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_iiif_viewer'
+        _controller: '\Drupal\acdh_repo_gui\Controller\DisseminationServicesController::repo_iiif_viewer'
     requirements:
         uri: '^[^\?]*$'
         _permission: 'access content'
         _access: 'TRUE'
 
-#arche apis
-oeaw_turtle_api:    
-    path: '/oeaw_turtle_api/{repoid}'
+oeaw_change_lng:    
+    path: '/oeaw_change_lng/{lng}'
     defaults:
-        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_turtle_api'
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::oeaw_change_lng'
     requirements:
-        data: '^[^\?]*$'
-        _permission: 'access content'
         _access: 'TRUE'
 
-
-
-
-
-
-repo_search:
-  path: '/repo_search/{data}'
+##### APIs #######
+        
+repo_search_v2:    
+  path: '/search/{metavalue}'
   defaults:
-    _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::search_view'
+    _controller: '\Drupal\acdh_repo_gui\Controller\SearchViewController::generateView'
+    metavalue: ""
+    order: "datedesc"
+    limit: "10"
+    page: "1"
   requirements:
-    identifier: '^[^\?]*$'
     _permission: 'access content'
-    _access: 'TRUE' 
+    _access: 'TRUE'      
+
+repo_search_vcr:    
+  path: '/api/search_vcr/{metavalue}'
+  defaults:
+    _controller: '\Drupal\acdh_repo_gui\Controller\SearchViewController::search_vcr'
+    metavalue: ""
+  requirements:
+    _permission: 'access content'
+    _access: 'TRUE'
+    
+repo_shibboleth_login:
+    path: '/federated_login'
+    defaults:
+        _controller: '\Drupal\acdh_repo_gui\Controller\AcdhRepoGuiController::shibboleth_login'
+    requirements:        
+        _access: 'TRUE'
+        _permission: 'access content'
+    options:
+        no_cache: 'TRUE'
