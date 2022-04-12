@@ -42,7 +42,7 @@ jobs:
       run:  composer create-project drupal/recommended-project drupal  
   
     - name: drupal composer update
-      run: cd drupal && composer update && composer require drush/drush && composer require phpunit/phpunit ^8 && cd -
+      run: cd drupal && composer update && composer require drush/drush && composer require phpunit/phpunit && cd -
               
     - name: check drush
       run: |
@@ -73,7 +73,7 @@ jobs:
   
     - name: start web server
       run: |
-        cd drupal && vendor/drush/drush/drush runserver 127.0.0.1:8080 &
+        cd drupal && vendor/drush/drush/drush runserver http://127.0.0.1:8080 &
         until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done  
         
     - name: test
@@ -89,7 +89,7 @@ jobs:
         #phpunit --version
        
         echo "run test"
-        XDEBUG_MODE=coverage ./drupal/web/modules/arche-gui/vendor/bin/phpunit   
+        #XDEBUG_MODE=coverage ./drupal/web/modules/arche-gui/vendor/bin/phpunit   
         #XDEBUG_MODE=coverage ./drupal/vendor/phpunit/phpunit/phpunit --coverage-clover ./build/logs/clover.xml --configuration ./drupal/web/modules/arche-gui/phpunit.xml            
       
     
