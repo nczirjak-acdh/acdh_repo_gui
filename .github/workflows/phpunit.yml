@@ -88,8 +88,8 @@ jobs:
         #echo "simple phpunit version"
         #phpunit --version
        
-       echo "PING API SERVER"
-       ping http://127.0.0.1/api
+        echo "PING API SERVER"
+        ping http://127.0.0.1/api
        
         echo "run test"
         XDEBUG_MODE=coverage ./drupal/web/modules/arche-gui/vendor/bin/phpunit   
