@@ -1,5 +1,5 @@
 rest:
-    urlBase: http://localhost
+    urlBase: http://127.0.0.1
     pathBase: /api/
     verifyCert: false
     headers:
@@ -7,31 +7,7 @@ rest:
         metadataParentProperty: X-PARENT-PROPERTY
         metadataWriteMode: X-METADATA-WRITE-MODE
         transactionId: X-TRANSACTION-ID
-    handlers:
-        methods:
-            get: []
-            create:
-                - type: function
-                  function: \acdhOeaw\acdhRepo\handler\MetadataManager::manage
-            delete: []
-            updateBinary: []
-            updateMetadata:
-                - type: function
-                  function: \acdhOeaw\acdhRepo\handler\MetadataManager::manage
-            txBegin: []
-            txCommit: []
-            txRollback: []
-metadataManagment:
-    nonRelationProperties:
-        - https://vocabs.acdh.oeaw.ac.at/schema#hasPid
-    autoAddIds:
-        denyNamespaces: []
-metadataManager:
-    fixed: []
-    default: []
-    forbidden: []
-    copying:
-        https://vocabs.acdh.oeaw.ac.at/schema#hasPid: https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier
+        withReferences: X-WITH-REFERENCES
 schema:
     id: https://vocabs.acdh.oeaw.ac.at/schema#hasIdentifier
     parent: https://vocabs.acdh.oeaw.ac.at/schema#isPartOf
@@ -100,3 +76,9 @@ auth:
     httpBasic:
         user: ''
         passsword: ''
+transactionController:
+    # transaction timeout in s
+    timeout: 15
+repositories:
+- urlBase: http://127.0.0.1
+  pathBase: /api/
